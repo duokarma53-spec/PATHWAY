@@ -2,21 +2,23 @@ import type { NavItem } from '@/types';
 
 export const NAV_ITEMS: NavItem[] = [
   { label: 'About', href: '/about' },
-  { label: 'Destinations', href: '/destinations' },
+  { label: 'Career & Admissions', href: '/#career-admissions' },
+  { label: 'Study Abroad', href: '/#study-abroad' },
   { label: 'Services', href: '/services' },
-  { label: 'Universities', href: '/universities' },
+  { label: 'Destinations', href: '/destinations' },
   { label: 'Success Stories', href: '/success-stories' },
   { label: 'Insights', href: '/insights' },
 ];
 
 export const SITE_CONFIG = {
-  name: 'Pathway',
+  name: 'Pathway Education Consultancy',
   tagline: 'Your future deserves a Pathway.',
   description:
-    'Pathway is a premium international education consultancy helping Indian students build the path to the university and future they envision.',
-  email: 'hello@pathwayconsultancy.in',
-  phone: '+91 98765 43210',
-  address: 'Mumbai, India',
+    'Pathway is an international education consultancy in Dahod, Gujarat helping students build the path to universities in India and abroad.',
+  email: 'pathwayeduconsultancy53@gmail.com',
+  phone: '+91 75062 84722',
+  phoneAlt: '+91 94091 61562',
+  address: '1st Floor, Yusuf Corner, Godi Road, Dahod, Gujarat – 389151, India',
   social: {
     instagram: 'https://instagram.com/',
     linkedin: 'https://linkedin.com/',

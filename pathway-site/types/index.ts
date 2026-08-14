@@ -22,6 +22,7 @@ export interface University {
   country: string;
   logoUrl?: string;
   rank?: number;
+  globalRank?: number;
   programs: string[];
   websiteUrl?: string;
   destinationId: string;

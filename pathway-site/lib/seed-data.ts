@@ -191,7 +191,7 @@ export const DEMO_BLOG_POSTS: BlogPost[] = [
 ];
 
 // ── UNIVERSITIES ──────────────────────────────────────────────
-export const DEMO_UNIVERSITIES = [
+export const DEMO_UNIVERSITIES: University[] = [
   { id: '1', name: 'University of Oxford', country: 'United Kingdom', destinationId: '1', isFeatured: true, programs: [] },
   { id: '2', name: 'University of Cambridge', country: 'United Kingdom', destinationId: '1', isFeatured: true, programs: [] },
   { id: '3', name: 'Imperial College London', country: 'United Kingdom', destinationId: '1', isFeatured: true, programs: [] },

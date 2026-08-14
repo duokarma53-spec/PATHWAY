@@ -103,9 +103,9 @@ export function UniversitiesSection() {
                     {uni.country}
                   </span>
                   
-                  {uni.globalRank && (
+                  {(uni.globalRank || uni.rank) && (
                     <span className="text-xs bg-bg-secondary px-2 py-1 rounded text-text-secondary border border-border">
-                      Rank #{uni.globalRank}
+                      Rank #{uni.globalRank || uni.rank}
                     </span>
                   )}
                 </div>
