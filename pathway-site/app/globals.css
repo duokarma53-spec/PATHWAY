@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Brand Palette ─────────────────────────────── */
+  --color-charcoal: #121212;
+  --color-charcoal-light: #2A2A2A;
+  --color-charcoal-mid: #1A1A1A;
+  --color-ivory: #FDFBF7;
+  --color-ivory-dark: #F4F1EA;
+  --color-ivory-muted: #E8E5DD;
+  --color-white-warm: #FFFFFF;
+  --color-gold: #B89053;
+  --color-gold-light: #D4BA8E;
+  --color-gold-muted: #8A6A3B;
+  --color-forest: #1C2B24;
+  
+  --color-bg-primary: var(--color-ivory);
+  --color-bg-secondary: var(--color-white-warm);
+  --color-bg-tertiary: var(--color-ivory-dark);
+  --color-bg-inverse: var(--color-charcoal);
+  
+  --color-text-primary: var(--color-charcoal);
+  --color-text-secondary: #4A4A48;
+  --color-text-muted: #757571;
+  --color-text-faint: #A8A8A4;
+  --color-text-inverse: var(--color-ivory);
+  
+  --color-border: #E6E3DB;
+  --color-border-light: #F2EFE8;
+  --color-border-dark: #D1CEC5;
+
+  /* ── Typography ────────────────────────────────── */
+  --font-serif: var(--font-cormorant), 'Georgia', serif;
+  --font-sans: var(--font-inter), 'system-ui', sans-serif;
+
+  /* ── Motion ────────────────────────────────────── */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* ── Base Reset ────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── Selection ──────────────────────────────────────── */
+::selection {
+  background-color: var(--color-gold);
+  color: var(--color-charcoal);
+}
+
+/* ── Custom Scrollbar ───────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-dark);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-muted);
+}
+
+/* ── Focus Visible ──────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+  border-radius: 1px;
+}
+
+/* ── Typography Utilities ───────────────────────────── */
+.font-serif {
+  font-family: var(--font-serif);
+}
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+/* Editorial serif headlines */
+.headline-display {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+}
+.headline-xl {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  font-size: clamp(3rem, 7vw, 6.5rem);
+}
+.headline-lg {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+  font-size: clamp(2.25rem, 5vw, 4rem);
+}
+.headline-md {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+}
+.headline-sm {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.2;
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+}
+
+/* Label / eyebrow text */
+.label-text {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+/* ── Section Utilities ───────────────────────────────── */
+.section-padding {
+  padding-top: clamp(5rem, 10vw, 8rem);
+  padding-bottom: clamp(5rem, 10vw, 8rem);
+}
+.container-padding {
+  padding-left: clamp(1.5rem, 5vw, 5rem);
+  padding-right: clamp(1.5rem, 5vw, 5rem);
+}
+
+/* ── Gold Accent Line ────────────────────────────────── */
+.gold-rule {
+  width: 2.5rem;
+  height: 1px;
+  background-color: var(--color-gold);
+  display: inline-block;
+}
+
+/* ── Reduced Motion ──────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Image Overlays ──────────────────────────────────── */
+.img-overlay-dark {
+  position: relative;
+}
+.img-overlay-dark::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(12,12,10,0.2) 0%, rgba(12,12,10,0.7) 100%);
+  pointer-events: none;
+}

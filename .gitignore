@@ -1,0 +1,19 @@
+# Dependencies
+**/node_modules
+node_modules/
+
+# Next.js build outputs
+**/.next
+.next/
+
+# Environment files
+**/.env*.local
+.env*.local
+
+# Zip & logs
+*.zip
+*.log
+
+# System files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Background: Very light warm neutral */
+    --background: 40 33% 98%;
+    /* Foreground: Deep navy-charcoal */
+    --foreground: 220 20% 15%;
+
+    /* Card: White to contrast softly with background */
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 15%;
+
+    /* Primary: Deep navy-charcoal */
+    --primary: 220 20% 15%;
+    --primary-foreground: 40 33% 98%;
+
+    /* Secondary: Warm ivory */
+    --secondary: 40 20% 94%;
+    --secondary-foreground: 220 20% 15%;
+
+    /* Muted: Soft cool grey */
+    --muted: 220 10% 94%;
+    --muted-foreground: 220 10% 45%;
+
+    /* Accent: Restrained Pathway gold/champagne */
+    --accent: 42 40% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Destructive: Refined red */
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 40 33% 98%;
+
+    --border: 220 15% 90%;
+    --input: 220 15% 90%;
+    --ring: 220 20% 15%;
+
+    --radius: 0.35rem; /* Subtle rounding, not giant pills */
+  }
+
+  .dark {
+    --background: 220 20% 10%;
+    --foreground: 40 33% 98%;
+
+    --card: 220 20% 12%;
+    --card-foreground: 40 33% 98%;
+
+    --popover: 220 20% 12%;
+    --popover-foreground: 40 33% 98%;
+
+    --primary: 40 33% 98%;
+    --primary-foreground: 220 20% 10%;
+
+    --secondary: 220 20% 16%;
+    --secondary-foreground: 40 33% 98%;
+
+    --muted: 220 20% 16%;
+    --muted-foreground: 220 10% 65%;
+
+    --accent: 42 40% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 60% 40%;
+    --destructive-foreground: 40 33% 98%;
+
+    --border: 220 20% 20%;
+    --input: 220 20% 20%;
+    --ring: 220 10% 40%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
