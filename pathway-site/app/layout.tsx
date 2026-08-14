@@ -1,24 +1,24 @@
 import type { Metadata } from 'next';
-import { Cormorant_Garamond, Outfit } from 'next/font/google';
+import { Cormorant_Garamond, DM_Sans } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/components/navigation/Navbar';
 import { FloatingCta } from '@/components/ui/FloatingCta';
-import { buttonVariants } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 import Link from 'next/link';
 import { SITE_CONFIG } from '@/lib/constants';
 
-const instrument = Cormorant_Garamond({
+const display = Cormorant_Garamond({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
   style: ['normal', 'italic'],
-  variable: '--font-instrument',
+  variable: '--font-display',
   display: 'swap',
 });
 
-const manrope = Outfit({
+const body = DM_Sans({
   subsets: ['latin'],
-  variable: '--font-manrope',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-body',
   display: 'swap',
 });
 
@@ -62,18 +62,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${instrument.variable} ${manrope.variable}`}>
-      <body className="bg-bg-primary text-text-primary antialiased overflow-x-hidden selection:bg-gold selection:text-white">
+    <html lang="en" className={`${display.variable} ${body.variable}`}>
+      <body className="bg-bg-primary text-text-primary antialiased overflow-x-hidden selection:bg-gold selection:text-charcoal">
         <Navbar />
         <main>{children}</main>
         <FloatingCta />
         <footer className="border-t border-border/10 bg-bg-inverse text-text-inverse relative">
           <Container className="max-w-[1400px] py-16 md:py-20">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 items-start">
-              
+
               {/* Left */}
               <div>
-                <div className="font-serif text-3xl mb-4 tracking-tight text-white drop-shadow-sm">Pathway</div>
+                <div className="font-serif text-3xl mb-4 tracking-tight text-white">Pathway</div>
                 <p className="font-sans text-text-faint text-base leading-relaxed max-w-xs">
                   Education & career guidance for students and families.
                 </p>
@@ -113,7 +113,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <a href={`mailto:${SITE_CONFIG.email}`} className="hover:text-gold transition-colors">{SITE_CONFIG.email}</a>
               </div>
             </div>
-            
+
             <div className="mt-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 font-sans text-xs text-white/30 uppercase tracking-widest">
               <p>© {new Date().getFullYear()} Pathway. All rights reserved.</p>
               <div className="flex gap-6">
