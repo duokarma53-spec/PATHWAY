@@ -1,6 +1,8 @@
 import { MetadataRoute } from 'next';
 import { DEMO_DESTINATIONS, DEMO_BLOG_POSTS, DEMO_SUCCESS_STORIES } from '@/lib/seed-data';
 
+export const dynamic = 'force-static';
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://pathwayconsultancy.in';
 

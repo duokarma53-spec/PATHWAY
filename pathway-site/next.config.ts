@@ -9,9 +9,6 @@ const nextConfig: NextConfig = {
     // Allow build to succeed even with type errors (we fix these separately)
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   images: {
     unoptimized: true,
     remotePatterns: [
