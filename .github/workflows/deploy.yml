@@ -33,17 +33,15 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Install dependencies
-        working-directory: ./pathway-site
         run: npm install --legacy-peer-deps
 
       - name: Build Next.js site
-        working-directory: ./pathway-site
         run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "./pathway-site/out"
+          path: "./out"
 
       - name: Deploy to GitHub Pages
         id: deployment
