@@ -70,12 +70,12 @@ function NavContent({ collapsed, onNavClick }: { collapsed: boolean; onNavClick?
   return (
     <>
       {/* Navigation */}
-      <div className="flex-1 overflow-auto py-6 custom-scrollbar">
-        <nav className="flex flex-col gap-6 px-4">
+      <div className="flex-1 overflow-auto py-8 custom-scrollbar">
+        <nav className="flex flex-col gap-8 px-4">
           {navigationGroups.map((group) => (
-            <div key={group.label} className="flex flex-col gap-1">
+            <div key={group.label} className="flex flex-col gap-1.5">
               {!collapsed && (
-                <span className="px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70 mb-1">
+                <span className="px-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/50 mb-2">
                   {group.label}
                 </span>
               )}
@@ -87,22 +87,26 @@ function NavContent({ collapsed, onNavClick }: { collapsed: boolean; onNavClick?
                     href={item.href}
                     onClick={onNavClick}
                     className={cn(
-                      "group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-all duration-200 relative",
+                      "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] transition-all duration-300 relative overflow-hidden",
                       isActive
-                        ? "text-primary font-medium bg-muted/50"
-                        : "text-muted-foreground font-medium hover:bg-muted/30 hover:text-foreground",
-                      collapsed && "justify-center px-0"
+                        ? "text-primary font-medium"
+                        : "text-muted-foreground font-medium hover:text-foreground",
+                      collapsed && "justify-center px-0 rounded-lg"
                     )}
                     title={collapsed ? item.name : undefined}
                   >
                     {isActive && !collapsed && (
-                      <div className="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-accent" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/15 to-transparent border-l-2 border-primary" />
                     )}
+                    {!isActive && !collapsed && (
+                      <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-colors duration-300 rounded-xl" />
+                    )}
+                    
                     <item.icon className={cn(
-                      "h-4 w-4 shrink-0 transition-colors",
-                      isActive ? "text-accent" : "text-muted-foreground group-hover:text-foreground"
+                      "h-4 w-4 shrink-0 transition-all duration-300 relative z-10",
+                      isActive ? "text-primary" : "text-muted-foreground/70 group-hover:text-foreground"
                     )} />
-                    {!collapsed && <span>{item.name}</span>}
+                    {!collapsed && <span className="relative z-10 tracking-wide">{item.name}</span>}
                   </Link>
                 )
               })}
@@ -112,15 +116,15 @@ function NavContent({ collapsed, onNavClick }: { collapsed: boolean; onNavClick?
       </div>
 
       {/* Footer */}
-      <div className="border-t p-4 flex flex-col gap-2">
+      <div className="border-t border-border/40 p-4 flex flex-col gap-2 bg-background/30 backdrop-blur-md">
         <Button
           variant="ghost"
-          className={cn("w-full justify-start text-muted-foreground hover:text-foreground text-sm font-medium", collapsed && "justify-center px-2")}
+          className={cn("w-full justify-start text-muted-foreground hover:text-foreground text-sm font-medium rounded-xl hover:bg-foreground/5 transition-colors duration-300", collapsed && "justify-center px-2")}
           onClick={handleLogout}
           title={collapsed ? "Logout" : undefined}
         >
           <LogOut className="h-4 w-4 shrink-0" />
-          {!collapsed && <span className="ml-3">Logout</span>}
+          {!collapsed && <span className="ml-3 tracking-wide">Logout</span>}
         </Button>
       </div>
     </>
@@ -128,7 +132,6 @@ function NavContent({ collapsed, onNavClick }: { collapsed: boolean; onNavClick?
 }
 
 export function Sidebar() {
-  const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
   const { isOpen, setIsOpen } = useSidebar()
 
@@ -140,24 +143,24 @@ export function Sidebar() {
       {/* ── Desktop Sidebar ─────────────────────────── */}
       <div
         className={cn(
-          "relative hidden md:flex flex-col border-r bg-background transition-all duration-300",
-          collapsed ? "w-[80px]" : "w-[260px]"
+          "relative hidden md:flex flex-col border-r border-border/40 bg-background/60 backdrop-blur-xl transition-all duration-300",
+          collapsed ? "w-[80px]" : "w-[280px]"
         )}
       >
         {/* Header */}
-        <div className="flex h-16 items-center justify-between px-6 border-b">
+        <div className="flex h-[72px] items-center justify-between px-6 border-b border-border/40">
           {!collapsed && (
             <div className="flex items-center gap-3">
-              <div className="h-7 w-7 rounded flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm">
+              <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-primary/80 to-primary text-primary-foreground font-semibold text-sm shadow-sm">
                 P
               </div>
-              <span className="text-base font-semibold tracking-tight text-foreground">
+              <span className="text-lg font-light tracking-[0.15em] text-foreground uppercase">
                 Pathway
               </span>
             </div>
           )}
           {collapsed && (
-            <div className="mx-auto h-7 w-7 rounded flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm">
+            <div className="mx-auto h-8 w-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-primary/80 to-primary text-primary-foreground font-semibold text-sm shadow-sm">
               P
             </div>
           )}
@@ -166,7 +169,7 @@ export function Sidebar() {
         <Button
           variant="ghost"
           size="icon"
-          className="absolute -right-3.5 top-5 h-7 w-7 rounded-full border bg-background shadow-sm hover:bg-muted"
+          className="absolute -right-3.5 top-6 h-7 w-7 rounded-full border border-border/60 bg-background/80 backdrop-blur-sm shadow-sm hover:bg-muted transition-all duration-300"
           onClick={() => setCollapsed(!collapsed)}
         >
           {collapsed ? (
@@ -183,7 +186,7 @@ export function Sidebar() {
       {/* Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-40 bg-foreground/20 backdrop-blur-sm md:hidden transition-all duration-300"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -191,24 +194,24 @@ export function Sidebar() {
       {/* Drawer panel */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-[280px] flex flex-col border-r bg-background transition-transform duration-300 ease-in-out md:hidden",
+          "fixed inset-y-0 left-0 z-50 w-[300px] flex flex-col border-r border-white/10 bg-background/75 backdrop-blur-2xl transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] md:hidden shadow-[8px_0_40px_-12px_rgba(0,0,0,0.3)]",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Drawer Header */}
-        <div className="flex h-16 items-center justify-between px-5 border-b">
+        <div className="flex h-[72px] items-center justify-between px-6 border-b border-border/30 bg-background/30">
           <div className="flex items-center gap-3">
-            <div className="h-7 w-7 rounded flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm">
+            <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-primary/80 to-primary text-primary-foreground font-semibold text-sm shadow-sm">
               P
             </div>
-            <span className="text-base font-semibold tracking-tight text-foreground">
+            <span className="text-lg font-light tracking-[0.15em] text-foreground uppercase">
               Pathway
             </span>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 rounded-full hover:bg-muted"
+            className="h-8 w-8 rounded-full hover:bg-foreground/10 bg-background/20 backdrop-blur-md transition-all duration-300"
             onClick={() => setIsOpen(false)}
           >
             <X className="h-4 w-4 text-muted-foreground" />

@@ -10,7 +10,7 @@ export function Topbar() {
   const { setIsOpen } = useSidebar()
 
   return (
-    <div className="flex h-16 items-center justify-between border-b bg-card px-4 md:px-6 shadow-sm z-10 shrink-0">
+    <div className="flex h-[72px] items-center justify-between border-b border-border/40 bg-background/60 backdrop-blur-xl px-4 md:px-6 shadow-[0_4px_24px_-12px_rgba(0,0,0,0.1)] z-10 shrink-0 transition-all duration-300">
       {/* Mobile Menu */}
       <div className="flex items-center gap-4 flex-1 min-w-0">
         <Button
