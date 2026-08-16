@@ -55,7 +55,7 @@ export default async function AuditLogsPage() {
                <p>No activity recorded yet.</p>
              </div>
           ) : (
-            <Table>
+            <div className="overflow-x-auto -mx-1"><Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Time</TableHead>
@@ -85,7 +85,7 @@ export default async function AuditLogsPage() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+            </Table></div>
           )}
         </CardContent>
       </Card>

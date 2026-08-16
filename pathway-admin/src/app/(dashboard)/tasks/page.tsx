@@ -62,7 +62,7 @@ export default async function TasksPage() {
                No tasks found. Take a break!
              </div>
           ) : (
-            <Table>
+            <div className="overflow-x-auto -mx-1"><Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Task</TableHead>
@@ -120,7 +120,7 @@ export default async function TasksPage() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+            </Table></div>
           )}
         </CardContent>
       </Card>

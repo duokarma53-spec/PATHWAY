@@ -39,7 +39,7 @@ const PHOTOS = [
 
 export function PhotoGallery() {
   return (
-    <section className="py-24 bg-midnight text-white">
+    <section className="py-16 md:py-24 bg-midnight text-white">
       <div className="container mx-auto px-4 md:px-8">
         <SectionHeading
           eyebrow="LIFE AT CAMPUS"

@@ -60,7 +60,7 @@ export default async function DocumentsPage() {
                <p>No documents found.</p>
              </div>
           ) : (
-            <Table>
+            <div className="overflow-x-auto -mx-1"><Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>File Name</TableHead>
@@ -107,7 +107,7 @@ export default async function DocumentsPage() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+            </Table></div>
           )}
         </CardContent>
       </Card>

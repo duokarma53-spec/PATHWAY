@@ -27,7 +27,7 @@ const REASONS = [
 
 export function WhyPathway() {
   return (
-    <section id="why-pathway" className="py-24 bg-navy text-white">
+    <section id="why-pathway" className="py-16 md:py-24 bg-navy text-white">
       <div className="container mx-auto px-4 md:px-8">
         <SectionHeading
           eyebrow="WHY CHOOSE US"

@@ -48,7 +48,7 @@ export default async function ConsultationsPage() {
                No consultations found.
              </div>
           ) : (
-            <Table>
+            <div className="overflow-x-auto -mx-1"><Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Applicant Name</TableHead>
@@ -93,7 +93,7 @@ export default async function ConsultationsPage() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+            </Table></div>
           )}
         </CardContent>
       </Card>

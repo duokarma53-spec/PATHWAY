@@ -51,7 +51,7 @@ export default async function ServicesPage() {
                No services found.
              </div>
           ) : (
-            <Table>
+            <div className="overflow-x-auto -mx-1"><Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-12">Order</TableHead>
@@ -86,7 +86,7 @@ export default async function ServicesPage() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+            </Table></div>
           )}
         </CardContent>
       </Card>

@@ -4,13 +4,21 @@ import { Bell, Search, Menu } from "lucide-react"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { QuickAddButton } from "../actions/quick-actions"
+import { useSidebar } from "@/contexts/sidebar-context"
 
 export function Topbar() {
+  const { setIsOpen } = useSidebar()
+
   return (
-    <div className="flex h-16 items-center justify-between border-b bg-card px-4 md:px-6 shadow-sm z-10">
+    <div className="flex h-16 items-center justify-between border-b bg-card px-4 md:px-6 shadow-sm z-10 shrink-0">
       {/* Mobile Menu */}
-      <div className="flex items-center gap-4 flex-1">
-        <Button variant="ghost" size="icon" className="md:hidden">
+      <div className="flex items-center gap-4 flex-1 min-w-0">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden h-9 w-9 shrink-0"
+          onClick={() => setIsOpen(true)}
+        >
           <Menu className="h-5 w-5" />
         </Button>
 
@@ -31,7 +39,7 @@ export function Topbar() {
       </div>
 
       {/* Right Actions */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 shrink-0">
         {/* Quick Add */}
         <div className="hidden sm:flex">
           <QuickAddButton className="h-9 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-4 shadow-sm" />

@@ -36,7 +36,7 @@ const STEPS = [
 
 export function Process() {
   return (
-    <section className="py-24 bg-ivory">
+    <section className="py-16 md:py-24 bg-ivory">
       <div className="container mx-auto px-4 md:px-8">
         <SectionHeading
           eyebrow="HOW IT WORKS"

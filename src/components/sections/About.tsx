@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/Button";
 
 export function About() {
   return (
-    <section id="about" className="py-24 bg-white overflow-hidden">
+    <section id="about" className="py-16 md:py-24 bg-white overflow-hidden">
       <div className="container mx-auto px-4 md:px-8">
         <div className="flex flex-col lg:flex-row gap-16 items-center">
           

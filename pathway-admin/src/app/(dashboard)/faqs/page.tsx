@@ -52,7 +52,7 @@ export default async function FAQsPage() {
                No FAQs found.
              </div>
           ) : (
-            <Table>
+            <div className="overflow-x-auto -mx-1"><Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Category</TableHead>
@@ -83,7 +83,7 @@ export default async function FAQsPage() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+            </Table></div>
           )}
         </CardContent>
       </Card>

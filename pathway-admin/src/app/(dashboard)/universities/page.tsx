@@ -58,7 +58,7 @@ export default async function UniversitiesPage() {
                No universities found.
              </div>
           ) : (
-            <Table>
+            <div className="overflow-x-auto -mx-1"><Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>University Name</TableHead>
@@ -96,7 +96,7 @@ export default async function UniversitiesPage() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+            </Table></div>
           )}
         </CardContent>
       </Card>

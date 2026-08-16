@@ -14,7 +14,7 @@ export default async function DashboardPage() {
   const kpis = data.kpis || { newLeads: 0, upcomingConsultations: 0, activeApplications: 0, offers: 0 }
 
   return (
-    <div className="flex flex-col gap-8 max-w-7xl mx-auto pb-10">
+    <div className="flex flex-col gap-6 md:gap-8 max-w-7xl mx-auto pb-10 min-w-0">
       
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -98,8 +98,8 @@ export default async function DashboardPage() {
       </div>
 
       {/* Analytics & Funnel */}
-      <div className="grid gap-6 md:grid-cols-3">
-        <Card className="col-span-2 border-border/50 shadow-sm">
+      <div className="grid gap-6 md:grid-cols-3 min-w-0">
+        <Card className="col-span-full md:col-span-2 border-border/50 shadow-sm overflow-hidden">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div>
@@ -112,12 +112,12 @@ export default async function DashboardPage() {
               </select>
             </div>
           </CardHeader>
-          <CardContent className="pl-2 h-[300px]">
+          <CardContent className="pl-2 h-[260px] md:h-[300px] min-w-0">
             <DashboardChart />
           </CardContent>
         </Card>
 
-        <Card className="col-span-1 border-border/50 shadow-sm flex flex-col">
+        <Card className="col-span-full md:col-span-1 border-border/50 shadow-sm flex flex-col">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg">Lead Funnel</CardTitle>
             <CardDescription className="text-xs mt-1">Current active pipeline</CardDescription>
@@ -144,7 +144,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Secondary Row: Priorities & Consultations */}
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2 min-w-0">
         <Card className="border-border/50 shadow-sm">
           <CardHeader>
             <CardTitle className="text-lg flex items-center">

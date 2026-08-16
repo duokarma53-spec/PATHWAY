@@ -51,7 +51,7 @@ export default async function DestinationsPage() {
                No destinations found.
              </div>
           ) : (
-            <Table>
+            <div className="overflow-x-auto -mx-1"><Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Country Name</TableHead>
@@ -83,7 +83,7 @@ export default async function DestinationsPage() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+            </Table></div>
           )}
         </CardContent>
       </Card>

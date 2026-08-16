@@ -58,7 +58,7 @@ export default async function LeadsPage() {
                No leads found.
              </div>
           ) : (
-            <Table>
+            <div className="overflow-x-auto -mx-1"><Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
@@ -101,7 +101,7 @@ export default async function LeadsPage() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+            </Table></div>
           )}
         </CardContent>
       </Card>

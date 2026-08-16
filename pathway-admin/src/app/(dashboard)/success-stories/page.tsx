@@ -51,7 +51,7 @@ export default async function SuccessStoriesPage() {
                No success stories found.
              </div>
           ) : (
-            <Table>
+            <div className="overflow-x-auto -mx-1"><Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-12">Order</TableHead>
@@ -86,7 +86,7 @@ export default async function SuccessStoriesPage() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+            </Table></div>
           )}
         </CardContent>
       </Card>

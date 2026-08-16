@@ -6,14 +6,16 @@ import { cn } from "@/lib/utils"
 import {
   LayoutDashboard, Users, GraduationCap, FileText, Settings,
   HelpCircle, MessageSquare, Compass, Briefcase, ChevronLeft,
-  ChevronRight, LogOut, CheckSquare, FolderOpen, Activity, Calendar
+  ChevronRight, LogOut, CheckSquare, FolderOpen, Activity, Calendar, X
 } from "lucide-react"
 import { useState } from "react"
 import { Button } from "../ui/button"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
+import { useSidebar } from "@/contexts/sidebar-context"
 
-type NavItem = { name: string; href: string; icon: unknown; }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type NavItem = { name: string; href: string; icon: any; }
 type NavGroup = { label: string; items: NavItem[] }
 
 const navigationGroups: NavGroup[] = [
@@ -55,9 +57,8 @@ const navigationGroups: NavGroup[] = [
   }
 ]
 
-export function Sidebar() {
+function NavContent({ collapsed, onNavClick }: { collapsed: boolean; onNavClick?: () => void }) {
   const pathname = usePathname()
-  const [collapsed, setCollapsed] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -67,44 +68,7 @@ export function Sidebar() {
   }
 
   return (
-    <div
-      className={cn(
-        "relative hidden md:flex flex-col border-r bg-background transition-all duration-300",
-        collapsed ? "w-[80px]" : "w-[260px]"
-      )}
-    >
-      {/* Header */}
-      <div className="flex h-16 items-center justify-between px-6 border-b">
-        {!collapsed && (
-          <div className="flex items-center gap-3">
-            <div className="h-7 w-7 rounded flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm">
-              P
-            </div>
-            <span className="text-base font-semibold tracking-tight text-foreground">
-              Pathway
-            </span>
-          </div>
-        )}
-        {collapsed && (
-          <div className="mx-auto h-7 w-7 rounded flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm">
-            P
-          </div>
-        )}
-      </div>
-
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute -right-3.5 top-5 h-7 w-7 rounded-full border bg-background shadow-sm hover:bg-muted"
-        onClick={() => setCollapsed(!collapsed)}
-      >
-        {collapsed ? (
-          <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
-        ) : (
-          <ChevronLeft className="h-3.5 w-3.5 text-muted-foreground" />
-        )}
-      </Button>
-
+    <>
       {/* Navigation */}
       <div className="flex-1 overflow-auto py-6 custom-scrollbar">
         <nav className="flex flex-col gap-6 px-4">
@@ -121,8 +85,9 @@ export function Sidebar() {
                   <Link
                     key={item.name}
                     href={item.href}
+                    onClick={onNavClick}
                     className={cn(
-                      "group flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-all duration-200 relative",
+                      "group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-all duration-200 relative",
                       isActive
                         ? "text-primary font-medium bg-muted/50"
                         : "text-muted-foreground font-medium hover:bg-muted/30 hover:text-foreground",
@@ -145,11 +110,11 @@ export function Sidebar() {
           ))}
         </nav>
       </div>
-      
+
       {/* Footer */}
       <div className="border-t p-4 flex flex-col gap-2">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           className={cn("w-full justify-start text-muted-foreground hover:text-foreground text-sm font-medium", collapsed && "justify-center px-2")}
           onClick={handleLogout}
           title={collapsed ? "Logout" : undefined}
@@ -158,6 +123,100 @@ export function Sidebar() {
           {!collapsed && <span className="ml-3">Logout</span>}
         </Button>
       </div>
-    </div>
+    </>
+  )
+}
+
+export function Sidebar() {
+  const pathname = usePathname()
+  const [collapsed, setCollapsed] = useState(false)
+  const { isOpen, setIsOpen } = useSidebar()
+
+  // Close drawer when navigating on mobile
+  const handleNavClick = () => setIsOpen(false)
+
+  return (
+    <>
+      {/* ── Desktop Sidebar ─────────────────────────── */}
+      <div
+        className={cn(
+          "relative hidden md:flex flex-col border-r bg-background transition-all duration-300",
+          collapsed ? "w-[80px]" : "w-[260px]"
+        )}
+      >
+        {/* Header */}
+        <div className="flex h-16 items-center justify-between px-6 border-b">
+          {!collapsed && (
+            <div className="flex items-center gap-3">
+              <div className="h-7 w-7 rounded flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm">
+                P
+              </div>
+              <span className="text-base font-semibold tracking-tight text-foreground">
+                Pathway
+              </span>
+            </div>
+          )}
+          {collapsed && (
+            <div className="mx-auto h-7 w-7 rounded flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm">
+              P
+            </div>
+          )}
+        </div>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute -right-3.5 top-5 h-7 w-7 rounded-full border bg-background shadow-sm hover:bg-muted"
+          onClick={() => setCollapsed(!collapsed)}
+        >
+          {collapsed ? (
+            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+          ) : (
+            <ChevronLeft className="h-3.5 w-3.5 text-muted-foreground" />
+          )}
+        </Button>
+
+        <NavContent collapsed={collapsed} />
+      </div>
+
+      {/* ── Mobile Drawer ──────────────────────────── */}
+      {/* Backdrop */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm md:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Drawer panel */}
+      <div
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 w-[280px] flex flex-col border-r bg-background transition-transform duration-300 ease-in-out md:hidden",
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        )}
+      >
+        {/* Drawer Header */}
+        <div className="flex h-16 items-center justify-between px-5 border-b">
+          <div className="flex items-center gap-3">
+            <div className="h-7 w-7 rounded flex items-center justify-center bg-primary text-primary-foreground font-semibold text-sm">
+              P
+            </div>
+            <span className="text-base font-semibold tracking-tight text-foreground">
+              Pathway
+            </span>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-full hover:bg-muted"
+            onClick={() => setIsOpen(false)}
+          >
+            <X className="h-4 w-4 text-muted-foreground" />
+          </Button>
+        </div>
+
+        <NavContent collapsed={false} onNavClick={handleNavClick} />
+      </div>
+    </>
   )
 }

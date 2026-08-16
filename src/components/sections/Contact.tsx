@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, Lock, CheckCircle2, ChevronDown } from "lucide-react";
+import { ArrowUpRight, Lock, CheckCircle2, ChevronDown, Phone, MessageCircle, MapPin, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type CustomInputProps = React.InputHTMLAttributes<HTMLInputElement> & React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
@@ -18,47 +18,51 @@ function CustomInput({ label, isTextArea, className, required, ...props }: Custo
     setHasValue(Boolean(props.value));
   }, [props.value]);
 
-  const handleFocus = (e: React.FocusEvent<any>) => {
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setIsFocused(true);
-    if (props.onFocus) props.onFocus(e);
+    if (props.onFocus) props.onFocus(e as React.FocusEvent<HTMLInputElement & HTMLTextAreaElement>);
   };
 
-  const handleBlur = (e: React.FocusEvent<any>) => {
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setIsFocused(false);
     setHasValue(e.target.value.length > 0);
-    if (props.onBlur) props.onBlur(e);
+    if (props.onBlur) props.onBlur(e as React.FocusEvent<HTMLInputElement & HTMLTextAreaElement>);
   };
 
-  const Component = isTextArea ? "textarea" : "input";
   const active = isFocused || hasValue;
 
   return (
-    <div className={cn("relative w-full group", isTextArea ? "h-[130px]" : "h-[56px]", className)}>
+    <div className={cn("relative w-full group", isTextArea ? "h-[120px]" : "h-[56px]", className)}>
       <label
         className={cn(
           "absolute left-0 pointer-events-none font-sans transition-all duration-300 ease-out z-10",
-          active 
-            ? "top-1 text-[12px] text-gold" 
-            : isTextArea 
-              ? "top-4 text-[16px] text-midnight/60" 
-              : "top-1/2 -translate-y-1/2 text-[16px] text-midnight/60"
+          active
+            ? "top-1 text-[11px] text-gold/90"
+            : isTextArea
+              ? "top-4 text-[15px] text-white/40"
+              : "top-1/2 -translate-y-1/2 text-[15px] text-white/40"
         )}
       >
         {label} {required && "*"}
       </label>
-      
-      <Component
-        {...(props as any)}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        className={cn(
-          "w-full h-full bg-transparent border-none outline-none font-sans text-[16px] leading-[1.4] text-navy placeholder:text-transparent focus:placeholder:text-midnight/30 transition-all resize-none",
-          isTextArea ? "pt-8" : ""
-        )}
-      />
-      
-      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-navy/20" />
-      
+
+      {isTextArea ? (
+        <textarea
+          {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
+          onFocus={handleFocus as React.FocusEventHandler<HTMLTextAreaElement>}
+          onBlur={handleBlur as React.FocusEventHandler<HTMLTextAreaElement>}
+          className="w-full h-full bg-transparent border-none outline-none font-sans text-[15px] leading-[1.4] text-white pt-8 resize-none placeholder:text-transparent focus:placeholder:text-white/20 transition-all"
+        />
+      ) : (
+        <input
+          {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
+          onFocus={handleFocus as React.FocusEventHandler<HTMLInputElement>}
+          onBlur={handleBlur as React.FocusEventHandler<HTMLInputElement>}
+          className="w-full h-full bg-transparent border-none outline-none font-sans text-[15px] leading-[1.4] text-white placeholder:text-transparent focus:placeholder:text-white/20 transition-all"
+        />
+      )}
+
+      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-white/15" />
       <div
         className={cn(
           "absolute bottom-0 left-0 right-0 h-[1.5px] bg-gold origin-left transition-transform duration-300 ease-out",
@@ -98,9 +102,9 @@ function CustomSelect({ label, value, onChange, options, required }: CustomSelec
       <label
         className={cn(
           "absolute left-0 pointer-events-none font-sans transition-all duration-300 ease-out z-10",
-          active 
-            ? "top-1 text-[12px] text-gold" 
-            : "top-1/2 -translate-y-1/2 text-[16px] text-midnight/60"
+          active
+            ? "top-1 text-[11px] text-gold/90"
+            : "top-1/2 -translate-y-1/2 text-[15px] text-white/40"
         )}
       >
         {label} {required && "*"}
@@ -109,19 +113,18 @@ function CustomSelect({ label, value, onChange, options, required }: CustomSelec
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full h-full flex items-center justify-between bg-transparent border-none outline-none font-sans text-[16px] text-navy"
+        className="w-full h-full flex items-center justify-between bg-transparent border-none outline-none font-sans text-[15px] text-white"
       >
         <span className={cn("transition-opacity", value ? "opacity-100" : "opacity-0")}>
           {value || "Placeholder"}
         </span>
-        <ChevronDown 
-          size={16} 
-          className={cn("text-midnight/50 transition-transform duration-300 mr-2.5", isOpen && "rotate-180")} 
+        <ChevronDown
+          size={15}
+          className={cn("text-white/40 transition-transform duration-300 mr-1", isOpen && "rotate-180")}
         />
       </button>
 
-      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-navy/20" />
-      
+      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-white/15" />
       <div
         className={cn(
           "absolute bottom-0 left-0 right-0 h-[1.5px] bg-gold origin-left transition-transform duration-300 ease-out",
@@ -136,7 +139,7 @@ function CustomSelect({ label, value, onChange, options, required }: CustomSelec
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 5 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-[0_10px_40px_-15px_rgba(0,0,0,0.1)] border border-navy/5 overflow-hidden z-50 py-2"
+            className="absolute top-full left-0 right-0 mt-2 bg-[#1a2540] rounded-xl shadow-2xl border border-white/10 overflow-hidden z-50 py-1.5"
           >
             {options.map((option) => (
               <button
@@ -148,9 +151,9 @@ function CustomSelect({ label, value, onChange, options, required }: CustomSelec
                 }}
                 className={cn(
                   "w-full text-left px-5 py-3 font-sans text-sm transition-colors",
-                  value === option 
-                    ? "bg-ivory text-gold font-medium" 
-                    : "text-midnight hover:bg-ivory/50 hover:text-navy"
+                  value === option
+                    ? "bg-white/10 text-gold font-medium"
+                    : "text-white/70 hover:bg-white/5 hover:text-white"
                 )}
               >
                 {option}
@@ -163,12 +166,37 @@ function CustomSelect({ label, value, onChange, options, required }: CustomSelec
   );
 }
 
+// Step indicator
+function StepIndicator({ step }: { step: 1 | 2 }) {
+  return (
+    <div className="flex items-center gap-3 mb-8">
+      <div className="flex items-center gap-2">
+        <div className={cn(
+          "w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300",
+          step >= 1 ? "bg-gold text-navy" : "bg-white/10 text-white/40"
+        )}>1</div>
+        <span className={cn("text-[11px] uppercase tracking-widest font-bold transition-colors", step === 1 ? "text-gold" : "text-white/30")}>Your Details</span>
+      </div>
+      <div className="flex-1 h-[1px] bg-white/10 max-w-[40px]" />
+      <div className="flex items-center gap-2">
+        <div className={cn(
+          "w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300",
+          step >= 2 ? "bg-gold text-navy" : "bg-white/10 text-white/40"
+        )}>2</div>
+        <span className={cn("text-[11px] uppercase tracking-widest font-bold transition-colors", step === 2 ? "text-gold" : "text-white/30")}>Your Plans</span>
+      </div>
+    </div>
+  );
+}
+
 export function Contact() {
+  const [step, setStep] = useState<1 | 2>(1);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     email: "",
     interest: "",
+    preferredTime: "",
     message: "",
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -177,222 +205,331 @@ export function Contact() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSelectChange = (value: string) => {
-    setFormData({ ...formData, interest: value });
+  const handleSelectChange = (field: string) => (value: string) => {
+    setFormData({ ...formData, [field]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleStep1Submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setStep(2);
+  };
+
+  const handleFinalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitted(true);
   };
 
   const INTEREST_OPTIONS = [
-    "Medical",
-    "Engineering",
+    "Medical Admissions",
+    "Engineering Admissions",
     "Higher Education",
     "Overseas Education",
     "Visa Assistance",
     "Career Counselling",
-    "Other"
+    "Other",
   ];
 
+  const TIME_OPTIONS = ["Morning (9 AM – 12 PM)", "Afternoon (12 PM – 3 PM)", "Evening (3 PM – 6 PM)"];
+
   return (
-    <section id="contact" className="py-24 bg-white relative overflow-hidden">
-      <div className="container mx-auto px-4 md:px-8 max-w-[1300px]">
-        <div className="flex flex-col lg:flex-row gap-12 lg:gap-24">
-          
-          <div className="w-full lg:w-[40%] flex flex-col pt-4">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-xs font-bold tracking-[0.2em] text-sage uppercase">01</span>
-              <div className="w-8 h-[1px] bg-gold/50" />
-              <span className="text-xs font-bold tracking-[0.2em] text-sage uppercase">Consultation</span>
+    <section id="contact" className="py-16 md:py-24 bg-[#0d1525] relative overflow-hidden">
+      {/* Gold geometric accent */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full border border-gold/5" />
+        <div className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full border border-gold/5" />
+        <div className="absolute top-1/2 -translate-y-1/2 right-0 w-px h-64 bg-gradient-to-b from-transparent via-gold/20 to-transparent hidden lg:block" />
+        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gold/10 to-transparent" />
+      </div>
+
+      <div className="container mx-auto px-4 md:px-8 max-w-[1280px] relative z-10">
+
+        {/* Mobile quick-contact strip */}
+        <div className="flex md:hidden gap-3 mb-8">
+          <a
+            href="tel:+917506284722"
+            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl border border-white/10 text-white/80 text-sm font-medium bg-white/5 active:bg-white/10 transition-colors"
+          >
+            <Phone size={16} className="text-gold" />
+            Call Us
+          </a>
+          <a
+            href="https://wa.me/917506284722"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] text-sm font-medium active:bg-[#25D366]/20 transition-colors"
+          >
+            <MessageCircle size={16} />
+            WhatsApp
+          </a>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-20">
+
+          {/* Left info column */}
+          <div className="w-full lg:w-[38%] flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-5">
+                <span className="text-xs font-bold tracking-[0.2em] text-gold/70 uppercase">Consultation</span>
+                <div className="flex-1 h-[1px] bg-gold/20 max-w-[60px]" />
+              </div>
+
+              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl lg:leading-[1.1] text-white font-bold mb-5">
+                Your next chapter starts with a conversation.
+              </h2>
+
+              <p className="font-sans text-white/50 leading-relaxed mb-10 max-w-sm text-sm md:text-base">
+                Tell us what you&apos;re looking for. Our counsellors will help you find the right path for your academic journey.
+              </p>
             </div>
-            
-            <h2 className="font-serif text-4xl lg:text-5xl lg:leading-[1.1] text-navy font-bold mb-6">
-              Your next chapter<br />starts with a conversation.
-            </h2>
-            
-            <p className="font-sans text-midnight/70 leading-relaxed mb-12 max-w-md">
-              Tell us a little about what you're looking for. Our counsellors will help you understand the right options for your academic journey.
-            </p>
-            
-            <div className="relative rounded-[20px] overflow-hidden group h-[220px] lg:h-[400px] w-full">
-              <img 
-                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1000&auto=format&fit=crop" 
-                alt="Student counselling"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/20 to-transparent flex items-end p-6">
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-bold tracking-widest text-gold mb-1 uppercase">
-                    Pathway Education Consultancy
-                  </span>
-                  <span className="font-sans text-sm text-white/90">
-                    Dahod, Gujarat
-                  </span>
+
+            {/* Contact info cards — desktop */}
+            <div className="hidden md:flex flex-col gap-4">
+              <a
+                href="tel:+917506284722"
+                className="group flex items-center gap-4 p-4 rounded-2xl border border-white/8 bg-white/3 hover:bg-white/6 hover:border-gold/20 transition-all duration-300"
+              >
+                <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center shrink-0 group-hover:bg-gold/20 transition-colors">
+                  <Phone size={16} className="text-gold" />
+                </div>
+                <div>
+                  <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-0.5">Call Us</p>
+                  <p className="text-white font-medium text-sm">+91 75062 84722</p>
+                </div>
+                <ArrowUpRight size={14} className="ml-auto text-white/20 group-hover:text-gold group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
+              </a>
+
+              <a
+                href="https://wa.me/917506284722"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-4 p-4 rounded-2xl border border-white/8 bg-white/3 hover:bg-[#25D366]/5 hover:border-[#25D366]/20 transition-all duration-300"
+              >
+                <div className="w-10 h-10 rounded-full bg-[#25D366]/10 flex items-center justify-center shrink-0">
+                  <MessageCircle size={16} className="text-[#25D366]" />
+                </div>
+                <div>
+                  <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-0.5">WhatsApp</p>
+                  <p className="text-white font-medium text-sm">Quick Response</p>
+                </div>
+                <ArrowUpRight size={14} className="ml-auto text-white/20 group-hover:text-[#25D366] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
+              </a>
+
+              <div className="flex items-center gap-4 p-4 rounded-2xl border border-white/8 bg-white/3">
+                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                  <Clock size={16} className="text-white/50" />
+                </div>
+                <div>
+                  <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-0.5">Office Hours</p>
+                  <p className="text-white/70 text-sm">Mon – Sat, 9 AM – 6 PM</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 p-4 rounded-2xl border border-white/8 bg-white/3">
+                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                  <MapPin size={16} className="text-white/50" />
+                </div>
+                <div>
+                  <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-0.5">Location</p>
+                  <p className="text-white/70 text-sm">Dahod, Gujarat</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="w-full lg:w-[60%] flex flex-col justify-center">
-            <div className="bg-ivory rounded-[24px] border border-navy/5 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.03)] p-8 md:p-14 relative overflow-hidden">
-              
+          {/* Right — form */}
+          <div className="w-full lg:w-[62%]">
+            <div className="bg-[#111d35] rounded-3xl border border-white/8 p-7 md:p-12 relative overflow-visible">
+
               <AnimatePresence mode="wait">
                 {!isSubmitted ? (
                   <motion.div
-                    key="form"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.98, filter: "blur(4px)" }}
-                    transition={{ duration: 0.4 }}
+                    key="form-container"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
                   >
-                    <div className="mb-10">
-                      <span className="inline-block text-[10px] font-bold tracking-widest text-gold mb-4 uppercase bg-white/50 px-3 py-1.5 rounded-full">
+                    {/* Header */}
+                    <div className="mb-8">
+                      <span className="inline-block text-[10px] font-bold tracking-widest text-gold mb-4 uppercase bg-gold/10 px-3 py-1.5 rounded-full border border-gold/20">
                         Free Consultation
                       </span>
-                      <h3 className="font-serif text-3xl text-navy font-bold mb-3">
+                      <h3 className="font-serif text-2xl md:text-3xl text-white font-bold mb-2">
                         Tell us about your plans.
                       </h3>
-                      <p className="font-sans text-sm text-midnight/60">
-                        Complete a few details and we'll get in touch.
+                      <p className="font-sans text-sm text-white/40">
+                        Complete a few details and we&apos;ll be in touch.
                       </p>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-0">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[40px] gap-y-[40px]">
-                        <CustomInput
-                          label="Full Name"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleChange}
-                          placeholder="Your full name"
-                          required
-                        />
-                        <CustomInput
-                          label="Phone Number"
-                          name="phone"
-                          type="tel"
-                          value={formData.phone}
-                          onChange={handleChange}
-                          placeholder="+91 XXXXX XXXXX"
-                          required
-                        />
-                        <CustomInput
-                          label="Email Address"
-                          name="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={handleChange}
-                          placeholder="you@example.com"
-                        />
-                        <CustomSelect
-                          label="I'm Interested In"
-                          value={formData.interest}
-                          onChange={handleSelectChange}
-                          options={INTEREST_OPTIONS}
-                          required
-                        />
-                        <div className="md:col-span-2 mt-[2px] mb-[40px]">
-                          <CustomInput
-                            label="Your Message"
-                            name="message"
-                            value={formData.message}
-                            onChange={handleChange}
-                            placeholder="Tell us what you're planning or what you'd like guidance with..."
-                            isTextArea
-                            rows={2}
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="pt-2">
-                        <button 
-                          type="submit"
-                          className="group relative w-full lg:w-auto flex items-center justify-center gap-3 bg-navy text-ivory h-[56px] px-10 rounded-[16px] text-[15px] font-sans font-medium transition-all duration-300 hover:shadow-lg hover:-translate-y-[2px]"
-                        >
-                          Start My Journey
-                          <ArrowUpRight 
-                            size={18} 
-                            className="text-gold transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" 
-                          />
-                        </button>
-                      </div>
+                    <StepIndicator step={step} />
 
-                      <div className="flex items-center justify-between pt-4 border-t border-navy/5">
-                        <div className="flex items-center gap-2 text-midnight/50">
-                          <Lock size={12} />
-                          <span className="text-[11px] font-sans">
-                            Your information is used only to respond to your enquiry.
-                          </span>
-                        </div>
-                        
-                        <a 
-                          href="https://wa.me/917506284722" 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="hidden md:flex items-center gap-1.5 text-[12px] font-sans font-medium text-navy hover:text-sage transition-colors group"
+                    {/* Step 1 */}
+                    <AnimatePresence mode="wait">
+                      {step === 1 && (
+                        <motion.form
+                          key="step1"
+                          onSubmit={handleStep1Submit}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -20 }}
+                          transition={{ duration: 0.3 }}
                         >
-                          Prefer to talk? <span className="underline decoration-gold underline-offset-4 decoration-[1.5px]">WhatsApp</span>
-                          <ArrowUpRight size={12} className="text-gold group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
-                        </a>
-                      </div>
-                      
-                      {/* Mobile WhatsApp link */}
-                      <div className="md:hidden flex justify-center pt-2">
-                        <a 
-                          href="https://wa.me/917506284722" 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 text-[13px] font-sans font-medium text-navy group"
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8 mb-10">
+                            <CustomInput
+                              label="Full Name"
+                              name="name"
+                              value={formData.name}
+                              onChange={handleChange}
+                              required
+                            />
+                            <CustomInput
+                              label="Phone Number"
+                              name="phone"
+                              type="tel"
+                              value={formData.phone}
+                              onChange={handleChange}
+                              required
+                            />
+                            <CustomInput
+                              label="Email Address"
+                              name="email"
+                              type="email"
+                              value={formData.email}
+                              onChange={handleChange}
+                            />
+                            <CustomSelect
+                              label="I'm Interested In"
+                              value={formData.interest}
+                              onChange={handleSelectChange("interest")}
+                              options={INTEREST_OPTIONS}
+                              required
+                            />
+                          </div>
+
+                          <button
+                            type="submit"
+                            disabled={!formData.name || !formData.phone || !formData.interest}
+                            className="group relative w-full flex items-center justify-center gap-3 bg-gold text-navy h-[54px] px-10 rounded-2xl text-[15px] font-sans font-bold transition-all duration-300 hover:shadow-[0_8px_30px_rgba(200,169,107,0.35)] hover:-translate-y-[1px] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:hover:translate-y-0"
+                          >
+                            Continue
+                            <ArrowUpRight
+                              size={18}
+                              className="transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300"
+                            />
+                          </button>
+                        </motion.form>
+                      )}
+
+                      {/* Step 2 */}
+                      {step === 2 && (
+                        <motion.form
+                          key="step2"
+                          onSubmit={handleFinalSubmit}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -20 }}
+                          transition={{ duration: 0.3 }}
                         >
-                          Prefer to talk? <span className="underline decoration-gold underline-offset-4 decoration-[1.5px]">WhatsApp</span>
-                          <ArrowUpRight size={12} className="text-gold" />
-                        </a>
-                      </div>
-                    </form>
+                          <div className="flex flex-col gap-8 mb-10">
+                            <CustomSelect
+                              label="Preferred Time for a Callback"
+                              value={formData.preferredTime}
+                              onChange={handleSelectChange("preferredTime")}
+                              options={TIME_OPTIONS}
+                            />
+                            <CustomInput
+                              label="Anything else you'd like us to know?"
+                              name="message"
+                              value={formData.message}
+                              onChange={handleChange}
+                              isTextArea
+                              rows={3}
+                            />
+                          </div>
+
+                          <div className="flex flex-col sm:flex-row gap-3">
+                            <button
+                              type="button"
+                              onClick={() => setStep(1)}
+                              className="flex-1 h-[54px] rounded-2xl border border-white/10 text-white/60 text-[14px] font-medium hover:bg-white/5 hover:text-white transition-all"
+                            >
+                              ← Back
+                            </button>
+                            <button
+                              type="submit"
+                              className="flex-[2] group relative flex items-center justify-center gap-3 bg-gold text-navy h-[54px] px-10 rounded-2xl text-[15px] font-sans font-bold transition-all duration-300 hover:shadow-[0_8px_30px_rgba(200,169,107,0.35)] hover:-translate-y-[1px]"
+                            >
+                              Start My Journey
+                              <ArrowUpRight
+                                size={18}
+                                className="transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300"
+                              />
+                            </button>
+                          </div>
+                        </motion.form>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Footer */}
+                    <div className="flex items-center gap-2 text-white/25 mt-6 pt-5 border-t border-white/5">
+                      <Lock size={11} />
+                      <span className="text-[11px] font-sans">
+                        Your information is kept private and used only to respond to your enquiry.
+                      </span>
+                    </div>
                   </motion.div>
                 ) : (
-                  // --- SUCCESS STATE ---
+                  /* Success State */
                   <motion.div
                     key="success"
-                    initial={{ opacity: 0, scale: 0.95, filter: "blur(8px)" }}
-                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
-                    className="flex flex-col items-center justify-center text-center py-20"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="flex flex-col items-center justify-center text-center py-16"
                   >
-                    <motion.div 
+                    <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 20 }}
-                      className="w-16 h-16 bg-sage/10 rounded-full flex items-center justify-center mb-6 text-sage"
+                      className="w-20 h-20 rounded-full bg-gold/15 border border-gold/30 flex items-center justify-center mb-8"
                     >
-                      <CheckCircle2 size={32} strokeWidth={2.5} />
+                      <CheckCircle2 size={36} className="text-gold" strokeWidth={2} />
                     </motion.div>
-                    
-                    <h3 className="font-serif text-4xl text-navy font-bold mb-4">
-                      You're on your way.
+
+                    <h3 className="font-serif text-3xl md:text-4xl text-white font-bold mb-4">
+                      You&apos;re on your way.
                     </h3>
-                    <p className="font-sans text-midnight/70 mb-10 max-w-sm">
-                      Thank you. A Pathway counsellor will review your details and get in touch with you shortly.
+                    <p className="font-sans text-white/50 mb-10 max-w-sm text-sm leading-relaxed">
+                      Thank you. A Pathway counsellor will review your details and reach out to you shortly.
                     </p>
-                    
-                    <button 
-                      onClick={() => {
-                        setFormData({ name: "", phone: "", email: "", interest: "", message: "" });
-                        setIsSubmitted(false);
-                      }}
-                      className="text-sm font-sans font-bold text-navy uppercase tracking-widest hover:text-gold transition-colors flex items-center gap-2"
+
+                    <a
+                      href="https://wa.me/917506284722?text=Hi%2C%20I%20just%20submitted%20the%20consultation%20form%20on%20your%20website."
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2.5 bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] font-medium px-6 py-3 rounded-full text-sm hover:bg-[#25D366]/20 transition-colors mb-6"
                     >
-                      Back to Pathway
+                      <MessageCircle size={16} />
+                      Continue on WhatsApp
+                    </a>
+
+                    <button
+                      onClick={() => {
+                        setFormData({ name: "", phone: "", email: "", interest: "", preferredTime: "", message: "" });
+                        setIsSubmitted(false);
+                        setStep(1);
+                      }}
+                      className="text-[11px] font-sans font-bold text-white/30 uppercase tracking-widest hover:text-white/60 transition-colors"
+                    >
+                      Back to form
                     </button>
                   </motion.div>
                 )}
               </AnimatePresence>
-              
             </div>
           </div>
-          
+
         </div>
       </div>
     </section>

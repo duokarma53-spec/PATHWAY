@@ -6,12 +6,8 @@ import { StudyAbroad } from "@/components/sections/StudyAbroad";
 import { MedicalEducation } from "@/components/sections/MedicalEducation";
 import { Process } from "@/components/sections/Process";
 import { WhyPathway } from "@/components/sections/WhyPathway";
-import { Testimonials } from "@/components/sections/Testimonials";
-import { Partners } from "@/components/sections/Partners";
-import { PhotoGallery } from "@/components/sections/PhotoGallery";
-import { FAQ } from "@/components/sections/FAQ";
-import { FinalCTA } from "@/components/sections/FinalCTA";
 import { Contact } from "@/components/sections/Contact";
+import { FAQ } from "@/components/sections/FAQ";
 
 export default function Home() {
   return (
@@ -24,12 +20,8 @@ export default function Home() {
       <MedicalEducation />
       <Process />
       <WhyPathway />
-      <Testimonials />
-      <Partners />
-      <PhotoGallery />
-      <FAQ />
-      <FinalCTA />
       <Contact />
+      <FAQ />
     </>
   );
 }

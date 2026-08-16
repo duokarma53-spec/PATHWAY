@@ -61,7 +61,7 @@ export default async function InsightsPage() {
                No posts found.
              </div>
           ) : (
-            <Table>
+            <div className="overflow-x-auto -mx-1"><Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Title</TableHead>
@@ -97,7 +97,7 @@ export default async function InsightsPage() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+            </Table></div>
           )}
         </CardContent>
       </Card>

@@ -30,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
-      <body className="antialiased min-h-screen bg-ivory text-midnight font-sans">
+      <body className="antialiased min-h-screen bg-ivory text-midnight font-sans overflow-x-hidden">
         <Navbar />
         <main>{children}</main>
         <FloatingWhatsApp phoneNumber="+917506284722" />

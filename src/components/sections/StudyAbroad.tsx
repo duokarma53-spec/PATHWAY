@@ -34,7 +34,7 @@ const DESTINATIONS = [
 
 export function StudyAbroad() {
   return (
-    <section id="study-abroad" className="py-24 bg-navy">
+    <section id="study-abroad" className="py-16 md:py-24 bg-navy">
       <div className="container mx-auto px-4 md:px-8">
         <div className="flex flex-col md:flex-row items-end justify-between gap-8 mb-16">
           <div className="max-w-2xl">

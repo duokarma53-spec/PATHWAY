@@ -62,7 +62,7 @@ export default async function ApplicationsPage() {
                No applications found.
              </div>
           ) : (
-            <Table>
+            <div className="overflow-x-auto -mx-1"><Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Student</TableHead>
@@ -105,7 +105,7 @@ export default async function ApplicationsPage() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+            </Table></div>
           )}
         </CardContent>
       </Card>

@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/Button";
 
 export function Hero() {
   return (
-    <section className="relative min-h-[90vh] flex items-center pt-20 overflow-hidden bg-ivory">
-      {/* Background Image with Parallax effect simulation */}
+    <section className="relative min-h-[85vh] md:min-h-[90vh] flex items-center pt-20 overflow-hidden bg-ivory">
+      {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-r from-ivory via-ivory/90 to-transparent z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-ivory/50 z-10" />
@@ -15,9 +15,10 @@ export function Hero() {
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 10, ease: "easeOut" }}
-          src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop"
+          src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1200&auto=format&fit=crop"
           alt="Diverse group of students walking on campus"
           className="w-full h-full object-cover object-[70%_30%] opacity-90"
+          loading="eager"
         />
       </div>
 
@@ -37,7 +38,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="font-serif text-5xl md:text-7xl font-medium text-navy leading-tight mt-6 mb-6"
+            className="font-serif text-4xl sm:text-5xl md:text-7xl font-medium text-navy leading-tight mt-5 mb-5"
           >
             Your Future Deserves <br className="hidden md:block" />
             <span className="text-gold">A Better Path.</span>
@@ -47,7 +48,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-lg md:text-xl text-midnight/80 font-sans leading-relaxed mb-8 max-w-xl"
+            className="text-base md:text-xl text-midnight/80 font-sans leading-relaxed mb-7 max-w-xl"
           >
             From choosing the right course to securing admission and preparing for your journey abroad, Pathway helps students move forward with clarity and confidence.
           </motion.p>
@@ -56,23 +57,23 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-4 mb-8"
+            className="flex flex-col sm:flex-row gap-3 mb-7 w-full sm:w-auto"
           >
-            <Button href="#contact" size="lg">Start Your Journey</Button>
-            <Button href="#study-abroad" variant="outline" size="lg">Explore Opportunities</Button>
+            <Button href="#contact" size="lg" className="w-full sm:w-auto">Start Your Journey</Button>
+            <Button href="#study-abroad" variant="outline" size="lg" className="w-full sm:w-auto">Explore Opportunities</Button>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.8 }}
-            className="text-sm font-medium text-navy/70 tracking-wide uppercase flex flex-wrap gap-x-4 gap-y-2"
+            className="text-xs font-medium text-navy/70 tracking-wide uppercase flex flex-wrap gap-x-3 gap-y-2"
           >
             <span>Admissions</span> • <span>Career Guidance</span> • <span>Overseas Education</span> • <span>Visa Support</span>
           </motion.div>
         </div>
 
-        {/* Floating Card */}
+        {/* Floating Card — desktop only */}
         <motion.div
           initial={{ opacity: 0, y: 30, x: 20 }}
           animate={{ opacity: 1, y: 0, x: 0 }}
