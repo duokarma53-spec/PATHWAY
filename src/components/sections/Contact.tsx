@@ -37,10 +37,10 @@ function CustomInput({ label, isTextArea, className, required, ...props }: Custo
         className={cn(
           "absolute left-0 pointer-events-none font-sans transition-all duration-300 ease-out z-10",
           active
-            ? "top-1 text-[11px] text-gold/90"
+            ? "top-1 text-[11px] text-navy/70 font-bold uppercase tracking-widest"
             : isTextArea
-              ? "top-4 text-[15px] text-white/40"
-              : "top-1/2 -translate-y-1/2 text-[15px] text-white/40"
+              ? "top-4 text-[15px] text-navy/40"
+              : "top-1/2 -translate-y-1/2 text-[15px] text-navy/40"
         )}
       >
         {label} {required && "*"}
@@ -51,18 +51,18 @@ function CustomInput({ label, isTextArea, className, required, ...props }: Custo
           {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
           onFocus={handleFocus as React.FocusEventHandler<HTMLTextAreaElement>}
           onBlur={handleBlur as React.FocusEventHandler<HTMLTextAreaElement>}
-          className="w-full h-full bg-transparent border-none outline-none font-sans text-[15px] leading-[1.4] text-white pt-8 resize-none placeholder:text-transparent focus:placeholder:text-white/20 transition-all"
+          className="w-full h-full bg-transparent border-none outline-none font-sans text-[15px] leading-[1.4] text-navy pt-8 resize-none placeholder:text-transparent focus:placeholder:text-navy/20 transition-all"
         />
       ) : (
         <input
           {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
           onFocus={handleFocus as React.FocusEventHandler<HTMLInputElement>}
           onBlur={handleBlur as React.FocusEventHandler<HTMLInputElement>}
-          className="w-full h-full bg-transparent border-none outline-none font-sans text-[15px] leading-[1.4] text-white placeholder:text-transparent focus:placeholder:text-white/20 transition-all"
+          className="w-full h-full bg-transparent border-none outline-none font-sans text-[15px] leading-[1.4] text-navy placeholder:text-transparent focus:placeholder:text-navy/20 transition-all"
         />
       )}
 
-      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-white/15" />
+      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-navy/10" />
       <div
         className={cn(
           "absolute bottom-0 left-0 right-0 h-[1.5px] bg-gold origin-left transition-transform duration-300 ease-out",
@@ -103,8 +103,8 @@ function CustomSelect({ label, value, onChange, options, required }: CustomSelec
         className={cn(
           "absolute left-0 pointer-events-none font-sans transition-all duration-300 ease-out z-10",
           active
-            ? "top-1 text-[11px] text-gold/90"
-            : "top-1/2 -translate-y-1/2 text-[15px] text-white/40"
+            ? "top-1 text-[11px] text-navy/70 font-bold uppercase tracking-widest"
+            : "top-1/2 -translate-y-1/2 text-[15px] text-navy/40"
         )}
       >
         {label} {required && "*"}
@@ -113,18 +113,18 @@ function CustomSelect({ label, value, onChange, options, required }: CustomSelec
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full h-full flex items-center justify-between bg-transparent border-none outline-none font-sans text-[15px] text-white"
+        className="w-full h-full flex items-center justify-between bg-transparent border-none outline-none font-sans text-[15px] text-navy"
       >
         <span className={cn("transition-opacity", value ? "opacity-100" : "opacity-0")}>
           {value || "Placeholder"}
         </span>
         <ChevronDown
           size={15}
-          className={cn("text-white/40 transition-transform duration-300 mr-1", isOpen && "rotate-180")}
+          className={cn("text-navy/40 transition-transform duration-300 mr-1", isOpen && "rotate-180")}
         />
       </button>
 
-      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-white/15" />
+      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-navy/10" />
       <div
         className={cn(
           "absolute bottom-0 left-0 right-0 h-[1.5px] bg-gold origin-left transition-transform duration-300 ease-out",
@@ -139,7 +139,7 @@ function CustomSelect({ label, value, onChange, options, required }: CustomSelec
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 5 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-[#1a2540] rounded-xl shadow-2xl border border-white/10 overflow-hidden z-50 py-1.5"
+            className="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-xl rounded-xl shadow-[0_8px_32px_-8px_rgba(11,31,51,0.15)] border border-navy/5 overflow-y-auto max-h-[250px] z-50 py-1.5 custom-scrollbar"
           >
             {options.map((option) => (
               <button
@@ -152,8 +152,8 @@ function CustomSelect({ label, value, onChange, options, required }: CustomSelec
                 className={cn(
                   "w-full text-left px-5 py-3 font-sans text-sm transition-colors",
                   value === option
-                    ? "bg-white/10 text-gold font-medium"
-                    : "text-white/70 hover:bg-white/5 hover:text-white"
+                    ? "bg-navy/5 text-navy font-bold"
+                    : "text-navy/70 hover:bg-navy/5 hover:text-navy"
                 )}
               >
                 {option}
@@ -173,17 +173,17 @@ function StepIndicator({ step }: { step: 1 | 2 }) {
       <div className="flex items-center gap-2">
         <div className={cn(
           "w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300",
-          step >= 1 ? "bg-gold text-navy" : "bg-white/10 text-white/40"
+          step >= 1 ? "bg-gold text-navy" : "bg-navy/5 text-navy/40"
         )}>1</div>
-        <span className={cn("text-[11px] uppercase tracking-widest font-bold transition-colors", step === 1 ? "text-gold" : "text-white/30")}>Your Details</span>
+        <span className={cn("text-[11px] uppercase tracking-widest font-bold transition-colors", step === 1 ? "text-gold" : "text-navy/30")}>Your Details</span>
       </div>
-      <div className="flex-1 h-[1px] bg-white/10 max-w-[40px]" />
+      <div className="flex-1 h-[1px] bg-navy/10 max-w-[40px]" />
       <div className="flex items-center gap-2">
         <div className={cn(
           "w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300",
-          step >= 2 ? "bg-gold text-navy" : "bg-white/10 text-white/40"
+          step >= 2 ? "bg-gold text-navy" : "bg-navy/5 text-navy/40"
         )}>2</div>
-        <span className={cn("text-[11px] uppercase tracking-widest font-bold transition-colors", step === 2 ? "text-gold" : "text-white/30")}>Your Plans</span>
+        <span className={cn("text-[11px] uppercase tracking-widest font-bold transition-colors", step === 2 ? "text-gold" : "text-navy/30")}>Your Plans</span>
       </div>
     </div>
   );
@@ -232,13 +232,13 @@ export function Contact() {
   const TIME_OPTIONS = ["Morning (9 AM – 12 PM)", "Afternoon (12 PM – 3 PM)", "Evening (3 PM – 6 PM)"];
 
   return (
-    <section id="contact" className="py-16 md:py-24 bg-[#0d1525] relative overflow-hidden">
+    <section id="contact" className="py-16 md:py-24 bg-[#F7F5EF] relative">
       {/* Gold geometric accent */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full border border-gold/5" />
-        <div className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full border border-gold/5" />
-        <div className="absolute top-1/2 -translate-y-1/2 right-0 w-px h-64 bg-gradient-to-b from-transparent via-gold/20 to-transparent hidden lg:block" />
-        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gold/10 to-transparent" />
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full border border-gold/10" />
+        <div className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full border border-gold/10" />
+        <div className="absolute top-1/2 -translate-y-1/2 right-0 w-px h-64 bg-gradient-to-b from-transparent via-gold/30 to-transparent hidden lg:block" />
+        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
       </div>
 
       <div className="container mx-auto px-4 md:px-8 max-w-[1280px] relative z-10">
@@ -247,7 +247,7 @@ export function Contact() {
         <div className="flex md:hidden gap-3 mb-8">
           <a
             href="tel:+917506284722"
-            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl border border-white/10 text-white/80 text-sm font-medium bg-white/5 active:bg-white/10 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl border border-navy/10 text-navy text-sm font-medium bg-white/40 backdrop-blur-md active:bg-white/60 transition-colors"
           >
             <Phone size={16} className="text-gold" />
             Call Us
@@ -256,7 +256,7 @@ export function Contact() {
             href="https://wa.me/917506284722"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] text-sm font-medium active:bg-[#25D366]/20 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] text-sm font-medium backdrop-blur-md active:bg-[#25D366]/20 transition-colors"
           >
             <MessageCircle size={16} />
             WhatsApp
@@ -269,15 +269,15 @@ export function Contact() {
           <div className="w-full lg:w-[38%] flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 mb-5">
-                <span className="text-xs font-bold tracking-[0.2em] text-gold/70 uppercase">Consultation</span>
-                <div className="flex-1 h-[1px] bg-gold/20 max-w-[60px]" />
+                <span className="text-xs font-bold tracking-[0.2em] text-gold uppercase">Consultation</span>
+                <div className="flex-1 h-[1px] bg-gold/40 max-w-[60px]" />
               </div>
 
-              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl lg:leading-[1.1] text-white font-bold mb-5">
+              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl lg:leading-[1.1] text-navy font-bold mb-5">
                 Your next chapter starts with a conversation.
               </h2>
 
-              <p className="font-sans text-white/50 leading-relaxed mb-10 max-w-sm text-sm md:text-base">
+              <p className="font-sans text-navy/60 leading-relaxed mb-10 max-w-sm text-sm md:text-base">
                 Tell us what you&apos;re looking for. Our counsellors will help you find the right path for your academic journey.
               </p>
             </div>
@@ -286,59 +286,59 @@ export function Contact() {
             <div className="hidden md:flex flex-col gap-4">
               <a
                 href="tel:+917506284722"
-                className="group flex items-center gap-4 p-4 rounded-2xl border border-white/8 bg-white/3 hover:bg-white/6 hover:border-gold/20 transition-all duration-300"
+                className="group flex items-center gap-4 p-4 rounded-2xl border border-navy/5 bg-white/40 backdrop-blur-md hover:bg-white/60 hover:border-gold/30 transition-all duration-300 shadow-[0_4px_20px_-10px_rgba(11,31,51,0.05)]"
               >
                 <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center shrink-0 group-hover:bg-gold/20 transition-colors">
                   <Phone size={16} className="text-gold" />
                 </div>
                 <div>
-                  <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-0.5">Call Us</p>
-                  <p className="text-white font-medium text-sm">+91 75062 84722</p>
+                  <p className="text-[10px] text-navy/50 uppercase tracking-widest font-bold mb-0.5">Call Us</p>
+                  <p className="text-navy font-bold text-sm">+91 75062 84722</p>
                 </div>
-                <ArrowUpRight size={14} className="ml-auto text-white/20 group-hover:text-gold group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
+                <ArrowUpRight size={14} className="ml-auto text-navy/30 group-hover:text-gold group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
               </a>
 
               <a
                 href="https://wa.me/917506284722"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center gap-4 p-4 rounded-2xl border border-white/8 bg-white/3 hover:bg-[#25D366]/5 hover:border-[#25D366]/20 transition-all duration-300"
+                className="group flex items-center gap-4 p-4 rounded-2xl border border-navy/5 bg-white/40 backdrop-blur-md hover:bg-[#25D366]/5 hover:border-[#25D366]/30 transition-all duration-300 shadow-[0_4px_20px_-10px_rgba(11,31,51,0.05)]"
               >
                 <div className="w-10 h-10 rounded-full bg-[#25D366]/10 flex items-center justify-center shrink-0">
                   <MessageCircle size={16} className="text-[#25D366]" />
                 </div>
                 <div>
-                  <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-0.5">WhatsApp</p>
-                  <p className="text-white font-medium text-sm">Quick Response</p>
+                  <p className="text-[10px] text-navy/50 uppercase tracking-widest font-bold mb-0.5">WhatsApp</p>
+                  <p className="text-navy font-bold text-sm">Quick Response</p>
                 </div>
-                <ArrowUpRight size={14} className="ml-auto text-white/20 group-hover:text-[#25D366] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
+                <ArrowUpRight size={14} className="ml-auto text-navy/30 group-hover:text-[#25D366] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
               </a>
 
-              <div className="flex items-center gap-4 p-4 rounded-2xl border border-white/8 bg-white/3">
-                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0">
-                  <Clock size={16} className="text-white/50" />
+              <div className="flex items-center gap-4 p-4 rounded-2xl border border-navy/5 bg-white/40 backdrop-blur-md shadow-[0_4px_20px_-10px_rgba(11,31,51,0.05)]">
+                <div className="w-10 h-10 rounded-full bg-navy/5 flex items-center justify-center shrink-0">
+                  <Clock size={16} className="text-navy/60" />
                 </div>
                 <div>
-                  <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-0.5">Office Hours</p>
-                  <p className="text-white/70 text-sm">Mon – Sat, 9 AM – 6 PM</p>
+                  <p className="text-[10px] text-navy/50 uppercase tracking-widest font-bold mb-0.5">Office Hours</p>
+                  <p className="text-navy/80 font-medium text-sm">Mon – Sat, 9 AM – 6 PM</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 p-4 rounded-2xl border border-white/8 bg-white/3">
-                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0">
-                  <MapPin size={16} className="text-white/50" />
+              <div className="flex items-center gap-4 p-4 rounded-2xl border border-navy/5 bg-white/40 backdrop-blur-md shadow-[0_4px_20px_-10px_rgba(11,31,51,0.05)]">
+                <div className="w-10 h-10 rounded-full bg-navy/5 flex items-center justify-center shrink-0">
+                  <MapPin size={16} className="text-navy/60" />
                 </div>
                 <div>
-                  <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mb-0.5">Location</p>
-                  <p className="text-white/70 text-sm">Dahod, Gujarat</p>
+                  <p className="text-[10px] text-navy/50 uppercase tracking-widest font-bold mb-0.5">Location</p>
+                  <p className="text-navy/80 font-medium text-sm">Dahod, Gujarat</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Right — form */}
-          <div className="w-full lg:w-[62%]">
-            <div className="bg-[#111d35] rounded-3xl border border-white/8 p-7 md:p-12 relative overflow-visible">
+          <div className="w-full lg:w-[62%] relative">
+            <div className="bg-white/40 backdrop-blur-2xl rounded-3xl border border-white/60 p-7 md:p-12 relative overflow-visible shadow-[0_8px_32px_-8px_rgba(11,31,51,0.08)]">
 
               <AnimatePresence mode="wait">
                 {!isSubmitted ? (
@@ -351,13 +351,13 @@ export function Contact() {
                   >
                     {/* Header */}
                     <div className="mb-8">
-                      <span className="inline-block text-[10px] font-bold tracking-widest text-gold mb-4 uppercase bg-gold/10 px-3 py-1.5 rounded-full border border-gold/20">
+                      <span className="inline-block text-[10px] font-bold tracking-widest text-navy mb-4 uppercase bg-gold/20 px-3 py-1.5 rounded-full border border-gold/30">
                         Free Consultation
                       </span>
-                      <h3 className="font-serif text-2xl md:text-3xl text-white font-bold mb-2">
+                      <h3 className="font-serif text-2xl md:text-3xl text-navy font-bold mb-2">
                         Tell us about your plans.
                       </h3>
-                      <p className="font-sans text-sm text-white/40">
+                      <p className="font-sans text-sm text-navy/60">
                         Complete a few details and we&apos;ll be in touch.
                       </p>
                     </div>
@@ -452,18 +452,18 @@ export function Contact() {
                             <button
                               type="button"
                               onClick={() => setStep(1)}
-                              className="flex-1 h-[54px] rounded-2xl border border-white/10 text-white/60 text-[14px] font-medium hover:bg-white/5 hover:text-white transition-all"
+                              className="flex-1 h-[54px] rounded-2xl border border-navy/10 text-navy/70 text-[14px] font-bold hover:bg-navy/5 hover:text-navy transition-all bg-white/50"
                             >
                               ← Back
                             </button>
                             <button
                               type="submit"
-                              className="flex-[2] group relative flex items-center justify-center gap-3 bg-gold text-navy h-[54px] px-10 rounded-2xl text-[15px] font-sans font-bold transition-all duration-300 hover:shadow-[0_8px_30px_rgba(200,169,107,0.35)] hover:-translate-y-[1px]"
+                              className="flex-[2] group relative flex items-center justify-center gap-3 bg-navy text-ivory h-[54px] px-10 rounded-2xl text-[15px] font-sans font-bold transition-all duration-300 hover:shadow-lg hover:bg-midnight hover:-translate-y-[1px]"
                             >
                               Start My Journey
                               <ArrowUpRight
                                 size={18}
-                                className="transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300"
+                                className="text-gold transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300"
                               />
                             </button>
                           </div>
@@ -472,7 +472,7 @@ export function Contact() {
                     </AnimatePresence>
 
                     {/* Footer */}
-                    <div className="flex items-center gap-2 text-white/25 mt-6 pt-5 border-t border-white/5">
+                    <div className="flex items-center gap-2 text-navy/40 mt-6 pt-5 border-t border-navy/5">
                       <Lock size={11} />
                       <span className="text-[11px] font-sans">
                         Your information is kept private and used only to respond to your enquiry.
@@ -492,15 +492,15 @@ export function Contact() {
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 20 }}
-                      className="w-20 h-20 rounded-full bg-gold/15 border border-gold/30 flex items-center justify-center mb-8"
+                      className="w-20 h-20 rounded-full bg-gold/20 border border-gold/40 flex items-center justify-center mb-8 shadow-lg"
                     >
-                      <CheckCircle2 size={36} className="text-gold" strokeWidth={2} />
+                      <CheckCircle2 size={36} className="text-navy" strokeWidth={2} />
                     </motion.div>
 
-                    <h3 className="font-serif text-3xl md:text-4xl text-white font-bold mb-4">
+                    <h3 className="font-serif text-3xl md:text-4xl text-navy font-bold mb-4">
                       You&apos;re on your way.
                     </h3>
-                    <p className="font-sans text-white/50 mb-10 max-w-sm text-sm leading-relaxed">
+                    <p className="font-sans text-navy/60 mb-10 max-w-sm text-sm leading-relaxed">
                       Thank you. A Pathway counsellor will review your details and reach out to you shortly.
                     </p>
 
@@ -508,7 +508,7 @@ export function Contact() {
                       href="https://wa.me/917506284722?text=Hi%2C%20I%20just%20submitted%20the%20consultation%20form%20on%20your%20website."
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2.5 bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] font-medium px-6 py-3 rounded-full text-sm hover:bg-[#25D366]/20 transition-colors mb-6"
+                      className="flex items-center gap-2.5 bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] font-bold px-6 py-3 rounded-full text-sm hover:bg-[#25D366]/20 transition-colors mb-6 shadow-sm"
                     >
                       <MessageCircle size={16} />
                       Continue on WhatsApp
@@ -520,7 +520,7 @@ export function Contact() {
                         setIsSubmitted(false);
                         setStep(1);
                       }}
-                      className="text-[11px] font-sans font-bold text-white/30 uppercase tracking-widest hover:text-white/60 transition-colors"
+                      className="text-[11px] font-sans font-bold text-navy/40 uppercase tracking-widest hover:text-navy/80 transition-colors"
                     >
                       Back to form
                     </button>
