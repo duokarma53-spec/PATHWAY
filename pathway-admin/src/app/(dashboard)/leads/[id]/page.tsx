@@ -6,6 +6,13 @@ import { ArrowLeft, Mail, Phone, Calendar, UserPlus } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
+export function generateStaticParams() {
+  return [
+    { id: '1' },
+    { id: '2' },
+    { id: '3' }
+  ]
+}
 export default async function LeadProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
   const supabase = await createClient()

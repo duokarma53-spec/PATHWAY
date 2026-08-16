@@ -6,6 +6,13 @@ import { ArrowLeft, Edit, Mail, Phone, MapPin, GraduationCap, Calendar } from 'l
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
+export function generateStaticParams() {
+  return [
+    { id: '1' },
+    { id: '2' },
+    { id: '3' }
+  ]
+}
 export default async function StudentProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
   const supabase = await createClient()
