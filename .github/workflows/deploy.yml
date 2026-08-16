@@ -35,19 +35,8 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Build Next.js site
+      - name: Build Next.js public site
         run: npm run build
-
-      - name: Install admin dependencies
-        working-directory: ./pathway-admin
-        run: npm install --legacy-peer-deps
-
-      - name: Build admin site
-        working-directory: ./pathway-admin
-        run: npm run build
-
-      - name: Copy admin to main site out folder
-        run: cp -r ./pathway-admin/out ./out/admin
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
