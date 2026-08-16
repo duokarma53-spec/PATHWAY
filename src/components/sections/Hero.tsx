@@ -29,8 +29,9 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <span className="text-xs font-bold uppercase tracking-widest text-navy bg-gold/20 px-3 py-1 rounded-full">
-              PATHWAY EDUCATION CONSULTANCY · DAHOD
+            <span className="text-xs font-bold uppercase tracking-widest text-navy bg-gold/20 px-3 py-1 rounded-full inline-block">
+              <span className="md:hidden">Dahod, Gujarat</span>
+              <span className="hidden md:inline">PATHWAY EDUCATION CONSULTANCY · DAHOD</span>
             </span>
           </motion.div>
 

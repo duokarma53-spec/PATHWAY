@@ -409,7 +409,7 @@ export function Navbar() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.4 }}
-                    className="h-full flex flex-col justify-center px-8 pb-20"
+                    className="h-full flex flex-col justify-start pt-8 px-8 pb-20 overflow-y-auto"
                   >
                     <ul className="flex flex-col gap-6">
                       {NAV_LINKS.map((link, i) => (
