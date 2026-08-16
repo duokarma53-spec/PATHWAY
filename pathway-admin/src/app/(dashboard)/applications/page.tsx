@@ -77,7 +77,7 @@ export default async function ApplicationsPage() {
                 {applications?.map((app) => (
                   <TableRow key={app.id}>
                     <TableCell className="font-medium">
-                      {/* @ts-ignore */}
+                      {/* @ts-expect-error - type mismatch */}
                       {app.students?.first_name} {app.students?.last_name}
                     </TableCell>
                     <TableCell>{app.university_name || 'N/A'}</TableCell>

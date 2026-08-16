@@ -71,7 +71,7 @@ export default async function AuditLogsPage() {
                       {new Date(log.created_at).toLocaleString()}
                     </TableCell>
                     <TableCell className="font-medium">
-                      {/* @ts-ignore */}
+                      {/* @ts-expect-error - type mismatch */}
                       {log.profiles?.full_name || 'System'}
                     </TableCell>
                     <TableCell>

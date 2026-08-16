@@ -11,7 +11,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Upload, FileText, Download } from 'lucide-react'
-import Link from 'next/link'
+// import Link from 'next/link'
 
 export default async function DocumentsPage() {
   const supabase = await createClient()
@@ -82,7 +82,7 @@ export default async function DocumentsPage() {
                       {doc.document_type}
                     </TableCell>
                     <TableCell>
-                      {/* @ts-ignore */}
+                      {/* @ts-expect-error - type mismatch */}
                       {doc.students ? `${doc.students.first_name} ${doc.students.last_name}` : 'Unknown'}
                     </TableCell>
                     <TableCell>

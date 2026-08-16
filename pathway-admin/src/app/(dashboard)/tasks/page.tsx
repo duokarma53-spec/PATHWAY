@@ -91,11 +91,11 @@ export default async function TasksPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      {/* @ts-ignore */}
+                      {/* @ts-expect-error - type mismatch */}
                       {task.students ? `${task.students.first_name} ${task.students.last_name}` : 'General'}
                     </TableCell>
                     <TableCell>
-                      {/* @ts-ignore */}
+                      {/* @ts-expect-error - type mismatch */}
                       {task.profiles?.full_name || 'Unassigned'}
                     </TableCell>
                     <TableCell>

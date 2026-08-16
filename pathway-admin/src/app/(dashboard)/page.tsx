@@ -1,6 +1,6 @@
 import { getDashboardData } from '@/lib/dashboard/queries'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Users, FileText, Calendar, CheckCircle, Plus, ArrowUpRight, Clock, AlertCircle } from 'lucide-react'
+import { Users, FileText, Calendar, CheckCircle, ArrowUpRight, AlertCircle } from 'lucide-react'
 import { DashboardChart } from '@/components/dashboard-chart'
 import { Button } from '@/components/ui/button'
 import { AddLeadButton, ScheduleButton } from '@/components/actions/quick-actions'
@@ -23,7 +23,7 @@ export default async function DashboardPage() {
             Good morning, Admin.
           </h1>
           <p className="text-muted-foreground text-sm font-medium">
-            Here's what needs your attention today, {format(new Date(), 'EEEE, MMMM do')}.
+            Here&apos;s what needs your attention today, {format(new Date(), 'EEEE, MMMM do')}.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -149,7 +149,7 @@ export default async function DashboardPage() {
           <CardHeader>
             <CardTitle className="text-lg flex items-center">
               <AlertCircle className="w-4 h-4 mr-2 text-destructive" />
-              Today's Priorities
+              Today&apos;s Priorities
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -168,7 +168,7 @@ export default async function DashboardPage() {
             ) : (
               <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
                 <CheckCircle className="h-8 w-8 mb-2 opacity-20" />
-                <p className="text-sm font-medium">You're all caught up!</p>
+                <p className="text-sm font-medium">You&apos;re all caught up!</p>
                 <p className="text-xs">No overdue tasks or urgent items.</p>
               </div>
             )}

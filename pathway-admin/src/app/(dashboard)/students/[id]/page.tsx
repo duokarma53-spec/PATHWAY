@@ -121,17 +121,17 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
               <CardTitle>Assigned Counsellor</CardTitle>
             </CardHeader>
             <CardContent>
-              {/* @ts-ignore */}
+              {/* @ts-expect-error - type mismatch */}
               {student.profiles?.full_name ? (
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
                     <span className="text-sm font-semibold text-primary">
-                      {/* @ts-ignore */}
+                      {/* @ts-expect-error - type mismatch */}
                       {student.profiles.full_name.substring(0, 2).toUpperCase()}
                     </span>
                   </div>
                   <div>
-                    {/* @ts-ignore */}
+                    {/* @ts-expect-error - type mismatch */}
                     <p className="font-medium">{student.profiles.full_name}</p>
                     <p className="text-xs text-muted-foreground">Primary Counsellor</p>
                   </div>

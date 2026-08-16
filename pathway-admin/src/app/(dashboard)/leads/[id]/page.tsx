@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Mail, Phone, Calendar, UserPlus } from 'lucide-react'
@@ -105,17 +105,17 @@ export default async function LeadProfilePage({ params }: { params: Promise<{ id
               <CardTitle>Assignment</CardTitle>
             </CardHeader>
             <CardContent>
-              {/* @ts-ignore */}
+              {/* @ts-expect-error - type mismatch */}
               {lead.profiles?.full_name ? (
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
                     <span className="text-sm font-semibold text-primary">
-                      {/* @ts-ignore */}
+                      {/* @ts-expect-error - type mismatch */}
                       {lead.profiles.full_name.substring(0, 2).toUpperCase()}
                     </span>
                   </div>
                   <div>
-                    {/* @ts-ignore */}
+                    {/* @ts-expect-error - type mismatch */}
                     <p className="font-medium">{lead.profiles.full_name}</p>
                     <p className="text-xs text-muted-foreground">Assigned Team Member</p>
                   </div>

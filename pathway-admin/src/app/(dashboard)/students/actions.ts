@@ -17,7 +17,7 @@ const studentSchema = z.object({
   notes: z.string().optional(),
 })
 
-export async function createStudent(prevState: any, formData: FormData) {
+export async function createStudent(prevState: unknown, formData: FormData) {
   const supabase = await createClient()
 
   const rawData = {

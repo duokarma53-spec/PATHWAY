@@ -13,7 +13,7 @@ import { Button } from "../ui/button"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 
-type NavItem = { name: string; href: string; icon: any; }
+type NavItem = { name: string; href: string; icon: unknown; }
 type NavGroup = { label: string; items: NavItem[] }
 
 const navigationGroups: NavGroup[] = [

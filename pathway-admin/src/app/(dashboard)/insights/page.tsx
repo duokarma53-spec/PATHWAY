@@ -78,7 +78,7 @@ export default async function InsightsPage() {
                       {post.title}
                     </TableCell>
                     <TableCell>
-                      {/* @ts-ignore */}
+                      {/* @ts-expect-error - type mismatch */}
                       {post.blog_categories?.name || 'Uncategorized'}
                     </TableCell>
                     <TableCell>

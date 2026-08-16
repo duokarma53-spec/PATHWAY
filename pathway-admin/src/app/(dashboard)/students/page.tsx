@@ -11,7 +11,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { GenericAddButton } from '@/components/actions/quick-actions'
-import { Plus } from 'lucide-react'
+import {} from 'lucide-react'
 import Link from 'next/link'
 
 export default async function StudentsPage() {
@@ -90,7 +90,7 @@ export default async function StudentsPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {/* @ts-ignore */}
+                      {/* @ts-expect-error - type mismatch */}
                       {student.profiles?.full_name || 'Unassigned'}
                     </TableCell>
                     <TableCell className="text-right">

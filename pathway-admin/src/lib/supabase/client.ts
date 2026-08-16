@@ -1,6 +1,7 @@
-import { createBrowserClient } from '@supabase/ssr'
+// import { createBrowserClient } from '@supabase/ssr'
 
 // Mock query builder that safely handles chained Supabase calls
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function createMockQuery(): any {
   const mockPromise = Promise.resolve({ data: [], error: null, count: 0 });
   
@@ -19,7 +20,8 @@ function createMockQuery(): any {
   return proxy;
 }
 
-export function createClient() {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function createClient(): any {
   // FORCE MOCK CLIENT FOR DEMO: By returning the mock client unconditionally, 
   // we bypass any fetch errors caused by the dummy .env.local file.
   return {
@@ -29,5 +31,6 @@ export function createClient() {
       signOut: async () => ({ error: null }),
       getSession: async () => ({ data: { session: null }, error: null })
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any;
 }

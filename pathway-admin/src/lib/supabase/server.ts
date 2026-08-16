@@ -1,7 +1,7 @@
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+
 
 // Rich dummy data for demo purposes
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const DUMMY_DATA: Record<string, any[]> = {
   leads: [
     { id: 1, first_name: 'Rahul', last_name: 'Sharma', email: 'rahul.s@example.com', status: 'new', inquiry_type: 'general', created_at: new Date().toISOString() },
@@ -37,6 +37,7 @@ const DUMMY_DATA: Record<string, any[]> = {
 };
 
 // Mock query builder that safely handles chained Supabase calls
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function createMockQuery(table?: string): any {
   const data = table && DUMMY_DATA[table] ? DUMMY_DATA[table] : [];
   const mockPromise = Promise.resolve({ data, error: null, count: data.length });
@@ -56,7 +57,8 @@ function createMockQuery(table?: string): any {
   return proxy;
 }
 
-export async function createClient() {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function createClient(): Promise<any> {
   // FORCE MOCK CLIENT FOR DEMO: By returning the mock client unconditionally, 
   // we bypass any fetch errors caused by the dummy .env.local file.
   return {
@@ -66,5 +68,6 @@ export async function createClient() {
       signOut: async () => ({ error: null }),
       getSession: async () => ({ data: { session: null }, error: null })
     }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any;
 }

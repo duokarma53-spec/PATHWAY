@@ -11,8 +11,8 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { GenericAddButton } from '@/components/actions/quick-actions'
-import { Plus } from 'lucide-react'
-import Link from 'next/link'
+import {} from 'lucide-react'
+// import Link from 'next/link'
 
 export default async function UniversitiesPage() {
   const supabase = await createClient()
@@ -75,7 +75,7 @@ export default async function UniversitiesPage() {
                       {uni.name}
                     </TableCell>
                     <TableCell>
-                      {/* @ts-ignore */}
+                      {/* @ts-expect-error - type mismatch */}
                       {uni.destinations?.name || uni.country}
                     </TableCell>
                     <TableCell>

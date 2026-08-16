@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell, Search, Menu, Plus } from "lucide-react"
+import { Bell, Search, Menu } from "lucide-react"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { QuickAddButton } from "../actions/quick-actions"
