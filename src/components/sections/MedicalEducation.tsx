@@ -40,7 +40,7 @@ export function MedicalEducation() {
           <div className="w-full lg:w-1/2 relative">
             <div className="absolute inset-0 bg-navy/5 -z-10 translate-x-4 translate-y-4 rounded-sm" />
             <img
-              src="https://images.unsplash.com/photo-1576091160550-2173ff9e5eb3?q=80&w=2068&auto=format&fit=crop"
+              src="/images/medical_students.jpg"
               alt="Medical students studying"
               className="w-full h-auto aspect-square lg:aspect-[4/3] object-cover rounded-sm shadow-lg"
             />

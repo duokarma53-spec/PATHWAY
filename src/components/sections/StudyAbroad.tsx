@@ -12,7 +12,7 @@ const DESTINATIONS = [
   },
   {
     name: "United Kingdom",
-    image: "https://images.unsplash.com/photo-1513635269975-5969336ac1fc?q=80&w=2070&auto=format&fit=crop",
+    image: "/images/united_kingdom.jpg",
     colSpan: "col-span-1",
   },
   {
