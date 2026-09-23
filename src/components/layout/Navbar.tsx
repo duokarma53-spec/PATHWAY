@@ -288,23 +288,23 @@ export function Navbar() {
       <motion.header
         className="fixed top-0 left-0 right-0 z-50 flex justify-center pointer-events-none"
         initial={{ y: -100 }}
-        animate={{ y: scrolled ? 20 : 32 }}
+        animate={{ y: scrolled ? 16 : 24 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
         <motion.div
-          className="pointer-events-auto w-[92%] max-w-[1300px] flex items-center justify-between mx-auto"
+          className="pointer-events-auto w-[95%] max-w-[1200px] flex items-center justify-between mx-auto"
           animate={{
-            backgroundColor: scrolled ? "rgba(247, 245, 239, 0.85)" : "rgba(247, 245, 239, 0.5)",
-            backdropFilter: scrolled ? "blur(24px)" : "blur(12px)",
-            paddingTop: scrolled ? "12px" : "16px",
-            paddingBottom: scrolled ? "12px" : "16px",
-            paddingLeft: scrolled ? "24px" : "32px",
-            paddingRight: scrolled ? "24px" : "32px",
-            borderRadius: scrolled ? "20px" : "24px",
+            backgroundColor: scrolled ? "rgba(247, 245, 239, 0.9)" : "rgba(247, 245, 239, 0.6)",
+            backdropFilter: scrolled ? "blur(20px)" : "blur(10px)",
+            paddingTop: "10px",
+            paddingBottom: "10px",
+            paddingLeft: "24px",
+            paddingRight: "10px",
+            borderRadius: "16px",
             boxShadow: scrolled 
-              ? "0 10px 30px -10px rgba(11, 31, 51, 0.08)" 
-              : "0 4px 20px -10px rgba(11, 31, 51, 0.04)",
-            border: "1px solid rgba(11, 31, 51, 0.06)",
+              ? "0 4px 20px -10px rgba(11, 31, 51, 0.1)" 
+              : "0 2px 10px -5px rgba(11, 31, 51, 0.05)",
+            border: "1px solid rgba(11, 31, 51, 0.08)",
           }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
@@ -313,13 +313,13 @@ export function Navbar() {
             <img
               src="/images/logo.jpeg"
               alt="Pathway Education Consultancy"
-              className="h-10 lg:h-12 w-auto object-contain"
+              className="h-8 lg:h-10 w-auto object-contain"
             />
           </Link>
 
           {/* Desktop Navigation Links */}
           <nav className="hidden lg:flex items-center" onMouseLeave={() => setHoveredMegaMenu(null)}>
-            <ul className="flex items-center gap-1 xl:gap-4 relative">
+            <ul className="flex items-center gap-2 xl:gap-6 relative">
               {NAV_LINKS.map((link) => (
                 <div key={link.label} className="relative">
                   <NavDesktopItem
@@ -347,13 +347,13 @@ export function Navbar() {
           <div className="hidden lg:block">
             <Link 
               href="#contact" 
-              className="group flex items-center justify-center gap-2 bg-navy text-ivory h-[48px] px-7 rounded-full text-[14.5px] font-sans font-medium transition-all duration-300 hover:shadow-lg hover:bg-midnight"
+              className="group flex items-center justify-center gap-2 bg-navy text-ivory h-[40px] px-6 rounded-xl text-[13px] font-sans font-medium transition-all duration-300 hover:bg-midnight hover:shadow-lg"
               onMouseEnter={() => setCursorActive(true)}
               onMouseLeave={() => setCursorActive(false)}
             >
               Start Your Journey
               <ArrowUpRight 
-                size={16} 
+                size={14} 
                 className="text-gold transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" 
               />
             </Link>
@@ -361,11 +361,11 @@ export function Navbar() {
 
           {/* Mobile Menu Toggle */}
           <button
-            className="lg:hidden w-10 h-10 flex items-center justify-center text-navy bg-navy/5 rounded-full"
+            className="lg:hidden w-10 h-10 flex items-center justify-center text-navy bg-navy/5 rounded-xl mr-2"
             onClick={() => setMobileMenuOpen(true)}
             aria-label="Open Menu"
           >
-            <Menu size={20} />
+            <Menu size={18} />
           </button>
         </motion.div>
       </motion.header>

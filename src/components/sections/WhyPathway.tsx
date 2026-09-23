@@ -1,54 +1,93 @@
-import React from "react";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { UserCheck, Lightbulb, MapPin, CheckCircle2 } from "lucide-react";
+"use client";
 
-const REASONS = [
+import React from "react";
+import { motion } from "framer-motion";
+
+const PROOF_POINTS = [
   {
-    title: "Personalised Guidance",
-    description: "Every student's academic journey is different.",
-    icon: <UserCheck className="w-8 h-8 text-gold" />,
+    title: "PERSONALIZED GUIDANCE",
+    description: "Every student's academic journey is different. We don't believe in one-size-fits-all solutions.",
   },
   {
-    title: "Clear Counselling",
-    description: "Understand your options before making important decisions.",
-    icon: <Lightbulb className="w-8 h-8 text-gold" />,
+    title: "UNIVERSITY EXPERTISE",
+    description: "Deep understanding of admission criteria, course structures, and long-term career prospects.",
   },
   {
-    title: "End-to-End Assistance",
-    description: "Support across admissions, documentation, visas and travel-related services.",
-    icon: <CheckCircle2 className="w-8 h-8 text-gold" />,
+    title: "END-TO-END SUPPORT",
+    description: "From initial counseling to application, documentation, visa processing, and travel preparation.",
   },
   {
-    title: "Local Accessibility",
-    description: "A counselling centre based in Dahod for students and families who want accessible guidance.",
-    icon: <MapPin className="w-8 h-8 text-gold" />,
+    title: "STUDENT-FIRST APPROACH",
+    description: "A counseling center based in Dahod prioritizing accessible, transparent, and factual guidance.",
   },
 ];
 
 export function WhyPathway() {
   return (
-    <section id="why-pathway" className="py-16 md:py-24 bg-navy text-white">
-      <div className="container mx-auto px-4 md:px-8">
-        <SectionHeading
-          eyebrow="WHY CHOOSE US"
-          title={<span className="text-white">Why Students Choose Pathway</span>}
-        />
+    <section id="why-pathway" className="py-24 md:py-32 bg-ivory relative">
+      <div className="container mx-auto px-4 md:px-8 max-w-[1400px]">
+        
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-start">
+          
+          {/* Left: Huge Brand Statement */}
+          <div className="lg:col-span-7">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8 }}
+              className="flex items-center gap-4 mb-8"
+            >
+              <span className="w-8 h-[1px] bg-gold" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-navy/60">
+                Our Philosophy
+              </span>
+            </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-16">
-          {REASONS.map((reason, i) => (
-            <div key={i} className="flex flex-col items-center text-center p-6 bg-white/5 rounded-sm border border-white/10 hover:bg-white/10 transition-colors">
-              <div className="mb-6 w-16 h-16 rounded-full bg-white/5 flex items-center justify-center">
-                {reason.icon}
-              </div>
-              <h4 className="font-serif font-bold text-xl mb-3 text-ivory">
-                {reason.title}
-              </h4>
-              <p className="text-ivory/70 text-sm leading-relaxed">
-                {reason.description}
-              </p>
+            <motion.h2 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 1, delay: 0.2 }}
+              className="font-serif text-3xl md:text-4xl lg:text-5xl text-navy leading-[1.1] tracking-tight pr-0 lg:pr-12"
+            >
+              We don't just process applications. <br className="hidden md:block" />
+              <span className="text-midnight/60 italic">We help build your next chapter.</span>
+            </motion.h2>
+          </div>
+
+          {/* Right: Architectural List */}
+          <div className="lg:col-span-5 lg:mt-16">
+            <div className="border-t border-navy/10">
+              {PROOF_POINTS.map((point, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
+                  className="py-6 border-b border-navy/10 group"
+                >
+                  <div className="flex items-start gap-6">
+                    <span className="text-xs font-mono font-medium text-gold mt-1">
+                      0{index + 1}
+                    </span>
+                    <div>
+                      <h4 className="font-sans font-bold text-sm tracking-widest uppercase text-navy mb-2 group-hover:text-gold transition-colors duration-300">
+                        {point.title}
+                      </h4>
+                      <p className="text-midnight/70 font-sans text-sm leading-relaxed max-w-sm">
+                        {point.description}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
             </div>
-          ))}
+          </div>
+          
         </div>
+        
       </div>
     </section>
   );

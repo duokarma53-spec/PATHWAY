@@ -67,30 +67,30 @@ export function PhotoGallery() {
           title={<span className="text-white">Come Visit Us in Dahod.</span>}
         />
 
-        {/* Bento Gallery Grid */}
-        <div className="mt-12 grid grid-cols-2 md:grid-cols-4 md:grid-rows-3 gap-3 md:gap-3 auto-rows-[180px] md:h-[600px]">
+        {/* Masonry Gallery */}
+        <div className="mt-12 columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
           {PHOTOS.map((photo, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, scale: 0.96 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.07, duration: 0.5, ease: "easeOut" }}
-              className={`relative overflow-hidden rounded-2xl group cursor-pointer col-span-1 row-span-1 ${photo.span}`}
+              transition={{ delay: i * 0.05, duration: 0.5, ease: "easeOut" }}
+              className="relative overflow-hidden rounded-xl group cursor-pointer break-inside-avoid"
               onClick={() => setLightbox(photo)}
             >
               {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-midnight/80 via-transparent to-transparent z-10 opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-midnight/80 via-transparent to-transparent z-10 opacity-60 group-hover:opacity-90 transition-opacity duration-500 pointer-events-none" />
 
               {/* Zoom icon */}
-              <div className="absolute top-3 right-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute top-3 right-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                 <div className="w-8 h-8 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center">
                   <ZoomIn size={14} className="text-white" />
                 </div>
               </div>
 
               {/* Caption */}
-              <div className="absolute bottom-0 left-0 right-0 z-20 p-4">
+              <div className="absolute bottom-0 left-0 right-0 z-20 p-4 pointer-events-none">
                 <motion.p
                   className="text-[11px] font-sans font-bold tracking-[0.18em] uppercase text-gold translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out"
                 >
@@ -101,7 +101,7 @@ export function PhotoGallery() {
               <img
                 src={photo.src}
                 alt={photo.alt}
-                className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out"
+                className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
               />
             </motion.div>
           ))}
