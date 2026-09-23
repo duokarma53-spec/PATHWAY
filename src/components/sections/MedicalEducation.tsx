@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
 
@@ -37,12 +38,14 @@ export function MedicalEducation() {
             </div>
           </div>
 
-          <div className="w-full lg:w-1/2 relative">
+          <div className="w-full lg:w-1/2 relative aspect-square lg:aspect-[4/3]">
             <div className="absolute inset-0 bg-navy/5 -z-10 translate-x-4 translate-y-4 rounded-sm" />
-            <img
+            <Image
               src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop"
               alt="Medical students studying"
-              className="w-full h-auto aspect-square lg:aspect-[4/3] object-cover rounded-sm shadow-lg"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover rounded-sm shadow-lg"
             />
           </div>
 

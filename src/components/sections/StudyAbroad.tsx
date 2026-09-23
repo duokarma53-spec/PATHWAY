@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 const DESTINATIONS = [
   {
@@ -42,18 +43,24 @@ export function StudyAbroad() {
       {/* Background Image (Faded) */}
       <div className="absolute inset-0 z-0">
         <AnimatePresence mode="wait">
-          <motion.img
+          <motion.div
             key={hoveredDest.name}
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 0.15, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
-            src={hoveredDest.image}
-            alt={hoveredDest.name}
-            className="w-full h-full object-cover grayscale"
-          />
+            className="absolute inset-0"
+          >
+            <Image
+              src={hoveredDest.image}
+              alt={hoveredDest.name}
+              fill
+              sizes="100vw"
+              className="object-cover grayscale"
+            />
+          </motion.div>
         </AnimatePresence>
-        <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/80 to-navy/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/80 to-navy/40 pointer-events-none" />
       </div>
 
       <div className="container mx-auto px-4 md:px-8 relative z-10 max-w-[1400px]">
@@ -122,10 +129,12 @@ export function StudyAbroad() {
                 className="absolute inset-0 flex flex-col"
               >
                 <div className="relative w-full h-[300px] lg:h-[400px] overflow-hidden mb-8">
-                  <img
+                  <Image
                     src={hoveredDest.image}
                     alt={hoveredDest.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 40vw"
+                    className="object-cover"
                   />
                   <div className="absolute inset-0 border border-white/10 m-4 pointer-events-none" />
                 </div>

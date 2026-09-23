@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDownRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -91,10 +92,13 @@ export function Hero() {
               className="absolute right-0 top-0 w-[90%] lg:w-[75%] h-[85%] shadow-2xl z-10"
             >
               <div className="absolute inset-0 bg-navy/10 z-10 mix-blend-overlay" />
-              <img
+              <Image
                 src="/images/gallery-2.jpeg"
                 alt="Pathway Education Consultancy Office Reception"
-                className="w-full h-full object-cover grayscale-[20%]"
+                fill
+                priority
+                sizes="(max-width: 1024px) 90vw, 75vw"
+                className="object-cover grayscale-[20%]"
               />
               
               {/* Subtle Coordinate Label */}
@@ -116,10 +120,12 @@ export function Hero() {
               transition={{ duration: 1, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
               className="absolute left-0 bottom-[5%] lg:bottom-[10%] w-[60%] lg:w-[45%] h-[50%] lg:h-[55%] shadow-[0_30px_60px_-15px_rgba(11,31,51,0.3)] z-20 border-8 border-ivory"
             >
-              <img
+              <Image
                 src="/images/gallery-6.jpeg"
                 alt="Consultation Space"
-                className="w-full h-full object-cover"
+                fill
+                sizes="(max-width: 1024px) 60vw, 45vw"
+                className="object-cover"
               />
             </motion.div>
             
