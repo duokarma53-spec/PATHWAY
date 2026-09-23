@@ -20,3 +20,8 @@
     @apply bg-ivory text-midnight font-sans antialiased selection:bg-gold/30 selection:text-navy;
   }
 }
+
+@keyframes pathway-ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}

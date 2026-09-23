@@ -3,7 +3,8 @@ import { Inter, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { FloatingWhatsApp } from "@/components/ui/FloatingWhatsApp";
+import { FloatingContactWidget } from "@/components/ui/FloatingContactWidget";
+import { NewsTicker } from "@/components/ui/NewsTicker";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -31,9 +32,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
       <body className="antialiased min-h-screen bg-ivory text-midnight font-sans overflow-x-hidden">
+        <NewsTicker />
         <Navbar />
         <main>{children}</main>
-        <FloatingWhatsApp phoneNumber="+917506284722" />
+        <FloatingContactWidget />
         <Footer />
       </body>
     </html>
