@@ -309,16 +309,12 @@ export function Navbar() {
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
           {/* Brand Area */}
-          <Link href="/" className="flex items-center gap-4 group">
-            <div className="flex flex-col">
-              <span className="font-serif text-2xl lg:text-[28px] font-bold tracking-tight text-navy leading-none">
-                PATHWAY
-              </span>
-              <span className="text-[8.5px] font-sans text-navy/50 font-semibold tracking-[0.25em] uppercase mt-1">
-                Education Consultancy
-              </span>
-            </div>
-
+          <Link href="/" className="flex items-center gap-2 group">
+            <img
+              src="/images/logo.jpeg"
+              alt="Pathway Education Consultancy"
+              className="h-10 lg:h-12 w-auto object-contain"
+            />
           </Link>
 
           {/* Desktop Navigation Links */}
@@ -386,7 +382,7 @@ export function Navbar() {
           >
             {/* Mobile Menu Header */}
             <div className="px-6 py-8 flex justify-between items-center border-b border-navy/5">
-              <span className="font-serif text-2xl font-bold text-navy">PATHWAY</span>
+              <img src="/images/logo.jpeg" alt="Pathway Education Consultancy" className="h-10 w-auto object-contain" />
               <button
                 className="w-10 h-10 flex items-center justify-center text-navy bg-navy/5 rounded-full"
                 onClick={() => {
