@@ -8,33 +8,33 @@ import Link from "next/link";
 const SERVICES = [
   {
     id: "01",
-    title: "UNIVERSITY SELECTION",
+    title: "University Selection",
     description: "Guidance for engineering, medical and general university admissions, matching your academic profile with the right institution.",
-    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1600&auto=format&fit=crop", // Clean architectural office
+    image: "/images/gallery-1.jpeg", // Using real office photo
   },
   {
     id: "02",
-    title: "APPLICATION GUIDANCE",
+    title: "Application Guidance",
     description: "End-to-end support for university admissions across disciplines, helping you prepare strong applications for top-tier institutions.",
-    image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1600&auto=format&fit=crop", // Clean desk/workspace
+    image: "/images/gallery-6.jpeg", // Using real office photo
   },
   {
     id: "03",
-    title: "OVERSEAS EDUCATION",
+    title: "Overseas Education",
     description: "Explore global opportunities. We assist with university shortlisting and applications for the UK, Canada, Australia, USA, and Europe.",
-    image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=1600&auto=format&fit=crop", // Premium campus
+    image: "/images/gallery-8.jpeg", // Using real office photo
   },
   {
     id: "04",
-    title: "VISA ASSISTANCE",
+    title: "Visa Assistance",
     description: "Navigate the complex visa process with ease. Our dedicated team helps you gather the correct documentation for a smooth approval.",
-    image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=1600&auto=format&fit=crop", // Plane wing / journey
+    image: "/images/gallery-5.jpeg", // Using real office photo
   },
   {
     id: "05",
-    title: "PRE-DEPARTURE SUPPORT",
+    title: "Pre-departure Support",
     description: "Assistance with ticket bookings, finding student accommodation, and providing essential travel tips for your new chapter.",
-    image: "https://images.unsplash.com/photo-1551525212-a1dc18be716f?q=80&w=1600&auto=format&fit=crop", // Premium lounge / departure
+    image: "/images/gallery-4.jpeg", // Using real office photo
   }
 ];
 
