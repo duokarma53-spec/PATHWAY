@@ -9,7 +9,7 @@ const DESTINATIONS = [
   {
     name: "UNITED KINGDOM",
     description: "Home to some of the world's oldest and most prestigious universities. Experience a rich academic tradition mixed with vibrant, modern student life.",
-    image: "https://images.unsplash.com/photo-1513635269975-5969336cd4f2?q=80&w=2070&auto=format&fit=crop",
+    image: "/images/united_kingdom.jpg",
   },
   {
     name: "UNITED STATES",

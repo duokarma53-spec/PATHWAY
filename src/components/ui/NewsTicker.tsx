@@ -28,33 +28,8 @@ const RSS_URL = encodeURIComponent(
 const API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${RSS_URL}&count=15`;
 
 export function NewsTicker() {
-  const [news, setNews] = useState<NewsItem[]>(FALLBACK_NEWS);
-  const [loading, setLoading] = useState(true);
+  const news = FALLBACK_NEWS;
   const marqueeRef = useRef<HTMLDivElement>(null);
-
-  const fetchNews = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(API_URL);
-      const data = await res.json();
-      if (data.status === "ok" && data.items?.length > 0) {
-        setNews(
-          data.items.slice(0, 12).map((item: { title: string; link: string }) => ({
-            title: item.title.replace(/ - .*$/, ""), // strip source name from Google News titles
-            link: item.link,
-          }))
-        );
-      }
-    } catch {
-      // silently use fallback
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchNews();
-  }, []);
 
   // Duplicate items so the marquee loops seamlessly
   const tickerItems = [...news, ...news];
@@ -91,14 +66,6 @@ export function NewsTicker() {
         </div>
       </div>
 
-      {/* Refresh icon */}
-      <button
-        onClick={fetchNews}
-        className="shrink-0 px-3 h-full flex items-center text-white/40 hover:text-gold transition-colors border-l border-white/10"
-        aria-label="Refresh news"
-      >
-        <RefreshCw size={11} className={loading ? "animate-spin" : ""} />
-      </button>
     </div>
   );
 }

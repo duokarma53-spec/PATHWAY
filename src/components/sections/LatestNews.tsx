@@ -84,38 +84,7 @@ function timeAgo(dateStr: string): string {
 }
 
 export function LatestNews() {
-  const [news, setNews] = useState<NewsItem[]>(FALLBACK);
-  const [loading, setLoading] = useState(true);
-  const [usedApi, setUsedApi] = useState(false);
-
-  const fetchNews = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(API_URL);
-      const data = await res.json();
-      if (data.status === "ok" && data.items?.length > 0) {
-        const items: NewsItem[] = data.items.slice(0, 8).map(
-          (item: { title: string; link: string; pubDate: string; description: string; source?: { name: string } }) => ({
-            title: item.title.replace(/ - .*$/, ""),
-            link: item.link,
-            pubDate: item.pubDate,
-            description: item.description?.replace(/<[^>]*>/g, "").slice(0, 160) + "...",
-            source: item.source?.name || "News",
-          })
-        );
-        setNews(items);
-        setUsedApi(true);
-      }
-    } catch {
-      // use fallback silently
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchNews();
-  }, []);
+  const news = FALLBACK;
 
   return (
     <section id="news" className="py-16 md:py-24 bg-ivory">
@@ -129,19 +98,7 @@ export function LatestNews() {
                 Latest News
               </h2>
             </div>
-            {!loading && usedApi && (
-              <span className="text-[11px] font-sans text-sage uppercase tracking-widest">
-                Live Feed
-              </span>
-            )}
           </div>
-          <button
-            onClick={fetchNews}
-            className="flex items-center gap-2 text-xs text-midnight/50 hover:text-navy transition-colors font-sans"
-          >
-            <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
-            Refresh
-          </button>
         </div>
 
         {/* News Grid */}

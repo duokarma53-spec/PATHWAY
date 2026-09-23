@@ -54,7 +54,7 @@ export function Services() {
                 Expertise
               </span>
             </div>
-            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-navy leading-[1.1] tracking-tight">
+            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-navy leading-[1.1] tracking-tight">
               Guidance tailored <br className="hidden md:block" />
               <span className="text-midnight/60 italic">to your ambition.</span>
             </h2>
@@ -69,7 +69,7 @@ export function Services() {
               {SERVICES.map((service) => (
                 <div 
                   key={service.id}
-                  className="group relative border-b border-navy/10 py-8 md:py-10 cursor-pointer overflow-hidden"
+                  className="group relative border-b border-navy/10 py-6 md:py-8 cursor-pointer overflow-hidden"
                   onMouseEnter={() => setHoveredService(service)}
                 >
                   {/* Hover background slide */}
@@ -80,7 +80,7 @@ export function Services() {
                       <span className="text-sm font-sans font-medium text-gold/60 group-hover:text-gold transition-colors duration-300">
                         {service.id}
                       </span>
-                      <h3 className="font-serif text-3xl md:text-4xl lg:text-5xl text-navy group-hover:translate-x-4 transition-transform duration-500 ease-out">
+                      <h3 className="font-serif text-2xl md:text-3xl lg:text-4xl text-navy group-hover:translate-x-4 transition-transform duration-500 ease-out">
                         {service.title}
                       </h3>
                     </div>

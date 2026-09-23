@@ -35,7 +35,7 @@ export function Process() {
             </span>
             <span className="w-8 h-[1px] bg-gold" />
           </div>
-          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-navy leading-[1.1] tracking-tight">
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-navy leading-[1.1] tracking-tight">
             How we <span className="italic text-midnight/60">move forward.</span>
           </h2>
         </div>

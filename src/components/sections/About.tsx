@@ -31,7 +31,7 @@ export function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 1, delay: 0.2 }}
-              className="font-serif text-5xl md:text-6xl lg:text-7xl text-navy leading-[1.1] tracking-tight"
+              className="font-serif text-3xl md:text-4xl lg:text-5xl text-navy leading-[1.1] tracking-tight"
             >
               Step inside <br/>
               <span className="text-midnight/60 italic">Pathway.</span>
