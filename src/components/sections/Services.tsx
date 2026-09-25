@@ -96,6 +96,14 @@ export function Services() {
                   <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-[0.22,1,0.36,1] px-4 md:px-6">
                     <div className="overflow-hidden">
                       <div className="pt-6 pb-2 pl-0 md:pl-[4.5rem]">
+                        {/* Mobile Image (hidden on desktop) */}
+                        <div className="lg:hidden w-full h-48 relative mb-6 rounded-sm overflow-hidden">
+                          <img 
+                            src={service.image} 
+                            alt={service.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
                         <p className="text-midnight/70 font-sans max-w-md leading-relaxed">
                           {service.description}
                         </p>

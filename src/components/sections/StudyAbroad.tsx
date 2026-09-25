@@ -90,28 +90,53 @@ export function StudyAbroad() {
               {DESTINATIONS.map((dest, i) => (
                 <div
                   key={dest.name}
-                  className="group relative border-b border-white/10 py-6 md:py-8 cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-4"
+                  className="group relative border-b border-white/10 py-6 md:py-8 cursor-pointer flex flex-col gap-4"
                   onMouseEnter={() => setHoveredDest(dest)}
                 >
-                  <div className="flex items-baseline gap-6 md:gap-12 relative z-10">
-                    <span className="text-sm font-sans font-medium text-sage/50 group-hover:text-gold transition-colors duration-300">
-                      0{i + 1}
-                    </span>
-                    <h3 className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white/50 group-hover:text-white transition-colors duration-500">
-                      {dest.name}
-                    </h3>
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex items-baseline gap-6 md:gap-12 relative z-10">
+                      <span className="text-sm font-sans font-medium text-sage/50 group-hover:text-gold transition-colors duration-300">
+                        0{i + 1}
+                      </span>
+                      <h3 className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white/50 group-hover:text-white transition-colors duration-500">
+                        {dest.name}
+                      </h3>
+                    </div>
+                    
+                    <div className="hidden md:block overflow-hidden relative z-10">
+                      <motion.div 
+                        className="text-gold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-out"
+                      >
+                        <ArrowUpRight size={32} strokeWidth={1.5} />
+                      </motion.div>
+                    </div>
                   </div>
-                  
-                  <div className="hidden md:block overflow-hidden relative z-10">
-                    <motion.div 
-                      className="text-gold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-out"
-                    >
-                      <ArrowUpRight size={32} strokeWidth={1.5} />
-                    </motion.div>
+
+                  {/* Expandable Mobile Content */}
+                  <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-[0.22,1,0.36,1] lg:hidden w-full relative z-10">
+                    <div className="overflow-hidden">
+                      <div className="pt-4 pb-2">
+                        <div className="w-full h-48 relative mb-6 rounded-sm overflow-hidden border border-white/10">
+                          <Image
+                            src={dest.image}
+                            alt={dest.name}
+                            fill
+                            sizes="(max-width: 1024px) 100vw, 40vw"
+                            className="object-cover"
+                          />
+                        </div>
+                        <p className="text-ivory/70 font-sans leading-relaxed mb-6">
+                          {dest.description}
+                        </p>
+                        <Link href="#contact" className="group/btn flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gold hover:text-white transition-colors w-fit">
+                          Explore Programs <ArrowUpRight size={14} className="transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                        </Link>
+                      </div>
+                    </div>
                   </div>
                   
                   {/* Subtle hover background highlight */}
-                  <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-0" />
+                  <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-0 pointer-events-none" />
                 </div>
               ))}
             </div>
