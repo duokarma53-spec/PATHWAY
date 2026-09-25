@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Phone, Mail, ChevronRight, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -47,110 +47,135 @@ const MOBILE_ITEMS = [
 export function FloatingContactWidget() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [panelWidth, setPanelWidth] = useState(0);
+
+  // Measure panel width so we can slide it exactly off-screen
+  useEffect(() => {
+    if (panelRef.current) {
+      setPanelWidth(panelRef.current.offsetWidth);
+    }
+  }, []);
 
   return (
     <>
       {/* ── Desktop Side Widget ────────────────────────── */}
       {/*
-        FIX: Previously used Tailwind classes to combine -translate-y-1/2 (centering)
-        with a conditional -translate-x-... (slide). Tailwind generates these as separate
-        utility classes but they share the same CSS `transform` property — toggling the
-        conditional class can reset the vertical offset and cause a jump/glitch.
-
-        Solution: Use a motion.div so Framer Motion owns all transforms. Vertical centering
-        is done via `top-1/2` + a fixed `y: "-50%"` in the animate prop, and the
-        horizontal slide is a separate `x` value. Framer composes them together without
-        any Tailwind class conflict.
+        FIX v2: Completely restructured to avoid all transform conflicts.
+        
+        The root wrapper is position:fixed at left-0, top-1/2 (-translate-y-1/2).
+        It does NOT move — only the inner panel slides via `x`.
+        The toggle tab is a sibling that stays pinned at the right edge of the 
+        root (left: panelWidth, translated to stay visible).
+        
+        This way:
+        - Vertical centering is just a CSS translate, never touched by JS.
+        - Horizontal slide is a Framer Motion `x` on the panel div only.
+        - The tab button never moves — it's always at left: panelWidth of the container.
+        - Zero Tailwind class conflict, zero transform collision.
       */}
-      <motion.div
-        className="hidden md:flex fixed left-0 top-1/2 z-[90] items-center"
-        style={{ pointerEvents: "auto" }}
-        initial={false}
-        animate={{
-          x: collapsed ? "calc(-100% + 24px)" : "0%",
-          y: "-50%",
-        }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      <div
+        className="hidden md:block fixed left-0 top-1/2 -translate-y-1/2 z-[90]"
+        style={{ pointerEvents: "none" }}
       >
-        {/* Icon panel — hover expands each item */}
-        <div
-          className="flex flex-col gap-3 py-4 px-3 bg-navy/95 backdrop-blur-md rounded-r-3xl shadow-[20px_0_40px_-15px_rgba(11,31,51,0.5)] border-y border-r border-white/10"
+        {/* Sliding panel */}
+        <motion.div
+          ref={panelRef}
+          style={{ pointerEvents: "auto" }}
+          initial={false}
+          animate={{ x: collapsed ? "-100%" : "0%" }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         >
-          {/* Phone */}
-          <a
-            href={`tel:+${PHONE_RAW}`}
-            className="group flex items-center rounded-full overflow-hidden cursor-pointer"
-            aria-label="Call us"
-          >
-            <div className="max-w-0 group-hover:max-w-[170px] overflow-hidden transition-[max-width] duration-300 ease-out">
-              <span className="block pl-4 pr-3 text-[13px] font-semibold text-white whitespace-nowrap">
-                {PHONE_DISPLAY}
-              </span>
-            </div>
-            <div className="w-12 h-12 rounded-full bg-red-600/90 border border-red-500/50 flex items-center justify-center shrink-0 shadow-lg group-hover:scale-105 group-hover:bg-red-600 transition-all duration-300">
-              <Phone size={18} className="text-white" strokeWidth={2} />
-            </div>
-          </a>
+          <div className="flex flex-col gap-3 py-4 px-3 bg-navy/95 backdrop-blur-md rounded-r-2xl shadow-[20px_0_40px_-15px_rgba(11,31,51,0.5)] border-y border-r border-white/10">
+            {/* Phone */}
+            <a
+              href={`tel:+${PHONE_RAW}`}
+              className="group flex items-center rounded-full overflow-hidden cursor-pointer"
+              aria-label="Call us"
+            >
+              <div className="max-w-0 group-hover:max-w-[170px] overflow-hidden transition-[max-width] duration-300 ease-out">
+                <span className="block pl-4 pr-3 text-[13px] font-semibold text-white whitespace-nowrap">
+                  {PHONE_DISPLAY}
+                </span>
+              </div>
+              <div className="w-12 h-12 rounded-full bg-red-600/90 border border-red-500/50 flex items-center justify-center shrink-0 shadow-lg group-hover:scale-105 group-hover:bg-red-600 transition-all duration-300">
+                <Phone size={18} className="text-white" strokeWidth={2} />
+              </div>
+            </a>
 
-          {/* WhatsApp */}
-          <a
-            href={`https://wa.me/${WA_RAW}?text=${WA_MSG}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center rounded-full overflow-hidden cursor-pointer"
-            aria-label="WhatsApp"
-          >
-            <div className="max-w-0 group-hover:max-w-[170px] overflow-hidden transition-[max-width] duration-300 ease-out">
-              <span className="block pl-4 pr-3 text-[13px] font-semibold text-white whitespace-nowrap">
-                {WA_DISPLAY}
-              </span>
-            </div>
-            <div className="w-12 h-12 rounded-full bg-[#25D366]/90 border border-[#25D366]/50 flex items-center justify-center shrink-0 shadow-lg group-hover:scale-105 group-hover:bg-[#25D366] transition-all duration-300">
-              <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
-                <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.524 5.847L0 24l6.332-1.499A11.938 11.938 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.789 9.789 0 01-5.017-1.381l-.36-.214-3.728.882.939-3.625-.235-.372A9.792 9.792 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z" />
-              </svg>
-            </div>
-          </a>
+            {/* WhatsApp */}
+            <a
+              href={`https://wa.me/${WA_RAW}?text=${WA_MSG}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center rounded-full overflow-hidden cursor-pointer"
+              aria-label="WhatsApp"
+            >
+              <div className="max-w-0 group-hover:max-w-[170px] overflow-hidden transition-[max-width] duration-300 ease-out">
+                <span className="block pl-4 pr-3 text-[13px] font-semibold text-white whitespace-nowrap">
+                  {WA_DISPLAY}
+                </span>
+              </div>
+              <div className="w-12 h-12 rounded-full bg-[#25D366]/90 border border-[#25D366]/50 flex items-center justify-center shrink-0 shadow-lg group-hover:scale-105 group-hover:bg-[#25D366] transition-all duration-300">
+                <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                  <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.524 5.847L0 24l6.332-1.499A11.938 11.938 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.789 9.789 0 01-5.017-1.381l-.36-.214-3.728.882.939-3.625-.235-.372A9.792 9.792 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z" />
+                </svg>
+              </div>
+            </a>
 
-          {/* Email */}
-          <a
-            href={`mailto:${MAIL}`}
-            className="group flex items-center rounded-full overflow-hidden cursor-pointer"
-            aria-label="Email us"
-          >
-            <div className="max-w-0 group-hover:max-w-[200px] overflow-hidden transition-[max-width] duration-300 ease-out">
-              <span className="block pl-4 pr-3 text-[11px] font-semibold text-white whitespace-nowrap">
-                {MAIL}
-              </span>
-            </div>
-            <div className="w-12 h-12 rounded-full bg-midnight border border-white/10 flex items-center justify-center shrink-0 shadow-lg group-hover:scale-105 group-hover:bg-midnight/80 transition-all duration-300">
-              <Mail size={18} className="text-white" strokeWidth={2} />
-            </div>
-          </a>
-        </div>
+            {/* Email */}
+            <a
+              href={`mailto:${MAIL}`}
+              className="group flex items-center rounded-full overflow-hidden cursor-pointer"
+              aria-label="Email us"
+            >
+              <div className="max-w-0 group-hover:max-w-[200px] overflow-hidden transition-[max-width] duration-300 ease-out">
+                <span className="block pl-4 pr-3 text-[11px] font-semibold text-white whitespace-nowrap">
+                  {MAIL}
+                </span>
+              </div>
+              <div className="w-12 h-12 rounded-full bg-midnight border border-white/10 flex items-center justify-center shrink-0 shadow-lg group-hover:scale-105 group-hover:bg-midnight/80 transition-all duration-300">
+                <Mail size={18} className="text-white" strokeWidth={2} />
+              </div>
+            </a>
+          </div>
+        </motion.div>
 
-        {/* Collapse / expand tab — always visible, sits to the right of the panel */}
+        {/* 
+          Toggle tab — position:absolute to the right of the panel.
+          Uses `left: panelWidth` so it always hugs the right edge of the panel div,
+          regardless of whether the panel is collapsed or expanded.
+          top: 50% centers it vertically within the fixed wrapper.
+          This element NEVER moves — only the panel behind it slides.
+        */}
         <button
           onClick={() => setCollapsed((c) => !c)}
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: panelWidth > 0 ? panelWidth : "auto",
+            transform: "translateY(-50%)",
+            pointerEvents: "auto",
+          }}
           className="w-6 h-16 bg-navy/95 backdrop-blur-md border-y border-r border-white/10 rounded-r-xl
-            flex items-center justify-center text-white hover:text-gold transition-colors duration-300
-            shadow-xl shrink-0"
+            flex items-center justify-center text-white hover:text-yellow-400 transition-colors duration-300
+            shadow-xl shrink-0 cursor-pointer"
           aria-label={collapsed ? "Show contact widget" : "Hide contact widget"}
         >
           <motion.span
             animate={{ rotate: collapsed ? 0 : 180 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             className="flex"
           >
             <ChevronRight size={14} strokeWidth={3} />
           </motion.span>
         </button>
-      </motion.div>
+      </div>
 
       {/* ── Mobile FAB ─────────────────────────────────── */}
       <div className="md:hidden fixed bottom-6 right-6 z-[90] flex flex-col items-end gap-3 pointer-events-auto">
-        {/* Sub-action buttons — AnimatePresence for glitch-free show/hide */}
+        {/* Sub-action buttons */}
         <AnimatePresence>
           {mobileMenuOpen &&
             MOBILE_ITEMS.map((item, i) => (
@@ -176,15 +201,7 @@ export function FloatingContactWidget() {
             ))}
         </AnimatePresence>
 
-        {/*
-          FIX: Previously the button rotated 45° AND swapped icons (MessageCircle ↔ X)
-          simultaneously. The icon DOM swap caused a re-render in the middle of the
-          rotation animation, producing a visible jump/glitch.
-
-          Solution: Keep a single icon (MessageCircle) and rotate it 135° to visually
-          suggest "close" — no DOM node is swapped so the animation runs cleanly.
-          `initial={false}` prevents the animation from firing on first render.
-        */}
+        {/* Single icon, rotates to suggest close — no DOM swap = no glitch */}
         <motion.button
           onClick={() => setMobileMenuOpen((o) => !o)}
           className="w-14 h-14 rounded-full bg-navy flex items-center justify-center text-white shadow-xl"

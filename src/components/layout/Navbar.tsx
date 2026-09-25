@@ -121,8 +121,8 @@ function NavDesktopItem({
           >
             <motion.span
               className={cn(
-                "block text-[14.5px] font-sans tracking-wide transition-colors duration-300",
-                isActive ? "text-navy" : "text-midnight/70 hover:text-navy"
+                "block text-[15px] font-sans font-semibold tracking-wide transition-colors duration-300",
+                isActive ? "text-navy" : "text-midnight/80 hover:text-navy"
               )}
               whileHover={{ y: -2 }}
               transition={{ ease: "easeOut", duration: 0.3 }}
@@ -288,32 +288,32 @@ export function Navbar() {
       <motion.header
         className="fixed top-0 left-0 right-0 z-50 flex justify-center pointer-events-none"
         initial={{ y: -100 }}
-        animate={{ y: scrolled ? 16 : 24 }}
+        animate={{ y: scrolled ? 12 : 20 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
         <motion.div
-          className="pointer-events-auto w-[95%] max-w-[1200px] flex items-center justify-between mx-auto"
+          className="pointer-events-auto w-[95%] max-w-[1280px] flex items-center justify-between mx-auto"
           animate={{
-            backgroundColor: scrolled ? "rgba(247, 245, 239, 0.9)" : "rgba(247, 245, 239, 0.6)",
-            backdropFilter: scrolled ? "blur(20px)" : "blur(10px)",
-            paddingTop: "10px",
-            paddingBottom: "10px",
-            paddingLeft: "24px",
-            paddingRight: "10px",
-            borderRadius: "16px",
-            boxShadow: scrolled 
-              ? "0 4px 20px -10px rgba(11, 31, 51, 0.1)" 
-              : "0 2px 10px -5px rgba(11, 31, 51, 0.05)",
-            border: "1px solid rgba(11, 31, 51, 0.08)",
+            backgroundColor: scrolled ? "rgba(247, 245, 239, 0.98)" : "rgba(247, 245, 239, 0.92)",
+            backdropFilter: scrolled ? "blur(24px)" : "blur(16px)",
+            paddingTop: "14px",
+            paddingBottom: "14px",
+            paddingLeft: "28px",
+            paddingRight: "14px",
+            borderRadius: "14px",
+            boxShadow: scrolled
+              ? "0 8px 32px -8px rgba(11, 31, 51, 0.22), 0 1px 0 rgba(11,31,51,0.06)"
+              : "0 4px 24px -8px rgba(11, 31, 51, 0.14), 0 1px 0 rgba(11,31,51,0.06)",
+            border: "1.5px solid rgba(11, 31, 51, 0.14)",
           }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
         >
           {/* Brand Area */}
           <Link href="/" className="flex items-center gap-2 group">
             <img
               src="/images/logo.jpeg"
               alt="Pathway Education Consultancy"
-              className="h-8 lg:h-10 w-auto object-contain"
+              className="h-10 lg:h-12 w-auto object-contain"
             />
           </Link>
 
@@ -345,16 +345,16 @@ export function Navbar() {
 
           {/* Premium Pill CTA */}
           <div className="hidden lg:block">
-            <Link 
-              href="#contact" 
-              className="group flex items-center justify-center gap-2 bg-navy text-ivory h-[40px] px-6 rounded-xl text-[13px] font-sans font-medium transition-all duration-300 hover:bg-midnight hover:shadow-lg"
+            <Link
+              href="#contact"
+              className="group flex items-center justify-center gap-2 bg-navy text-ivory h-[46px] px-7 rounded-xl text-[14px] font-sans font-semibold tracking-wide transition-all duration-300 hover:bg-midnight hover:shadow-[0_8px_24px_-6px_rgba(11,31,51,0.45)] active:scale-[0.97]"
               onMouseEnter={() => setCursorActive(true)}
               onMouseLeave={() => setCursorActive(false)}
             >
               Start Your Journey
-              <ArrowUpRight 
-                size={14} 
-                className="text-gold transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" 
+              <ArrowUpRight
+                size={15}
+                className="text-gold transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300"
               />
             </Link>
           </div>
