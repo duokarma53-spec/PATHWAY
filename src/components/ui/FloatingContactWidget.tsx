@@ -22,8 +22,8 @@
  */
 
 import React, { useState, useRef, useLayoutEffect, useCallback } from "react";
-import { Phone, Mail, ChevronRight, MessageCircle } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Phone, Mail, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 const PHONE_RAW     = "917506284722";
 const PHONE_DISPLAY = "+91 75062 84722";
@@ -43,15 +43,10 @@ function WhatsAppSVG() {
   );
 }
 
-const MOBILE_ITEMS = [
-  { key: "email",    href: `mailto:${MAIL}`,                              label: "Email",    bg: "#0B1F33", icon: <Mail size={20} /> },
-  { key: "phone",    href: `tel:+${PHONE_RAW}`,                           label: "Call",     bg: "#dc2626", icon: <Phone size={20} /> },
-  { key: "whatsapp", href: `https://wa.me/${WA_RAW}?text=${WA_MSG}`,      label: "WhatsApp", bg: "#25D366", icon: <WhatsAppSVG />, external: true },
-];
+
 
 export function FloatingContactWidget() {
-  const [isOpen, setIsOpen]         = useState(true);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const panelRef = useRef<HTMLDivElement>(null);
   const [panelW, setPanelW] = useState(80); // default 80 prevents 0-flash
@@ -278,69 +273,7 @@ export function FloatingContactWidget() {
         </button>
       </div>
 
-      {/* ══════════════════════════════════════════════
-          MOBILE FAB — bottom right
-          ══════════════════════════════════════════════ */}
-      <div
-        className="md:hidden"
-        style={{
-          position: "fixed",
-          bottom: 24,
-          right: 24,
-          zIndex: 9999,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-end",
-          gap: 12,
-        }}
-        aria-label="Mobile contact menu"
-      >
-        <AnimatePresence>
-          {mobileOpen && MOBILE_ITEMS.map((item, i) => (
-            <motion.a
-              key={item.key}
-              href={item.href}
-              aria-label={item.label}
-              {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-              initial={{ opacity: 0, scale: 0.6, y: 12 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.6, y: 12 }}
-              transition={{ duration: 0.2, delay: (MOBILE_ITEMS.length - 1 - i) * 0.05, ease: [0.22,1,0.36,1] }}
-              style={{
-                width: 52, height: 52,
-                borderRadius: "50%",
-                background: item.bg,
-                color: "white",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                boxShadow: "0 6px 20px rgba(0,0,0,0.3)",
-                textDecoration: "none",
-              }}
-            >
-              {item.icon}
-            </motion.a>
-          ))}
-        </AnimatePresence>
 
-        <motion.button
-          onClick={() => setMobileOpen(o => !o)}
-          aria-label={mobileOpen ? "Close contact menu" : "Open contact menu"}
-          initial={false}
-          animate={{ rotate: mobileOpen ? 135 : 0 }}
-          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-          style={{
-            width: 56, height: 56,
-            borderRadius: "50%",
-            background: "#0B1F33",
-            color: "white",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0 8px 28px rgba(11,31,51,0.5)",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          <MessageCircle size={22} />
-        </motion.button>
-      </div>
     </>
   );
 }
