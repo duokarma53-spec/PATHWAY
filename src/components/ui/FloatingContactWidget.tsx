@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Phone, Mail, ChevronRight, ChevronLeft, MessageCircle, X } from "lucide-react";
+import { Phone, Mail, ChevronRight, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const PHONE_RAW = "917506284722";
@@ -51,11 +51,26 @@ export function FloatingContactWidget() {
   return (
     <>
       {/* ── Desktop Side Widget ────────────────────────── */}
-      <div
-        className={`hidden md:flex fixed left-0 top-1/2 -translate-y-1/2 z-[90] items-center transition-transform duration-500 ease-out ${
-          collapsed ? "-translate-x-[calc(100%-24px)]" : "translate-x-0"
-        }`}
+      {/*
+        FIX: Previously used Tailwind classes to combine -translate-y-1/2 (centering)
+        with a conditional -translate-x-... (slide). Tailwind generates these as separate
+        utility classes but they share the same CSS `transform` property — toggling the
+        conditional class can reset the vertical offset and cause a jump/glitch.
+
+        Solution: Use a motion.div so Framer Motion owns all transforms. Vertical centering
+        is done via `top-1/2` + a fixed `y: "-50%"` in the animate prop, and the
+        horizontal slide is a separate `x` value. Framer composes them together without
+        any Tailwind class conflict.
+      */}
+      <motion.div
+        className="hidden md:flex fixed left-0 top-1/2 z-[90] items-center"
         style={{ pointerEvents: "auto" }}
+        initial={false}
+        animate={{
+          x: collapsed ? "calc(-100% + 24px)" : "0%",
+          y: "-50%",
+        }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >
         {/* Icon panel — hover expands each item */}
         <div
@@ -131,7 +146,7 @@ export function FloatingContactWidget() {
             <ChevronRight size={14} strokeWidth={3} />
           </motion.span>
         </button>
-      </div>
+      </motion.div>
 
       {/* ── Mobile FAB ─────────────────────────────────── */}
       <div className="md:hidden fixed bottom-6 right-6 z-[90] flex flex-col items-end gap-3 pointer-events-auto">
@@ -151,7 +166,7 @@ export function FloatingContactWidget() {
                 exit={{ opacity: 0, scale: 0.5, y: 20 }}
                 transition={{
                   duration: 0.25,
-                  delay: mobileMenuOpen ? (MOBILE_ITEMS.length - 1 - i) * 0.06 : i * 0.04,
+                  delay: (MOBILE_ITEMS.length - 1 - i) * 0.06,
                   ease: [0.22, 1, 0.36, 1],
                 }}
                 className={`w-[52px] h-[52px] rounded-full ${item.bg} text-white shadow-xl flex items-center justify-center active:scale-95 transition-transform`}
@@ -161,15 +176,24 @@ export function FloatingContactWidget() {
             ))}
         </AnimatePresence>
 
-        {/* Main toggle button */}
+        {/*
+          FIX: Previously the button rotated 45° AND swapped icons (MessageCircle ↔ X)
+          simultaneously. The icon DOM swap caused a re-render in the middle of the
+          rotation animation, producing a visible jump/glitch.
+
+          Solution: Keep a single icon (MessageCircle) and rotate it 135° to visually
+          suggest "close" — no DOM node is swapped so the animation runs cleanly.
+          `initial={false}` prevents the animation from firing on first render.
+        */}
         <motion.button
           onClick={() => setMobileMenuOpen((o) => !o)}
           className="w-14 h-14 rounded-full bg-navy flex items-center justify-center text-white shadow-xl"
           aria-label={mobileMenuOpen ? "Close contact menu" : "Open contact menu"}
-          animate={{ rotate: mobileMenuOpen ? 45 : 0 }}
+          initial={false}
+          animate={{ rotate: mobileMenuOpen ? 135 : 0 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
         >
-          {mobileMenuOpen ? <X size={22} /> : <MessageCircle size={22} />}
+          <MessageCircle size={22} />
         </motion.button>
       </div>
     </>
