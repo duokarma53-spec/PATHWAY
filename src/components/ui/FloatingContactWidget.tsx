@@ -52,18 +52,14 @@ export function FloatingContactWidget() {
     <>
       {/* ── Desktop Side Widget ────────────────────────── */}
       <div
-        className="hidden md:flex fixed left-0 top-1/2 -translate-y-1/2 z-[90] items-center"
+        className={`hidden md:flex fixed left-0 top-1/2 -translate-y-1/2 z-[90] items-center transition-transform duration-500 ease-out ${
+          collapsed ? "-translate-x-[calc(100%-24px)]" : "translate-x-0"
+        }`}
         style={{ pointerEvents: "auto" }}
       >
-        {/* Icon panel — slides in/out, hover expands each item */}
+        {/* Icon panel — hover expands each item */}
         <div
-          className={`flex flex-col gap-3 py-4 px-3 bg-navy/95 backdrop-blur-md rounded-r-3xl
-            shadow-[20px_0_40px_-15px_rgba(11,31,51,0.5)] border-y border-r border-white/10
-            transition-all duration-500 ease-out ${
-              collapsed
-                ? "opacity-0 -translate-x-full pointer-events-none"
-                : "opacity-100 translate-x-0"
-            }`}
+          className="flex flex-col gap-3 py-4 px-3 bg-navy/95 backdrop-blur-md rounded-r-3xl shadow-[20px_0_40px_-15px_rgba(11,31,51,0.5)] border-y border-r border-white/10"
         >
           {/* Phone */}
           <a
