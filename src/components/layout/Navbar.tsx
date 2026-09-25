@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMagneticHover } from "@/hooks/useMagneticHover";
 import { cn } from "@/lib/utils";
-import { Menu, X, ArrowUpRight, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowUpRight, ArrowRight, Phone } from "lucide-react";
 
 // --- Types ---
 type NavItem = {
@@ -121,11 +121,11 @@ function NavDesktopItem({
           >
             <motion.span
               className={cn(
-                "block text-[15px] font-sans font-semibold tracking-wide transition-colors duration-300",
-                isActive ? "text-navy" : "text-midnight/80 hover:text-navy"
+                "block text-[15px] font-sans font-semibold tracking-[0.01em] transition-colors duration-300",
+                isActive ? "text-navy" : "text-midnight/75 hover:text-navy"
               )}
-              whileHover={{ y: -2 }}
-              transition={{ ease: "easeOut", duration: 0.3 }}
+              whileHover={{ y: -1 }}
+              transition={{ ease: "easeOut", duration: 0.25 }}
             >
               {item.label}
             </motion.span>
@@ -284,42 +284,51 @@ export function Navbar() {
     <>
       <CustomCursor active={cursorActive} />
 
-      {/* --- Desktop Floating Island --- */}
+      {/* ─── Floating Navbar ─────────────────────────────────────────────
+           Sits BELOW the NewsTicker (36px) with a 12px gap.
+           Uses `top` offset so it never overlaps the ticker.
+           Scrolled → rises slightly, becomes more opaque.
+      ──────────────────────────────────────────────────────────────── */}
       <motion.header
-        className="fixed top-0 left-0 right-0 z-50 flex justify-center pointer-events-none"
-        initial={{ y: -100 }}
-        animate={{ y: scrolled ? 12 : 20 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="fixed left-0 right-0 z-50 flex justify-center pointer-events-none"
+        style={{ top: 36 }}
+        initial={{ y: -120, opacity: 0 }}
+        animate={{ y: scrolled ? 8 : 16, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 28, delay: 0.1 }}
       >
         <motion.div
-          className="pointer-events-auto w-[95%] max-w-[1280px] flex items-center justify-between mx-auto"
+          className="pointer-events-auto w-[94%] max-w-[1340px] flex items-center justify-between mx-auto"
           animate={{
-            backgroundColor: scrolled ? "rgba(247, 245, 239, 0.98)" : "rgba(247, 245, 239, 0.92)",
-            backdropFilter: scrolled ? "blur(24px)" : "blur(16px)",
-            paddingTop: "14px",
-            paddingBottom: "14px",
-            paddingLeft: "28px",
-            paddingRight: "14px",
-            borderRadius: "14px",
+            backgroundColor: scrolled
+              ? "rgba(247, 245, 239, 1)"
+              : "rgba(247, 245, 239, 0.88)",
+            backdropFilter: scrolled ? "blur(28px)" : "blur(18px)",
+            paddingTop: scrolled ? "13px" : "16px",
+            paddingBottom: scrolled ? "13px" : "16px",
+            paddingLeft: "32px",
+            paddingRight: "16px",
+            borderRadius: "16px",
             boxShadow: scrolled
-              ? "0 8px 32px -8px rgba(11, 31, 51, 0.22), 0 1px 0 rgba(11,31,51,0.06)"
-              : "0 4px 24px -8px rgba(11, 31, 51, 0.14), 0 1px 0 rgba(11,31,51,0.06)",
-            border: "1.5px solid rgba(11, 31, 51, 0.14)",
+              ? "0 12px 40px -10px rgba(11,31,51,0.28), 0 0 0 1.5px rgba(11,31,51,0.12)"
+              : "0 6px 32px -10px rgba(11,31,51,0.18), 0 0 0 1.5px rgba(11,31,51,0.10)",
           }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
         >
-          {/* Brand Area */}
-          <Link href="/" className="flex items-center gap-2 group">
+          {/* Brand */}
+          <Link href="/" className="flex items-center gap-3 group shrink-0">
             <img
               src="/images/logo.jpeg"
               alt="Pathway Education Consultancy"
-              className="h-10 lg:h-12 w-auto object-contain"
+              className="h-11 lg:h-14 w-auto object-contain drop-shadow-sm"
             />
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center" onMouseLeave={() => setHoveredMegaMenu(null)}>
-            <ul className="flex items-center gap-2 xl:gap-6 relative">
+          {/* Desktop Nav */}
+          <nav
+            className="hidden lg:flex items-center"
+            onMouseLeave={() => setHoveredMegaMenu(null)}
+          >
+            <ul className="flex items-center gap-1 xl:gap-2 relative">
               {NAV_LINKS.map((link) => (
                 <div key={link.label} className="relative">
                   <NavDesktopItem
@@ -331,7 +340,6 @@ export function Navbar() {
                     }}
                     setCursorActive={setCursorActive}
                   />
-                  
                   {link.hasMegaMenu === "services" && (
                     <ServicesMegaMenu isHovered={hoveredMegaMenu === "services"} />
                   )}
@@ -343,29 +351,38 @@ export function Navbar() {
             </ul>
           </nav>
 
-          {/* Premium Pill CTA */}
-          <div className="hidden lg:block">
+          {/* CTA */}
+          <div className="hidden lg:flex items-center gap-3 shrink-0">
+            {/* Phone quick-link */}
+            <a
+              href="tel:+917506284722"
+              className="hidden xl:flex items-center gap-2 text-[13px] font-semibold text-navy/70 hover:text-navy transition-colors duration-200 tracking-wide"
+            >
+              <Phone size={13} strokeWidth={2.5} className="text-gold" />
+              +91 75062 84722
+            </a>
+            <div className="hidden xl:block w-px h-5 bg-navy/15" />
             <Link
               href="#contact"
-              className="group flex items-center justify-center gap-2 bg-navy text-ivory h-[46px] px-7 rounded-xl text-[14px] font-sans font-semibold tracking-wide transition-all duration-300 hover:bg-midnight hover:shadow-[0_8px_24px_-6px_rgba(11,31,51,0.45)] active:scale-[0.97]"
+              className="group flex items-center justify-center gap-2 bg-navy text-ivory h-[50px] px-8 rounded-[13px] text-[14px] font-sans font-semibold tracking-wide shadow-[0_4px_16px_-4px_rgba(11,31,51,0.4)] transition-all duration-300 hover:bg-midnight hover:shadow-[0_8px_28px_-6px_rgba(11,31,51,0.55)] active:scale-[0.97]"
               onMouseEnter={() => setCursorActive(true)}
               onMouseLeave={() => setCursorActive(false)}
             >
               Start Your Journey
               <ArrowUpRight
                 size={15}
-                className="text-gold transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300"
+                className="text-gold group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300"
               />
             </Link>
           </div>
 
-          {/* Mobile Menu Toggle */}
+          {/* Mobile toggle */}
           <button
-            className="lg:hidden w-10 h-10 flex items-center justify-center text-navy bg-navy/5 rounded-xl mr-2"
+            className="lg:hidden w-11 h-11 flex items-center justify-center text-navy bg-navy/8 rounded-xl mr-1 border border-navy/10"
             onClick={() => setMobileMenuOpen(true)}
             aria-label="Open Menu"
           >
-            <Menu size={18} />
+            <Menu size={20} />
           </button>
         </motion.div>
       </motion.header>
