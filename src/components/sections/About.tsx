@@ -11,7 +11,7 @@ export function About() {
       <div className="container mx-auto px-4 md:px-8 max-w-[1400px]">
         
         {/* Editorial Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20 md:mb-32">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-32">
           <div className="max-w-2xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -53,7 +53,7 @@ export function About() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 relative">
           
           {/* Left Column (Images 1 & 2) */}
-          <div className="md:col-span-5 flex flex-col gap-12 md:gap-32 md:mt-20">
+          <div className="md:col-span-5 flex flex-col gap-6 md:gap-32 md:mt-20">
             <motion.div 
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -94,7 +94,7 @@ export function About() {
           </div>
 
           {/* Right Column (Images 3 & 4) */}
-          <div className="md:col-span-7 flex flex-col gap-12 md:gap-24 relative">
+          <div className="md:col-span-7 flex flex-col gap-6 md:gap-24 relative">
             
             {/* Minimal About Text block intersecting */}
             <motion.div 

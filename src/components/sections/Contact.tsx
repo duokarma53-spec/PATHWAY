@@ -232,7 +232,7 @@ export function Contact() {
   const TIME_OPTIONS = ["Morning (9 AM – 12 PM)", "Afternoon (12 PM – 3 PM)", "Evening (3 PM – 6 PM)"];
 
   return (
-    <section id="contact" className="py-16 md:py-24 bg-[#F7F5EF] relative">
+    <section id="contact" className="py-14 md:py-24 bg-[#F7F5EF] relative">
       {/* Gold geometric accent */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full border border-gold/10" />
@@ -338,7 +338,7 @@ export function Contact() {
 
           {/* Right — form */}
           <div className="w-full lg:w-[62%] relative">
-            <div className="bg-white/40 backdrop-blur-2xl rounded-3xl border border-white/60 p-7 md:p-12 relative overflow-visible shadow-[0_8px_32px_-8px_rgba(11,31,51,0.08)]">
+            <div className="bg-white/40 backdrop-blur-2xl rounded-3xl border border-white/60 p-5 sm:p-7 md:p-12 relative overflow-visible shadow-[0_8px_32px_-8px_rgba(11,31,51,0.08)]">
 
               <AnimatePresence mode="wait">
                 {!isSubmitted ? (

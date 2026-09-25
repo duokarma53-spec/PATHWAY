@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export function FinalCTA() {
   return (
-    <section className="relative py-32 md:py-48 bg-navy text-center overflow-hidden">
+    <section className="relative py-20 md:py-48 bg-navy text-center overflow-hidden">
       
       {/* Cinematic Background */}
       <div className="absolute inset-0 z-0">
@@ -40,7 +40,7 @@ export function FinalCTA() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1, delay: 0.2 }}
-          className="font-serif text-5xl md:text-7xl lg:text-8xl text-white leading-[1] tracking-tight mb-8"
+          className="font-serif text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-white leading-[1] tracking-tight mb-6 md:mb-8"
         >
           READY TO BEGIN <br className="hidden md:block" />
           <span className="italic text-white/50">YOUR JOURNEY?</span>

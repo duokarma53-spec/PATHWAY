@@ -381,7 +381,7 @@ export function Navbar() {
             className="fixed inset-0 z-[100] bg-ivory flex flex-col overflow-hidden"
           >
             {/* Mobile Menu Header */}
-            <div className="px-6 py-8 flex justify-between items-center border-b border-navy/5">
+            <div className="px-5 py-5 sm:px-6 sm:py-8 flex justify-between items-center border-b border-navy/5">
               <img src="/images/logo.jpeg" alt="Pathway Education Consultancy" className="h-10 w-auto object-contain" />
               <button
                 className="w-10 h-10 flex items-center justify-center text-navy bg-navy/5 rounded-full"
@@ -418,7 +418,7 @@ export function Navbar() {
                           {link.hasMegaMenu === "study-abroad" ? (
                             <button 
                               onClick={() => setMobileSubMenu("study-abroad")}
-                              className="text-4xl font-serif text-navy flex items-center justify-between w-full text-left"
+                              className="text-3xl sm:text-4xl font-serif text-navy flex items-center justify-between w-full text-left"
                             >
                               <span className="flex items-baseline gap-4">
                                 <span className="text-sm font-sans font-medium text-gold">0{i + 1}</span>
@@ -430,7 +430,7 @@ export function Navbar() {
                             <Link
                               href={link.href}
                               onClick={() => setMobileMenuOpen(false)}
-                              className="text-4xl font-serif text-navy flex items-baseline gap-4"
+                              className="text-3xl sm:text-4xl font-serif text-navy flex items-baseline gap-4"
                             >
                               <span className="text-sm font-sans font-medium text-gold">0{i + 1}</span>
                               {link.label}
@@ -457,7 +457,7 @@ export function Navbar() {
                       <ArrowRight size={16} className="rotate-180" /> Back
                     </button>
                     
-                    <h2 className="text-4xl font-serif text-navy mb-8">Study Abroad</h2>
+                    <h2 className="text-3xl sm:text-4xl font-serif text-navy mb-8">Study Abroad</h2>
                     
                     <img 
                       src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=600&auto=format&fit=crop" 
@@ -484,11 +484,11 @@ export function Navbar() {
             </div>
 
             {/* Mobile Footer Area */}
-            <div className="p-6 bg-white border-t border-navy/5 shrink-0 flex flex-col gap-4">
+            <div className="p-4 sm:p-6 bg-white border-t border-navy/5 shrink-0 flex flex-col gap-3">
               <Link 
                 href="#contact" 
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-2 bg-navy text-ivory h-14 rounded-full text-lg font-sans font-medium w-full"
+                className="flex items-center justify-center gap-2 bg-navy text-ivory h-12 sm:h-14 rounded-full text-base sm:text-lg font-sans font-medium w-full"
               >
                 Start Your Journey <ArrowUpRight size={20} className="text-gold" />
               </Link>

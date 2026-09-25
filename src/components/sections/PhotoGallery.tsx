@@ -159,7 +159,7 @@ export function PhotoGallery() {
             onClick={() => setLightbox(null)}
           >
             <button
-              className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+              className="absolute top-4 right-4 w-11 h-11 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/25 transition-colors active:scale-95 z-10"
               onClick={() => setLightbox(null)}
               aria-label="Close"
             >

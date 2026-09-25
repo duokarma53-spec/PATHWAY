@@ -15,9 +15,41 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    /* Prevent horizontal overflow on mobile */
+    overflow-x: hidden;
   }
   body {
     @apply bg-ivory text-midnight font-sans antialiased selection:bg-gold/30 selection:text-navy;
+    overflow-x: hidden;
+    /* Remove iOS tap highlight on interactive elements */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Prevent iOS auto-zoom on form inputs (font-size must be >= 16px on iOS) */
+  input,
+  textarea,
+  select,
+  button {
+    font-size: max(16px, 1em);
+  }
+
+  /* Restore elegant smaller sizes visually with transform for non-mobile */
+  @media (min-width: 768px) {
+    input,
+    textarea,
+    select {
+      font-size: inherit;
+    }
+  }
+
+  /* Better touch scrolling on mobile */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Prevent pull-to-refresh interference */
+  html, body {
+    overscroll-behavior-y: none;
   }
 }
 
@@ -25,3 +57,4 @@
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
+

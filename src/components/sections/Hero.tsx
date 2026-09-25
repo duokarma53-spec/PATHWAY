@@ -19,11 +19,11 @@ export function Hero() {
   return (
     <section 
       ref={containerRef}
-      className="relative min-h-[100vh] flex items-center justify-center pt-32 pb-20 overflow-hidden bg-ivory selection:bg-gold/30"
+      className="relative min-h-[100svh] flex items-center justify-center pt-28 pb-16 overflow-hidden bg-ivory selection:bg-gold/30"
     >
       <div className="container mx-auto px-4 md:px-8 relative z-20 w-full max-w-[1400px]">
         {/* Editorial Layout Container */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           
           {/* Left Column: Typography */}
           <div className="lg:col-span-6 xl:col-span-5 flex flex-col justify-center order-2 lg:order-1 relative z-20">
@@ -46,7 +46,7 @@ export function Hero() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="font-serif text-6xl md:text-7xl lg:text-8xl xl:text-[7rem] font-medium text-navy leading-[0.9] tracking-tight mb-8"
+              className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[7rem] font-medium text-navy leading-[0.92] tracking-tight mb-6 md:mb-8"
             >
               YOUR WORLD<br />
               <span className="text-midnight/60 italic">BEGINS BEYOND</span><br />
@@ -57,7 +57,7 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="text-lg md:text-xl text-midnight/70 font-sans leading-relaxed max-w-md mb-12"
+              className="text-base md:text-xl text-midnight/70 font-sans leading-relaxed max-w-md mb-8 md:mb-12"
             >
               Personalized guidance for ambitious students building their future across the world.
             </motion.p>
@@ -81,7 +81,7 @@ export function Hero() {
           </div>
 
           {/* Right Column: Architectural Image Composition */}
-          <div className="lg:col-span-6 xl:col-span-7 relative h-[60vh] lg:h-[80vh] w-full order-1 lg:order-2 mt-12 lg:mt-0">
+          <div className="lg:col-span-6 xl:col-span-7 relative h-[45vh] sm:h-[55vh] lg:h-[80vh] w-full order-1 lg:order-2 mt-4 sm:mt-8 lg:mt-0">
             
             {/* Primary Large Image */}
             <motion.div 

@@ -41,12 +41,12 @@ export function Footer() {
         </span>
       </div>
 
-      <div className="container mx-auto px-4 md:px-8 max-w-[1400px] pt-32 pb-8 relative z-10">
+      <div className="container mx-auto px-4 md:px-8 max-w-[1400px] pt-16 md:pt-32 pb-8 relative z-10">
         
         {/* Strong CTA Above Footer Columns */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10 mb-32 relative z-20">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-16 md:mb-32 relative z-20">
           <div className="max-w-2xl">
-            <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl leading-[1.1] tracking-tight text-white mb-4">
+            <h2 className="font-serif text-3xl md:text-6xl lg:text-7xl leading-[1.1] tracking-tight text-white mb-4">
               Your journey <br className="hidden md:block"/>
               <span className="text-white/50 italic">starts here.</span>
             </h2>
@@ -64,7 +64,7 @@ export function Footer() {
         </div>
 
         {/* Top Section: Newsletter & Brand */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-16 mb-24 border-b border-white/10 pb-16 relative z-20">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-12 md:mb-24 border-b border-white/10 pb-10 md:pb-16 relative z-20">
           
           <div className="flex flex-col gap-6 max-w-lg">
             <Link href="/" className="inline-block">
@@ -96,7 +96,7 @@ export function Footer() {
         </div>
 
         {/* Navigation Columns */}
-        <div className="grid grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-32 relative z-20">
+        <div className="grid grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-8 mb-16 md:mb-32 relative z-20">
           
           {/* Column 1 */}
           <div className="flex flex-col gap-8 lg:col-span-2">

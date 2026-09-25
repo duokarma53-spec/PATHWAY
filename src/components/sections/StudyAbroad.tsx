@@ -82,7 +82,7 @@ export function StudyAbroad() {
         </div>
 
         {/* Interactive Destinations List */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8">
           
           {/* Left: The List */}
           <div className="lg:col-span-7 flex flex-col justify-center">
@@ -97,7 +97,7 @@ export function StudyAbroad() {
                     <span className="text-sm font-sans font-medium text-sage/50 group-hover:text-gold transition-colors duration-300">
                       0{i + 1}
                     </span>
-                    <h3 className="font-serif text-2xl md:text-3xl lg:text-4xl text-white/50 group-hover:text-white transition-colors duration-500">
+                    <h3 className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white/50 group-hover:text-white transition-colors duration-500">
                       {dest.name}
                     </h3>
                   </div>
@@ -118,7 +118,7 @@ export function StudyAbroad() {
           </div>
 
           {/* Right: Featured Destination Info */}
-          <div className="lg:col-span-5 relative h-[400px] lg:h-[600px]">
+          <div className="hidden lg:block lg:col-span-5 relative h-[600px]">
             <AnimatePresence mode="wait">
               <motion.div
                 key={hoveredDest.name}
