@@ -1,7 +1,6 @@
 "use client"
 
 import { motion, useScroll, useTransform } from "framer-motion"
-import ReactLenis from "lenis/react"
 import { useRef } from "react"
 
 const projects = [
@@ -55,21 +54,24 @@ const StickyCard_001 = ({
   targetScale: number
 }) => {
   const container = useRef<HTMLDivElement>(null)
-
   const scale = useTransform(progress, range, [1, targetScale])
 
   return (
-    <div ref={container} className="sticky top-0 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div
+      ref={container}
+      className="sticky flex items-center justify-center px-4 sm:px-6 lg:px-8"
+      style={{ top: "10vh", height: "auto" }}
+    >
       <motion.div
         style={{
           scale,
-          top: `calc(-5vh + ${i * 15 + 200}px)`,
+          top: `calc(${i * 25}px)`,
         }}
-        className="rounded-2xl sm:rounded-3xl lg:rounded-4xl relative -top-1/4 flex origin-top flex-col overflow-hidden
-                   h-[200px] w-[280px] 
-                   sm:h-[240px] sm:w-[360px] 
-                   md:h-[280px] md:w-[420px] 
-                   lg:h-[300px] lg:w-[500px]"
+        className="rounded-2xl sm:rounded-3xl relative flex origin-top flex-col overflow-hidden shadow-2xl
+                   h-[220px] w-[300px] 
+                   sm:h-[260px] sm:w-[380px] 
+                   md:h-[320px] md:w-[480px] 
+                   lg:h-[380px] lg:w-[580px]"
       >
         <img src={src || "/placeholder.svg"} alt={title} className="h-full w-full object-cover" />
       </motion.div>
@@ -85,29 +87,24 @@ const ImagesScrollingAnimation = () => {
   })
 
   return (
-    <ReactLenis root>
-      <main
-        ref={container}
-        className="relative flex w-full flex-col items-center justify-center 
-                                     pb-[50vh] pt-[5vh] 
-                                     sm:pb-[60vh] sm:pt-[8vh] 
-                                     lg:pb-[70vh] lg:pt-[10vh]"
-      >
-        {projects.map((project, i) => {
-          const targetScale = Math.max(0.6, 1 - (projects.length - i - 1) * 0.08)
-          return (
-            <StickyCard_001
-              key={`p_${i}`}
-              i={i}
-              {...project}
-              progress={scrollYProgress}
-              range={[i * (1 / projects.length), 1]}
-              targetScale={targetScale}
-            />
-          )
-        })}
-      </main>
-    </ReactLenis>
+    <div
+      ref={container}
+      className="relative w-full"
+    >
+      {projects.map((project, i) => {
+        const targetScale = Math.max(0.7, 1 - (projects.length - i - 1) * 0.05)
+        return (
+          <StickyCard_001
+            key={`p_${i}`}
+            i={i}
+            {...project}
+            progress={scrollYProgress}
+            range={[i * (1 / projects.length), 1]}
+            targetScale={targetScale}
+          />
+        )
+      })}
+    </div>
   )
 }
 
