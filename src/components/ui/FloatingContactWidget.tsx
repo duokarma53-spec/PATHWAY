@@ -194,7 +194,8 @@ export function FloatingContactWidget() {
 
           {/* Email */}
           <a
-            href={`mailto:${MAIL}`}
+            href={`https://mail.google.com/mail/?view=cm&fs=1&to=${MAIL}`}
+            target="_blank" rel="noopener noreferrer"
             aria-label={`Email ${MAIL}`}
             className="group"
             style={{ display: "flex", alignItems: "center", borderRadius: 999, overflow: "hidden", cursor: "pointer", textDecoration: "none" }}
