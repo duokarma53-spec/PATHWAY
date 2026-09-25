@@ -8,11 +8,11 @@ import { ImagesScrollingAnimation } from "@/components/ui/images-scrolling-anima
 
 export function PhotoGallery() {
   return (
-    <section id="gallery" className="bg-midnight text-white relative overflow-hidden">
+    <section id="gallery" className="bg-midnight text-white relative">
 
-      {/* ═══════════════════════════════════════════════════
-          BACKGROUND LAYERS — all pointer-events:none, z-0
-          ═══════════════════════════════════════════════════ */}
+      {/* Background wrapper — overflow-hidden MUST be here, NOT on the section,
+          because overflow-hidden on the section kills position:sticky for cards */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
 
       {/* 1. Primary radial glow — soft navy/blue bloom behind the gallery center */}
       <div
@@ -115,6 +115,7 @@ export function PhotoGallery() {
             "linear-gradient(to bottom, transparent 5%, rgba(200,169,107,0.06) 30%, rgba(200,169,107,0.04) 70%, transparent 95%)",
         }}
       />
+      </div>{/* end background wrapper */}
 
 
       {/* ═══════════════════════════════════════════════════

@@ -59,15 +59,14 @@ const StickyCard_001 = ({
   return (
     <div
       ref={container}
-      className="sticky flex items-center justify-center px-4 sm:px-6 lg:px-8"
-      style={{ top: "10vh", height: "auto" }}
+      className="sticky top-0 flex items-center justify-center px-4 sm:px-6 lg:px-8"
     >
       <motion.div
         style={{
           scale,
-          top: `calc(${i * 25}px)`,
+          top: `calc(-5vh + ${i * 25}px)`,
         }}
-        className="rounded-2xl sm:rounded-3xl relative flex origin-top flex-col overflow-hidden shadow-2xl
+        className="rounded-2xl sm:rounded-3xl relative -top-[25%] flex origin-top flex-col overflow-hidden shadow-2xl
                    h-[220px] w-[300px] 
                    sm:h-[260px] sm:w-[380px] 
                    md:h-[320px] md:w-[480px] 
@@ -89,10 +88,13 @@ const ImagesScrollingAnimation = () => {
   return (
     <div
       ref={container}
-      className="relative w-full"
+      className="relative flex w-full flex-col items-center justify-center
+                 pt-[5vh] pb-[50vh]
+                 sm:pt-[8vh] sm:pb-[60vh]
+                 lg:pt-[10vh] lg:pb-[70vh]"
     >
       {projects.map((project, i) => {
-        const targetScale = Math.max(0.7, 1 - (projects.length - i - 1) * 0.05)
+        const targetScale = Math.max(0.6, 1 - (projects.length - i - 1) * 0.05)
         return (
           <StickyCard_001
             key={`p_${i}`}
