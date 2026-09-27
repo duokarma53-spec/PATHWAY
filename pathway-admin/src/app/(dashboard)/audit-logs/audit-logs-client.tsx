@@ -22,8 +22,8 @@ const EXTENDED_LOGS: ActivityLog[] = [
   },
   {
     id: "act-8",
-    actor: "Hatim Patel",
-    actorRole: "Super Admin",
+    actor: "Administrator",
+    actorRole: "Admin",
     action: "uploaded and approved Passport document",
     entity: "Karan Johal",
     entityCode: "STU-2038",

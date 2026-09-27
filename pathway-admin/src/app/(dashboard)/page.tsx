@@ -63,7 +63,7 @@ export default function DashboardPage() {
             </span>
           </div>
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-            Good morning, Hatim.
+            Good morning, Admin.
           </h1>
           <p className="text-xs md:text-sm text-muted-foreground">
             Pathway Education Consultancy overview for {format(currentDate, "EEEE, MMMM do, yyyy")}.

@@ -99,8 +99,8 @@ export function LeadDetailClient({ leadId }: { leadId: string }) {
     if (!newNote.trim()) return
     const noteObj = {
       id: "note-" + Date.now(),
-      author: "Hatim Patel (You)",
-      role: "Super Admin",
+      author: "Admin (You)",
+      role: "Admin",
       content: newNote.trim(),
       timestamp: "Just now",
       isPinned: false
@@ -127,7 +127,7 @@ export function LeadDetailClient({ leadId }: { leadId: string }) {
       title: newTimelineTitle.trim(),
       description: "Milestone logged manually by counselor.",
       timestamp: "Just now",
-      actor: "Hatim Patel",
+      actor: "Admin",
       completed: true
     }
     setTimeline([event, ...timeline])

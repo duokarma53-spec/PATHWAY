@@ -33,7 +33,7 @@ const COUNSELLOR_PERF = [
   { name: "Rohan Varma", leads: 42, converted: 18, conversionRate: "42.8%", revenue: "$36,000" },
   { name: "Neha Sharma", leads: 38, converted: 14, conversionRate: "36.8%", revenue: "$28,500" },
   { name: "Dev Patel", leads: 31, converted: 12, conversionRate: "38.7%", revenue: "$24,000" },
-  { name: "Hatim Patel", leads: 22, converted: 11, conversionRate: "50.0%", revenue: "$22,000" },
+  { name: "Admin", leads: 22, converted: 11, conversionRate: "50.0%", revenue: "$22,000" },
 ]
 
 const MONTHLY_REVENUE = [

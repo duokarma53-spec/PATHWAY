@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS universities (
 CREATE TABLE IF NOT EXISTS leads (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   full_name TEXT NOT NULL,
-  email TEXT NOT NULL,
+  email TEXT,
   phone TEXT NOT NULL,
   parent_name TEXT,
   grade TEXT,
@@ -77,9 +77,9 @@ CREATE TABLE IF NOT EXISTS leads (
   city TEXT,
   country TEXT DEFAULT 'India',
   message TEXT,
-  status TEXT DEFAULT 'new' CHECK (status IN ('new', 'contacted', 'counselling_scheduled', 'counselling_done', 'shortlisting_in_progress', 'converted_to_student', 'cold', 'lost')),
-  priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'urgent')),
-  lead_source TEXT DEFAULT 'Website Inquiry' CHECK (lead_source IN ('Website Inquiry', 'Education Fair', 'Direct Referral', 'Google Search / SEO', 'Instagram / Social', 'WhatsApp Direct', 'Walk-in')),
+  status TEXT DEFAULT 'new',
+  priority TEXT DEFAULT 'medium',
+  lead_source TEXT DEFAULT 'Website Inquiry',
   assigned_counsellor UUID REFERENCES profiles(id) ON DELETE SET NULL,
   last_contacted_at TIMESTAMPTZ,
   next_followup_at TIMESTAMPTZ,
@@ -377,49 +377,127 @@ ALTER TABLE services ENABLE ROW LEVEL SECURITY;
 ALTER TABLE success_stories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE faqs ENABLE ROW LEVEL SECURITY;
 
--- Public can read content
+-- ── Public content policies (idempotent) ───────────────────────────────────────
+DROP POLICY IF EXISTS "Public can read destinations" ON destinations;
 CREATE POLICY "Public can read destinations" ON destinations FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public can read universities" ON universities;
 CREATE POLICY "Public can read universities" ON universities FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public can read services" ON services;
 CREATE POLICY "Public can read services" ON services FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public can read success_stories" ON success_stories;
 CREATE POLICY "Public can read success_stories" ON success_stories FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public can read faqs" ON faqs;
 CREATE POLICY "Public can read faqs" ON faqs FOR SELECT USING (true);
 
--- Anyone can submit inquiry/leads from website
+-- ── Website Lead & Inquiry Form Submission policies ───────────────────────────
+DROP POLICY IF EXISTS "Public can insert leads" ON leads;
 CREATE POLICY "Public can insert leads" ON leads FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Public can read leads" ON leads;
+CREATE POLICY "Public can read leads" ON leads FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Public can insert consultations" ON consultations;
 CREATE POLICY "Public can insert consultations" ON consultations FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Public can insert contact submissions" ON contact_submissions;
 CREATE POLICY "Public can insert contact submissions" ON contact_submissions FOR INSERT WITH CHECK (true);
 
--- Authenticated Admin staff has full access
+-- ── Enable Supabase Realtime for instant live updates ─────────────────────────
+DO $$
+BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE leads;
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
+
+-- ── Authenticated Admin staff access policies ─────────────────────────────────
+DROP POLICY IF EXISTS "Authenticated full access profiles" ON profiles;
 CREATE POLICY "Authenticated full access profiles" ON profiles FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access destinations" ON destinations;
 CREATE POLICY "Authenticated full access destinations" ON destinations FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access universities" ON universities;
 CREATE POLICY "Authenticated full access universities" ON universities FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access leads" ON leads;
 CREATE POLICY "Authenticated full access leads" ON leads FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access students" ON students;
 CREATE POLICY "Authenticated full access students" ON students FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access parents" ON parents;
 CREATE POLICY "Authenticated full access parents" ON parents FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access applications" ON applications;
 CREATE POLICY "Authenticated full access applications" ON applications FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access app_history" ON application_status_history;
 CREATE POLICY "Authenticated full access app_history" ON application_status_history FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access documents" ON documents;
 CREATE POLICY "Authenticated full access documents" ON documents FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access tasks" ON tasks;
 CREATE POLICY "Authenticated full access tasks" ON tasks FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access appointments" ON appointments;
 CREATE POLICY "Authenticated full access appointments" ON appointments FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access payments" ON payments;
 CREATE POLICY "Authenticated full access payments" ON payments FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access communications" ON communications;
 CREATE POLICY "Authenticated full access communications" ON communications FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access notes" ON notes;
 CREATE POLICY "Authenticated full access notes" ON notes FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access audit_logs" ON audit_logs;
 CREATE POLICY "Authenticated full access audit_logs" ON audit_logs FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access notifications" ON notifications;
 CREATE POLICY "Authenticated full access notifications" ON notifications FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access consultations" ON consultations;
 CREATE POLICY "Authenticated full access consultations" ON consultations FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access contact_submissions" ON contact_submissions;
 CREATE POLICY "Authenticated full access contact_submissions" ON contact_submissions FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access services" ON services;
 CREATE POLICY "Authenticated full access services" ON services FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access success_stories" ON success_stories;
 CREATE POLICY "Authenticated full access success_stories" ON success_stories FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated full access faqs" ON faqs;
 CREATE POLICY "Authenticated full access faqs" ON faqs FOR ALL USING (auth.role() = 'authenticated');
 
--- Also allow Anon READ/WRITE for Demo testing when needed:
-CREATE POLICY "Anon read for demo leads" ON leads FOR SELECT USING (true);
+-- ── Demo / Client Read policies ───────────────────────────────────────────────
+DROP POLICY IF EXISTS "Anon read for demo students" ON students;
 CREATE POLICY "Anon read for demo students" ON students FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Anon read for demo applications" ON applications;
 CREATE POLICY "Anon read for demo applications" ON applications FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Anon read for demo documents" ON documents;
 CREATE POLICY "Anon read for demo documents" ON documents FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Anon read for demo tasks" ON tasks;
 CREATE POLICY "Anon read for demo tasks" ON tasks FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Anon read for demo appointments" ON appointments;
 CREATE POLICY "Anon read for demo appointments" ON appointments FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Anon read for demo payments" ON payments;
 CREATE POLICY "Anon read for demo payments" ON payments FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Anon read for demo profiles" ON profiles;
 CREATE POLICY "Anon read for demo profiles" ON profiles FOR SELECT USING (true);
 
 -- ==============================================================================
@@ -428,7 +506,7 @@ CREATE POLICY "Anon read for demo profiles" ON profiles FOR SELECT USING (true);
 
 -- Staff Profiles
 INSERT INTO profiles (id, email, full_name, role, phone, department) VALUES
-  ('a1111111-1111-1111-1111-111111111111', 'hatim@pathway.com', 'Hatim Patel', 'Super Admin', '+91 98200 11223', 'Executive Management'),
+  ('a1111111-1111-1111-1111-111111111111', 'admin@pathway.com', 'Administrator', 'Super Admin', '+91 98200 11223', 'Executive Management'),
   ('a2222222-2222-2222-2222-222222222222', 'rohan@pathway.com', 'Rohan Varma', 'Counsellor', '+91 98200 44556', 'UK & Europe Admissions'),
   ('a3333333-3333-3333-3333-333333333333', 'priya@pathway.com', 'Priya Iyer', 'Counsellor', '+91 98200 77889', 'Canada & USA Admissions'),
   ('a4444444-4444-4444-4444-444444444444', 'dev@pathway.com', 'Dev Patel', 'Counsellor', '+91 98200 99001', 'Australia & NZ Admissions')

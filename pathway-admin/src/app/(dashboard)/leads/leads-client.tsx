@@ -25,6 +25,32 @@ import { INITIAL_LEADS, Lead } from "@/lib/mock-data"
 import Link from "next/link"
 import { toast } from "sonner"
 import { CRMQuickActions } from "@/components/actions/crm-quick-actions"
+import { createClient } from "@/lib/supabase/client"
+
+// Helper to map DB row to Lead interface
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapDbLeadToLead(row: any): Lead {
+  const codeNum = row.id ? row.id.substring(0, 4).toUpperCase() : Math.floor(1000 + Math.random() * 9000);
+  return {
+    id: row.id || `lead-live-${Date.now()}`,
+    leadCode: `LD-${codeNum}`,
+    name: row.full_name || "Prospective Student",
+    email: row.email || "",
+    phone: row.phone || "",
+    preferredDestination: row.destination || "United Kingdom",
+    course: row.course || "Higher Education",
+    intake: row.intake || "Upcoming 2026",
+    qualification: row.qualification || "Graduate",
+    status: (row.status === "new" ? "New" : "New") as any,
+    priority: "High" as any,
+    leadSource: "Website",
+    assignedCounsellor: "Admin",
+    createdDate: row.created_at ? new Date(row.created_at).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+    lastContactDate: "Pending first contact",
+    score: 90,
+    notes: row.message || "Submitted via website consultation form",
+  };
+}
 
 export function LeadsClientView() {
   const [leads, setLeads] = React.useState<Lead[]>(INITIAL_LEADS)
@@ -36,6 +62,56 @@ export function LeadsClientView() {
   const [selectedLeads, setSelectedLeads] = React.useState<string[]>([])
   const [sortField, setSortField] = React.useState<"name" | "createdDate" | "priority">("createdDate")
   const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("desc")
+
+  // Live Supabase Leads Sync & Real-time Auto-Refresh
+  React.useEffect(() => {
+    const supabase = createClient();
+
+    async function fetchLiveLeads() {
+      try {
+        const { data, error } = await supabase
+          .from("leads")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (!error && data && data.length > 0) {
+          const live = data.map(mapDbLeadToLead);
+          setLeads((prev) => {
+            const liveIds = new Set(live.map((l) => l.id));
+            const remainingMock = prev.filter((p) => !liveIds.has(p.id));
+            return [...live, ...remainingMock];
+          });
+        }
+      } catch (err) {
+        console.debug("Error fetching live leads:", err);
+      }
+    }
+
+    fetchLiveLeads();
+
+    // Check localStorage fallback
+    try {
+      const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
+      if (local.length > 0) {
+        const localMapped = local.map(mapDbLeadToLead);
+        setLeads((prev) => [...localMapped, ...prev]);
+      }
+    } catch (e) {}
+
+    // Listen to real-time custom event
+    const handleNewLeadEvent = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail) {
+        const newLeadItem = mapDbLeadToLead(customEvent.detail);
+        setLeads((prev) => [newLeadItem, ...prev.filter((p) => p.id !== newLeadItem.id)]);
+      }
+    };
+
+    window.addEventListener("pathway_new_lead", handleNewLeadEvent);
+    return () => {
+      window.removeEventListener("pathway_new_lead", handleNewLeadEvent);
+    };
+  }, []);
 
   // Filter & Search logic
   const filteredLeads = React.useMemo(() => {

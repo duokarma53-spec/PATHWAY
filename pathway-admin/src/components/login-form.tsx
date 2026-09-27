@@ -270,7 +270,7 @@ export function LoginForm({
               Staff Account Security
             </h4>
             <p className="text-xs text-[#6B5E54] mb-4 leading-relaxed">
-              Staff accounts are provisioned and managed by Pathway System Administrators. Please contact Hatim Patel or your supervisor to reset your workspace access.
+              Staff accounts are provisioned and managed by Pathway System Administrators. Please contact your administrator to reset your workspace access.
             </p>
             <div className="p-3 rounded-xl bg-white border border-[#E3D9CC] text-xs text-[#52473F] mb-4 space-y-1">
               <div><strong>Admin Support:</strong> support@pathway.com</div>

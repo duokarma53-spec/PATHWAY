@@ -1,26 +1,11 @@
 import { createBrowserClient } from '@supabase/ssr'
 
+const DEFAULT_SUPABASE_URL = "https://dhfuflpfgmgfipchitpq.supabase.co";
+const DEFAULT_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRoZnVmbHBmZ21nZmlwY2hpdHBxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1MTgwMTIsImV4cCI6MjEwNjA5NDAxMn0.aUQtsiG6sSQtNBOYx84o4mvA6jcrrTlINymq4QkMrk0";
+
 export function createClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || DEFAULT_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON_KEY;
 
-  if (!url || !key || url.includes('dummy-project')) {
-    // Mock client fallback for development without credentials
-    return {
-      from: () => ({
-        select: () => Promise.resolve({ data: [], error: null }),
-        insert: () => Promise.resolve({ data: [], error: null }),
-        update: () => Promise.resolve({ data: [], error: null }),
-        delete: () => Promise.resolve({ data: [], error: null }),
-      }),
-      auth: {
-        getUser: async () => ({ data: { user: { id: '1', email: 'hatim@pathway.com' } }, error: null }),
-        signOut: async () => ({ error: null }),
-        getSession: async () => ({ data: { session: null }, error: null }),
-      },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any
-  }
-
-  return createBrowserClient(url, key)
+  return createBrowserClient(url, key);
 }

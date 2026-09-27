@@ -2,6 +2,7 @@ import { Sidebar } from "@/components/layout/sidebar"
 import { Topbar } from "@/components/layout/topbar"
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav"
 import { MobileInstallGate } from "@/components/pwa/install-prompt"
+import { LeadNotificationListener } from "@/components/realtime/lead-notification-listener"
 import { SidebarProvider } from "@/contexts/sidebar-context"
 
 export default function DashboardLayout({
@@ -42,6 +43,9 @@ export default function DashboardLayout({
 
       {/* Compulsory / Smart App Install Gate on Phone */}
       <MobileInstallGate />
+
+      {/* Real-time Lead Listener with Audio & Toast Alerts */}
+      <LeadNotificationListener />
     </SidebarProvider>
   )
 }

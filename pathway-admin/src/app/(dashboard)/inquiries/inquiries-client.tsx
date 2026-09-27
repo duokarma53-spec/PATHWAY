@@ -20,10 +20,90 @@ import { StatusBadge, PriorityBadge } from "@/components/ui/status-badge"
 import { INITIAL_LEADS, Lead } from "@/lib/mock-data"
 import Link from "next/link"
 import { toast } from "sonner"
+import { createClient } from "@/lib/supabase/client"
+
+// Helper to map DB row to Lead interface
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapDbLeadToLead(row: any): Lead {
+  const codeNum = row.id ? row.id.substring(0, 4).toUpperCase() : Math.floor(1000 + Math.random() * 9000);
+  return {
+    id: row.id || `lead-web-${Date.now()}`,
+    leadCode: `WEB-${codeNum}`,
+    name: row.full_name || "Prospective Student",
+    email: row.email || "",
+    phone: row.phone || "",
+    preferredDestination: row.destination || "United Kingdom",
+    course: row.course || "Higher Education",
+    intake: row.intake || "Upcoming 2026",
+    qualification: row.qualification || "Graduate",
+    status: (row.status === "new" ? "New" : "New") as any,
+    priority: "High" as any,
+    leadSource: "Website",
+    assignedCounsellor: "Admin",
+    createdDate: row.created_at ? new Date(row.created_at).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+    lastContactDate: "Pending first contact",
+    score: 90,
+    notes: row.message || "Submitted via website consultation form",
+  };
+}
 
 export function InquiriesClientView() {
   const websiteInquiries = INITIAL_LEADS.filter(l => l.leadSource === "Website")
   const [inquiries, setInquiries] = React.useState<Lead[]>(websiteInquiries)
+  const [isLoading, setIsLoading] = React.useState(true)
+
+  // Fetch live leads from Supabase and listen for real-time events
+  React.useEffect(() => {
+    const supabase = createClient();
+
+    async function loadLiveInquiries() {
+      try {
+        const { data, error } = await supabase
+          .from("leads")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (!error && data && data.length > 0) {
+          const liveLeads = data.map(mapDbLeadToLead);
+          // Merge live leads on top of initial mock data without duplicates
+          setInquiries((prev) => {
+            const liveIds = new Set(liveLeads.map((l) => l.id));
+            const remainingMock = prev.filter((p) => !liveIds.has(p.id));
+            return [...liveLeads, ...remainingMock];
+          });
+        }
+      } catch (err) {
+        console.debug("Live inquiry fetch error:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadLiveInquiries();
+
+    // Check localStorage for any inquiries submitted in this browser
+    try {
+      const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
+      if (local.length > 0) {
+        const localMapped = local.map(mapDbLeadToLead);
+        setInquiries((prev) => [...localMapped, ...prev]);
+      }
+    } catch (e) {}
+
+    // Listen to real-time custom event dispatched by LeadNotificationListener
+    const handleNewLeadEvent = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail) {
+        const newLeadItem = mapDbLeadToLead(customEvent.detail);
+        setInquiries((prev) => [newLeadItem, ...prev.filter((p) => p.id !== newLeadItem.id)]);
+      }
+    };
+
+    window.addEventListener("pathway_new_lead", handleNewLeadEvent);
+    return () => {
+      window.removeEventListener("pathway_new_lead", handleNewLeadEvent);
+    };
+  }, []);
 
   const handleAssignCounsellor = (id: string, counsellor: string) => {
     setInquiries(prev => prev.map(l => l.id === id ? { ...l, assignedCounsellor: counsellor, status: "Contacted" } : l))

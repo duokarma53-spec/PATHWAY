@@ -89,8 +89,8 @@ export function StudentDetailClient({ studentId }: { studentId: string }) {
     if (!newNote.trim()) return
     const noteObj = {
       id: "sn-" + Date.now(),
-      author: "Hatim Patel (You)",
-      role: "Super Admin",
+      author: "Admin (You)",
+      role: "Admin",
       content: newNote.trim(),
       timestamp: "Just now",
       isPinned: false
