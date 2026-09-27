@@ -1,36 +1,26 @@
-// import { createBrowserClient } from '@supabase/ssr'
+import { createBrowserClient } from '@supabase/ssr'
 
-// Mock query builder that safely handles chained Supabase calls
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function createMockQuery(): any {
-  const mockPromise = Promise.resolve({ data: [], error: null, count: 0 });
-  
-  const proxy = new Proxy(() => {}, {
-    get(target, prop) {
-      if (prop === 'then') return mockPromise.then.bind(mockPromise);
-      if (prop === 'catch') return mockPromise.catch.bind(mockPromise);
-      if (prop === 'finally') return mockPromise.finally.bind(mockPromise);
-      if (typeof prop === 'symbol') return undefined;
-      return createMockQuery;
-    },
-    apply() {
-      return createMockQuery;
-    }
-  });
-  return proxy;
-}
+export function createClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function createClient(): any {
-  // FORCE MOCK CLIENT FOR DEMO: By returning the mock client unconditionally, 
-  // we bypass any fetch errors caused by the dummy .env.local file.
-  return {
-    from: () => createMockQuery(),
-    auth: {
-      getUser: async () => ({ data: { user: { id: '1', email: 'admin@pathway.demo' } }, error: null }),
-      signOut: async () => ({ error: null }),
-      getSession: async () => ({ data: { session: null }, error: null })
-    }
+  if (!url || !key || url.includes('dummy-project')) {
+    // Mock client fallback for development without credentials
+    return {
+      from: () => ({
+        select: () => Promise.resolve({ data: [], error: null }),
+        insert: () => Promise.resolve({ data: [], error: null }),
+        update: () => Promise.resolve({ data: [], error: null }),
+        delete: () => Promise.resolve({ data: [], error: null }),
+      }),
+      auth: {
+        getUser: async () => ({ data: { user: { id: '1', email: 'hatim@pathway.com' } }, error: null }),
+        signOut: async () => ({ error: null }),
+        getSession: async () => ({ data: { session: null }, error: null }),
+      },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } as any;
+    } as any
+  }
+
+  return createBrowserClient(url, key)
 }

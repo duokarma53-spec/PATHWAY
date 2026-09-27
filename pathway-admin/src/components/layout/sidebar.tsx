@@ -5,8 +5,9 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import {
   LayoutDashboard, Users, GraduationCap, FileText, Settings,
-  HelpCircle, MessageSquare, Compass, Briefcase, ChevronLeft,
-  ChevronRight, LogOut, CheckSquare, FolderOpen, Activity, Calendar, X
+  MessageSquare, Compass, CheckSquare, FolderOpen, Activity, Calendar,
+  CreditCard, BarChart3, TrendingUp, Inbox, Layers, Star,
+  ShieldCheck, Landmark, UserCheck, X, ChevronLeft, ChevronRight, LogOut
 } from "lucide-react"
 import { useState } from "react"
 import { Button } from "../ui/button"
@@ -15,51 +16,71 @@ import { useRouter } from "next/navigation"
 import { useSidebar } from "@/contexts/sidebar-context"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type NavItem = { name: string; href: string; icon: any; }
+type NavItem = { name: string; href: string; icon: any; badge?: string | number }
 type NavGroup = { label: string; items: NavItem[] }
 
 const navigationGroups: NavGroup[] = [
   {
-    label: "Operations",
+    label: "Overview",
     items: [
       { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-      { name: 'Leads', href: '/leads', icon: Users },
-      { name: 'Students', href: '/students', icon: GraduationCap },
-      { name: 'Consultations', href: '/consultations', icon: Calendar },
-      { name: 'Applications', href: '/applications', icon: FileText },
     ]
   },
   {
-    label: "Content",
+    label: "CRM",
     items: [
+      { name: 'Leads',          href: '/leads',          icon: Users,     badge: '10' },
+      { name: 'Students',       href: '/students',       icon: GraduationCap, badge: '5' },
+      { name: 'Follow-ups',     href: '/follow-ups',     icon: UserCheck, badge: '3' },
+      { name: 'Communications', href: '/communications', icon: MessageSquare },
+    ]
+  },
+  {
+    label: "Applications",
+    items: [
+      { name: 'Applications', href: '/applications', icon: FileText, badge: '7' },
+      { name: 'Universities', href: '/universities', icon: Landmark },
       { name: 'Destinations', href: '/destinations', icon: Compass },
-      { name: 'Universities', href: '/universities', icon: GraduationCap },
-      { name: 'Services', href: '/services', icon: Briefcase },
-      { name: 'Success Stories', href: '/success-stories', icon: MessageSquare },
-      { name: 'Insights', href: '/insights', icon: FileText },
-      { name: 'FAQs', href: '/faqs', icon: HelpCircle },
     ]
   },
   {
-    label: "Management",
+    label: "Student Management",
     items: [
-      { name: 'Tasks', href: '/tasks', icon: CheckSquare },
-      { name: 'Documents', href: '/documents', icon: FolderOpen },
-      { name: 'Team', href: '/team', icon: Users },
+      { name: 'Documents',    href: '/documents',    icon: FolderOpen, badge: '8' },
+      { name: 'Appointments', href: '/appointments', icon: Calendar,   badge: '4' },
+      { name: 'Tasks',        href: '/tasks',        icon: CheckSquare, badge: '6' },
+      { name: 'Payments',     href: '/payments',     icon: CreditCard },
     ]
   },
   {
-    label: "System",
+    label: "Analytics",
     items: [
-      { name: 'Activity', href: '/audit-logs', icon: Activity },
-      { name: 'Settings', href: '/settings', icon: Settings },
+      { name: 'Reports',     href: '/reports',     icon: BarChart3 },
+      { name: 'Performance', href: '/performance', icon: TrendingUp },
+    ]
+  },
+  {
+    label: "Website",
+    items: [
+      { name: 'Inquiries',    href: '/inquiries',    icon: Inbox,   badge: 'New' },
+      { name: 'Content',      href: '/content',      icon: Layers },
+      { name: 'Testimonials', href: '/testimonials', icon: Star },
+    ]
+  },
+  {
+    label: "Administration",
+    items: [
+      { name: 'Staff',             href: '/staff',       icon: Users },
+      { name: 'Roles & Permissions', href: '/roles',     icon: ShieldCheck },
+      { name: 'Activity Logs',     href: '/audit-logs',  icon: Activity },
+      { name: 'Settings',          href: '/settings',    icon: Settings },
     ]
   }
 ]
 
 function NavContent({ collapsed, onNavClick }: { collapsed: boolean; onNavClick?: () => void }) {
   const pathname = usePathname()
-  const router = useRouter()
+  const router   = useRouter()
   const supabase = createClient()
 
   const handleLogout = async () => {
@@ -70,12 +91,12 @@ function NavContent({ collapsed, onNavClick }: { collapsed: boolean; onNavClick?
   return (
     <>
       {/* Navigation */}
-      <div className="flex-1 overflow-auto py-8 custom-scrollbar">
-        <nav className="flex flex-col gap-8 px-4">
+      <div className="flex-1 overflow-auto py-6 custom-scrollbar">
+        <nav className="flex flex-col gap-6 px-3">
           {navigationGroups.map((group) => (
-            <div key={group.label} className="flex flex-col gap-1.5">
+            <div key={group.label} className="flex flex-col gap-0.5">
               {!collapsed && (
-                <span className="px-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/50 mb-2">
+                <span className="px-3 text-[9.5px] font-bold uppercase tracking-[0.22em] text-espresso-light/60 mb-1.5">
                   {group.label}
                 </span>
               )}
@@ -87,26 +108,43 @@ function NavContent({ collapsed, onNavClick }: { collapsed: boolean; onNavClick?
                     href={item.href}
                     onClick={onNavClick}
                     className={cn(
-                      "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] transition-all duration-300 relative overflow-hidden",
+                      "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13.5px] font-medium transition-all duration-250 overflow-hidden",
                       isActive
-                        ? "text-primary font-medium"
-                        : "text-muted-foreground font-medium hover:text-foreground",
-                      collapsed && "justify-center px-0 rounded-lg"
+                        ? "text-primary nav-active-pill"
+                        : "text-espresso-light hover:text-foreground hover:bg-white/50",
+                      collapsed && "justify-center px-2"
                     )}
                     title={collapsed ? item.name : undefined}
                   >
-                    {isActive && !collapsed && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-primary/15 to-transparent border-l-2 border-primary" />
-                    )}
+                    {/* subtle hover ripple */}
                     {!isActive && !collapsed && (
-                      <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-colors duration-300 rounded-xl" />
+                      <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200
+                        bg-gradient-to-r from-white/60 to-white/20" />
                     )}
-                    
+
                     <item.icon className={cn(
-                      "h-4 w-4 shrink-0 transition-all duration-300 relative z-10",
-                      isActive ? "text-primary" : "text-muted-foreground/70 group-hover:text-foreground"
+                      "h-[16px] w-[16px] shrink-0 relative z-10 transition-colors duration-200",
+                      isActive
+                        ? "text-primary"
+                        : "text-espresso-light/60 group-hover:text-foreground"
                     )} />
-                    {!collapsed && <span className="relative z-10 tracking-wide">{item.name}</span>}
+
+                    {!collapsed && (
+                      <span className="relative z-10 flex-1 tracking-[0.01em]">
+                        {item.name}
+                      </span>
+                    )}
+
+                    {!collapsed && item.badge && (
+                      <span className={cn(
+                        "relative z-10 px-1.5 py-0.5 text-[10px] font-semibold rounded-full",
+                        item.badge === 'New'
+                          ? "badge-amber"
+                          : "badge-neutral"
+                      )}>
+                        {item.badge}
+                      </span>
+                    )}
                   </Link>
                 )
               })}
@@ -116,14 +154,17 @@ function NavContent({ collapsed, onNavClick }: { collapsed: boolean; onNavClick?
       </div>
 
       {/* Footer */}
-      <div className="border-t border-border/40 p-4 flex flex-col gap-2 bg-background/30 backdrop-blur-md">
+      <div className="border-t border-linen-dark/50 p-3">
         <Button
           variant="ghost"
-          className={cn("w-full justify-start text-muted-foreground hover:text-foreground text-sm font-medium rounded-xl hover:bg-foreground/5 transition-colors duration-300", collapsed && "justify-center px-2")}
+          className={cn(
+            "w-full justify-start text-espresso-light/70 hover:text-foreground hover:bg-white/50 text-[13px] font-medium rounded-xl transition-colors duration-200",
+            collapsed && "justify-center px-2"
+          )}
           onClick={handleLogout}
           title={collapsed ? "Logout" : undefined}
         >
-          <LogOut className="h-4 w-4 shrink-0" />
+          <LogOut className="h-4 w-4 shrink-0 text-espresso-light/50" />
           {!collapsed && <span className="ml-3 tracking-wide">Logout</span>}
         </Button>
       </div>
@@ -135,7 +176,6 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
   const { isOpen, setIsOpen } = useSidebar()
 
-  // Close drawer when navigating on mobile
   const handleNavClick = () => setIsOpen(false)
 
   return (
@@ -143,39 +183,42 @@ export function Sidebar() {
       {/* ── Desktop Sidebar ─────────────────────────── */}
       <div
         className={cn(
-          "relative hidden md:flex flex-col border-r border-border/40 bg-background/60 backdrop-blur-xl transition-all duration-300",
-          collapsed ? "w-[80px]" : "w-[280px]"
+          "relative hidden md:flex flex-col glass-sidebar transition-all duration-300",
+          collapsed ? "w-[72px]" : "w-[272px]"
         )}
       >
-        {/* Header */}
-        <div className="flex h-[72px] items-center justify-between px-6 border-b border-border/40">
+        {/* Header / Logo */}
+        <div className={cn(
+          "flex h-[68px] items-center border-b border-linen-dark/40",
+          collapsed ? "justify-center px-4" : "px-5 gap-3"
+        )}>
+          {/* Logo mark */}
+          <div className="h-8 w-8 rounded-xl flex items-center justify-center bg-liquid-amber text-primary-foreground font-bold text-sm shadow-warm shrink-0">
+            P
+          </div>
           {!collapsed && (
-            <div className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-primary/80 to-primary text-primary-foreground font-semibold text-sm shadow-sm">
-                P
-              </div>
-              <span className="text-lg font-light tracking-[0.15em] text-foreground uppercase">
+            <div className="flex flex-col leading-tight">
+              <span className="text-[15px] font-semibold tracking-[0.08em] text-foreground uppercase">
                 Pathway
               </span>
-            </div>
-          )}
-          {collapsed && (
-            <div className="mx-auto h-8 w-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-primary/80 to-primary text-primary-foreground font-semibold text-sm shadow-sm">
-              P
+              <span className="text-[9px] font-medium tracking-[0.2em] text-espresso-light/50 uppercase">
+                Education CRM
+              </span>
             </div>
           )}
         </div>
 
+        {/* Collapse toggle */}
         <Button
           variant="ghost"
           size="icon"
-          className="absolute -right-3.5 top-6 h-7 w-7 rounded-full border border-border/60 bg-background/80 backdrop-blur-sm shadow-sm hover:bg-muted transition-all duration-300"
+          className="absolute -right-3.5 top-[22px] h-7 w-7 rounded-full border border-linen-dark bg-surface/90 backdrop-blur-sm shadow-sm hover:bg-white transition-all duration-200 z-20"
           onClick={() => setCollapsed(!collapsed)}
         >
           {collapsed ? (
-            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+            <ChevronRight className="h-3.5 w-3.5 text-espresso-light" />
           ) : (
-            <ChevronLeft className="h-3.5 w-3.5 text-muted-foreground" />
+            <ChevronLeft className="h-3.5 w-3.5 text-espresso-light" />
           )}
         </Button>
 
@@ -183,38 +226,41 @@ export function Sidebar() {
       </div>
 
       {/* ── Mobile Drawer ──────────────────────────── */}
-      {/* Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-foreground/20 backdrop-blur-sm md:hidden transition-all duration-300"
+          className="fixed inset-0 z-40 bg-espresso/20 backdrop-blur-[2px] md:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
 
-      {/* Drawer panel */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-[300px] flex flex-col border-r border-white/10 bg-background/75 backdrop-blur-2xl transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] md:hidden shadow-[8px_0_40px_-12px_rgba(0,0,0,0.3)]",
+          "fixed inset-y-0 left-0 z-50 w-[288px] flex flex-col glass-sidebar transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] md:hidden shadow-glass-lg",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Drawer Header */}
-        <div className="flex h-[72px] items-center justify-between px-6 border-b border-border/30 bg-background/30">
+        <div className="flex h-[68px] items-center justify-between px-5 border-b border-linen-dark/40">
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-primary/80 to-primary text-primary-foreground font-semibold text-sm shadow-sm">
+            <div className="h-8 w-8 rounded-xl flex items-center justify-center bg-liquid-amber text-primary-foreground font-bold text-sm shadow-warm">
               P
             </div>
-            <span className="text-lg font-light tracking-[0.15em] text-foreground uppercase">
-              Pathway
-            </span>
+            <div className="flex flex-col leading-tight">
+              <span className="text-[15px] font-semibold tracking-[0.08em] text-foreground uppercase">
+                Pathway
+              </span>
+              <span className="text-[9px] font-medium tracking-[0.2em] text-espresso-light/50 uppercase">
+                Education CRM
+              </span>
+            </div>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 rounded-full hover:bg-foreground/10 bg-background/20 backdrop-blur-md transition-all duration-300"
+            className="h-8 w-8 rounded-full hover:bg-white/60 transition-colors duration-200"
             onClick={() => setIsOpen(false)}
           >
-            <X className="h-4 w-4 text-muted-foreground" />
+            <X className="h-4 w-4 text-espresso-light" />
           </Button>
         </div>
 

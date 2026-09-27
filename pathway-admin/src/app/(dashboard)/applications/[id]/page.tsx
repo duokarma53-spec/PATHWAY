@@ -1,161 +1,74 @@
-import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { ArrowLeft, Edit, GraduationCap, Building2, Calendar, UserCircle } from 'lucide-react'
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { INITIAL_APPLICATIONS } from "@/lib/mock-data"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { StatusBadge } from "@/components/ui/status-badge"
+import { ArrowLeft, Building2, Calendar, GraduationCap, DollarSign, UserCheck } from "lucide-react"
+import Link from "next/link"
 
 export function generateStaticParams() {
-  return [
-    { id: '1' },
-    { id: '2' },
-    { id: '3' }
-  ]
+  return INITIAL_APPLICATIONS.map((a) => ({ id: a.id }))
 }
-export default async function ApplicationProfilePage({ params }: { params: Promise<{ id: string }> }) {
+
+export default async function ApplicationDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
-  const supabase = await createClient()
-
-  const { data: app, error } = await supabase
-    .from('applications')
-    .select(`
-      *,
-      profiles!applications_assigned_counsellor_fkey(full_name),
-      students(first_name, last_name, email)
-    `)
-    .eq('id', resolvedParams.id)
-    .single()
-
-  if (error || !app) {
-    notFound()
-  }
+  const app = INITIAL_APPLICATIONS.find(a => a.id === resolvedParams.id) || INITIAL_APPLICATIONS[0]
 
   return (
-    <div className="flex flex-col gap-6 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="/applications">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-bold tracking-tight">
-                {app.university_name || 'Unknown University'}
-              </h1>
-              <Badge 
-                variant={
-                  app.status === 'accepted' ? 'default' : 
-                  app.status === 'rejected' ? 'destructive' : 
-                  app.status === 'submitted' ? 'secondary' : 
-                  'outline'
-                }
-              >
-                {app.status}
-              </Badge>
-            </div>
-            <p className="text-muted-foreground flex items-center gap-2 mt-1">
-              <GraduationCap className="h-4 w-4" /> {app.course_name || 'Course not specified'} • {app.intake_term || 'Intake not specified'}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline">
-            <Edit className="mr-2 h-4 w-4" /> Edit Application
-          </Button>
-        </div>
+    <div className="flex flex-col gap-6 max-w-5xl mx-auto pb-16">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="sm" asChild className="rounded-xl hover:bg-muted/50 text-xs">
+          <Link href="/applications" className="flex items-center gap-1.5">
+            <ArrowLeft className="h-4 w-4" /> Back to Applications
+          </Link>
+        </Button>
+        <span className="text-muted-foreground/40">•</span>
+        <span className="text-xs text-muted-foreground font-mono">{app.applicationCode}</span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Application Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                    <Building2 className="h-4 w-4" /> University
-                  </p>
-                  <p>{app.university_name || 'Not provided'}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                    <Calendar className="h-4 w-4" /> Submission Date
-                  </p>
-                  <p>{app.submission_date ? new Date(app.submission_date).toLocaleDateString() : 'Not submitted yet'}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                    <Calendar className="h-4 w-4" /> Decision Date
-                  </p>
-                  <p>{app.decision_date ? new Date(app.decision_date).toLocaleDateString() : 'Pending decision'}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      <Card className="border-border/60 bg-card/85 p-6 md:p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-2xl font-bold text-foreground">{app.university}</h1>
+              <StatusBadge status={app.status} />
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {app.course} • {app.country} • Intake: <strong className="text-primary">{app.intake}</strong>
+            </p>
+          </div>
+          <div className="text-right">
+            <span className="text-xs font-semibold text-muted-foreground">Tuition Fee:</span>
+            <p className="text-lg font-bold text-foreground">{app.fees}</p>
+          </div>
         </div>
+      </Card>
 
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Applicant</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {app.students ? (
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center border">
-                    <UserCircle className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                  <div>
-                    {/* @ts-expect-error - type mismatch */}
-                    <p className="font-medium">{app.students.first_name} {app.students.last_name}</p>
-                    {/* @ts-expect-error - type mismatch */}
-                    <p className="text-xs text-muted-foreground">{app.students.email}</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-sm text-muted-foreground">
-                  No applicant linked.
-                </div>
-              )}
-              <Button variant="outline" className="w-full mt-4" asChild>
-                <Link href={`/students/${app.student_id}`}>View Profile</Link>
-              </Button>
-            </CardContent>
-          </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="border-border/60 bg-card/75 p-5 space-y-3">
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <GraduationCap className="h-4 w-4 text-primary" /> Applicant Details
+          </h3>
+          <div className="text-xs space-y-1">
+            <p className="text-muted-foreground">Student Name:</p>
+            <p className="font-semibold text-foreground text-sm">{app.studentName}</p>
+            <p className="text-muted-foreground pt-2">Assigned Counsellor:</p>
+            <p className="font-semibold text-foreground">{app.counsellor}</p>
+          </div>
+        </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Assigned Counsellor</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {/* @ts-expect-error - type mismatch */}
-              {app.profiles?.full_name ? (
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
-                    <span className="text-sm font-semibold text-primary">
-                      {/* @ts-expect-error - type mismatch */}
-                      {app.profiles.full_name.substring(0, 2).toUpperCase()}
-                    </span>
-                  </div>
-                  <div>
-                    {/* @ts-expect-error - type mismatch */}
-                    <p className="font-medium">{app.profiles.full_name}</p>
-                    <p className="text-xs text-muted-foreground">Lead Counsellor</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-sm text-muted-foreground mb-4">
-                  No team member assigned yet.
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+        <Card className="border-border/60 bg-card/75 p-5 space-y-3">
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <Calendar className="h-4 w-4 text-emerald-400" /> Milestones & Decisions
+          </h3>
+          <div className="text-xs space-y-1">
+            <p className="text-muted-foreground">Offer Decision:</p>
+            <p className="font-semibold text-foreground">{app.offerStatus}</p>
+            <p className="text-muted-foreground pt-2">Deposit Status:</p>
+            <p className="font-semibold text-foreground">{app.depositStatus}</p>
+            <p className="text-muted-foreground pt-2">Application Deadline:</p>
+            <p className="font-semibold text-amber-400 font-mono">{app.deadline}</p>
+          </div>
+        </Card>
       </div>
     </div>
   )

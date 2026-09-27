@@ -1,215 +1,366 @@
-import { getDashboardData } from '@/lib/dashboard/queries'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Users, FileText, Calendar, CheckCircle, ArrowUpRight, AlertCircle } from 'lucide-react'
-import { DashboardChart } from '@/components/dashboard-chart'
-import { Button } from '@/components/ui/button'
-import { AddLeadButton, ScheduleButton } from '@/components/actions/quick-actions'
-import Link from 'next/link'
-import { format } from 'date-fns'
+import * as React from "react"
+import {
+  Users,
+  UserPlus,
+  GraduationCap,
+  FileText,
+  CheckCircle2,
+  ShieldCheck,
+  Clock,
+  FolderOpen,
+  ArrowUpRight,
+  Calendar,
+  AlertTriangle,
+  Sparkles,
+  ExternalLink,
+  ChevronRight,
+  PhoneCall,
+  Check
+} from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { KPICard } from "@/components/ui/kpi-card"
+import { Button } from "@/components/ui/button"
+import {
+  LeadTrendChart,
+  LeadsBySourceChart,
+  LeadsByDestinationChart,
+  ConversionFunnel
+} from "@/components/dashboard/crm-dashboard-charts"
+import { CRMQuickActions } from "@/components/actions/crm-quick-actions"
+import {
+  INITIAL_LEADS,
+  INITIAL_STUDENTS,
+  INITIAL_APPLICATIONS,
+  INITIAL_TASKS,
+  INITIAL_APPOINTMENTS,
+  INITIAL_ACTIVITY_LOGS
+} from "@/lib/mock-data"
+import Link from "next/link"
+import { format } from "date-fns"
 
-export default async function DashboardPage() {
-  const data = await getDashboardData()
+export const metadata = {
+  title: "Pathway CRM | Executive Consultancy Dashboard",
+  description: "Comprehensive operations, student pipeline, and lead management platform.",
+}
 
-  // Real data gracefully falls back to 0 if the tables are empty or don't exist yet
-  const kpis = data.kpis || { newLeads: 0, upcomingConsultations: 0, activeApplications: 0, offers: 0 }
+export default function DashboardPage() {
+  const currentDate = new Date()
+
+  // Recent leads (especially 'New' ones)
+  const recentInquiries = INITIAL_LEADS.slice(0, 4)
+  const todayTasks = INITIAL_TASKS.slice(0, 4)
+  const todayAppointments = INITIAL_APPOINTMENTS.slice(0, 3)
 
   return (
-    <div className="flex flex-col gap-6 md:gap-8 max-w-7xl mx-auto pb-10 min-w-0">
-      
-      {/* Header Section */}
+    <div className="flex flex-col gap-6 md:gap-8 max-w-7xl mx-auto pb-16 min-w-0">
+      {/* Welcome & Quick Action Bar */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div className="space-y-1.5">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Good morning, Admin.
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
+            <span className="text-xs font-semibold text-primary uppercase tracking-wider">
+              Consultancy Live Operations
+            </span>
+          </div>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+            Good morning, Hatim.
           </h1>
-          <p className="text-muted-foreground text-sm font-medium">
-            Here&apos;s what needs your attention today, {format(new Date(), 'EEEE, MMMM do')}.
+          <p className="text-xs md:text-sm text-muted-foreground">
+            Pathway Education Consultancy overview for {format(currentDate, "EEEE, MMMM do, yyyy")}.
           </p>
         </div>
+
         <div className="flex items-center gap-3">
-          <ScheduleButton className="h-9 px-4 rounded-full font-medium" />
-          <AddLeadButton variant="default" className="h-9 px-4 rounded-full font-medium bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm" />
+          <Button variant="outline" size="sm" asChild className="rounded-xl border-border/70 text-xs">
+            <Link href="/appointments" className="flex items-center gap-1.5">
+              <Calendar className="h-3.5 w-3.5 text-primary" /> Today&apos;s Calendar
+            </Link>
+          </Button>
+          <CRMQuickActions />
         </div>
       </div>
-      
-      {/* KPI Section */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-border/50 shadow-sm hover:border-border transition-colors">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-semibold text-muted-foreground">New Leads</CardTitle>
-            <div className="h-8 w-8 rounded-full bg-accent/10 flex items-center justify-center">
-              <Users className="h-4 w-4 text-accent" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-foreground">{kpis.newLeads}</div>
-            <p className="text-xs text-emerald-600 font-medium flex items-center mt-1">
-              <ArrowUpRight className="h-3 w-3 mr-0.5" />
-              New this week
-            </p>
-          </CardContent>
-        </Card>
 
-        <Card className="border-border/50 shadow-sm hover:border-border transition-colors">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-semibold text-muted-foreground">Consultations</CardTitle>
-            <div className="h-8 w-8 rounded-full bg-primary/5 flex items-center justify-center">
-              <Calendar className="h-4 w-4 text-primary" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-foreground">{kpis.upcomingConsultations}</div>
-            <p className="text-xs text-muted-foreground font-medium flex items-center mt-1">
-              Upcoming today
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50 shadow-sm hover:border-border transition-colors">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-semibold text-muted-foreground">Active Applications</CardTitle>
-            <div className="h-8 w-8 rounded-full bg-primary/5 flex items-center justify-center">
-              <FileText className="h-4 w-4 text-primary" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-foreground">{kpis.activeApplications}</div>
-            <p className="text-xs text-muted-foreground font-medium flex items-center mt-1">
-              In progress
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/50 shadow-sm hover:border-border transition-colors">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-semibold text-muted-foreground">Offers Received</CardTitle>
-            <div className="h-8 w-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
-              <CheckCircle className="h-4 w-4 text-emerald-600" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-foreground">{kpis.offers}</div>
-            <p className="text-xs text-emerald-600 font-medium flex items-center mt-1">
-              <ArrowUpRight className="h-3 w-3 mr-0.5" />
-              Recent offers
-            </p>
-          </CardContent>
-        </Card>
+      {/* Top 8 KPI Cards Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+        <KPICard
+          title="Total Leads"
+          value="142"
+          subtitle="All time inquiries"
+          trend="+18% MoM"
+          trendPositive={true}
+          icon={Users}
+          iconColor="text-primary"
+          iconBg="bg-primary/10 border-primary/20"
+        />
+        <KPICard
+          title="New Inquiries"
+          value="14"
+          subtitle="Needs first response"
+          trend="+5 today"
+          trendPositive={true}
+          icon={Sparkles}
+          iconColor="text-amber-400"
+          iconBg="bg-amber-500/10 border-amber-500/20"
+        />
+        <KPICard
+          title="Active Students"
+          value="38"
+          subtitle="Converted profiles"
+          trend="85% retention"
+          trendPositive={true}
+          icon={GraduationCap}
+          iconColor="text-emerald-400"
+          iconBg="bg-emerald-500/10 border-emerald-500/20"
+        />
+        <KPICard
+          title="Applications in Progress"
+          value="28"
+          subtitle="Under university review"
+          trend="+4 this week"
+          trendPositive={true}
+          icon={FileText}
+          iconColor="text-blue-400"
+          iconBg="bg-blue-500/10 border-blue-500/20"
+        />
+        <KPICard
+          title="Offers Received"
+          value="19"
+          subtitle="Conditional & Firm"
+          trend="68% offer rate"
+          trendPositive={true}
+          icon={CheckCircle2}
+          iconColor="text-teal-400"
+          iconBg="bg-teal-500/10 border-teal-500/20"
+        />
+        <KPICard
+          title="Visa Applications"
+          value="12"
+          subtitle="Lodged at embassies"
+          trend="100% grant rate"
+          trendPositive={true}
+          icon={ShieldCheck}
+          iconColor="text-violet-400"
+          iconBg="bg-violet-500/10 border-violet-500/20"
+        />
+        <KPICard
+          title="Upcoming Follow-ups"
+          value="9"
+          subtitle="Due within 48 hours"
+          trend="2 urgent calls"
+          trendPositive={false}
+          icon={Clock}
+          iconColor="text-orange-400"
+          iconBg="bg-orange-500/10 border-orange-500/20"
+        />
+        <KPICard
+          title="Pending Documents"
+          value="15"
+          subtitle="Awaiting student upload"
+          trend="Action required"
+          trendPositive={false}
+          icon={FolderOpen}
+          iconColor="text-cyan-400"
+          iconBg="bg-cyan-500/10 border-cyan-500/20"
+        />
       </div>
 
-      {/* Analytics & Funnel */}
-      <div className="grid gap-6 md:grid-cols-3 min-w-0">
-        <Card className="col-span-full md:col-span-2 border-border/50 shadow-sm overflow-hidden">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-lg">Admissions Overview</CardTitle>
-                <CardDescription className="text-xs mt-1">Application volume and success rate</CardDescription>
-              </div>
-              <select className="text-xs bg-muted/50 border-none rounded-md px-2 py-1 outline-none text-muted-foreground font-medium">
-                <option>Last 6 Months</option>
-                <option>This Year</option>
-              </select>
+      {/* Row 2: Analytics & Conversion Funnel */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Trend Chart */}
+        <Card className="lg:col-span-2 border-border/60 bg-card/75 backdrop-blur-xl shadow-md">
+          <CardHeader className="pb-2 flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-base font-bold text-foreground">Lead Generation & Enrolments Over Time</CardTitle>
+              <CardDescription className="text-xs">
+                Monthly trajectory of incoming student inquiries vs final enrolled students.
+              </CardDescription>
             </div>
+            <span className="text-xs px-2.5 py-1 rounded-lg bg-muted text-muted-foreground font-medium">
+              Last 6 Months
+            </span>
           </CardHeader>
-          <CardContent className="pl-2 h-[260px] md:h-[300px] min-w-0">
-            <DashboardChart />
+          <CardContent className="pt-2">
+            <LeadTrendChart />
           </CardContent>
         </Card>
 
-        <Card className="col-span-full md:col-span-1 border-border/50 shadow-sm flex flex-col">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg">Lead Funnel</CardTitle>
-            <CardDescription className="text-xs mt-1">Current active pipeline</CardDescription>
+        {/* Conversion Funnel */}
+        <Card className="border-border/60 bg-card/75 backdrop-blur-xl shadow-md flex flex-col justify-between">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-bold text-foreground">Consultancy Conversion Funnel</CardTitle>
+            <CardDescription className="text-xs">
+              Inquiry → Counselling → Application → Visa → Enrolled
+            </CardDescription>
           </CardHeader>
           <CardContent className="flex-1">
-            <div className="space-y-4 pt-2">
-              {[
-                { label: 'New Leads', count: kpis.newLeads, percent: 100 },
-                { label: 'Contacted', count: Math.floor(kpis.newLeads * 0.8), percent: 80 },
-                { label: 'Qualified', count: Math.floor(kpis.newLeads * 0.5), percent: 50 },
-                { label: 'Consultations', count: Math.floor(kpis.newLeads * 0.3), percent: 30 },
-              ].map((stage, i) => (
-                <div key={i} className="flex items-center justify-between group cursor-default">
-                  <div className="w-1/3 text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">{stage.label}</div>
-                  <div className="w-1/2 bg-muted/30 rounded-full h-2 overflow-hidden">
-                    <div className="bg-primary h-full rounded-full transition-all duration-500" style={{ width: `${stage.percent}%` }} />
+            <ConversionFunnel />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Row 3: Destination Distribution & Source Breakdown */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="border-border/60 bg-card/75 backdrop-blur-xl shadow-md">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-bold text-foreground">Leads by Destination Country</CardTitle>
+            <CardDescription className="text-xs">Top study abroad destinations preferred by prospective students.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <LeadsByDestinationChart />
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/60 bg-card/75 backdrop-blur-xl shadow-md">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-bold text-foreground">Lead Acquisition Channels</CardTitle>
+            <CardDescription className="text-xs">Breakdown of sources feeding the CRM pipeline.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <LeadsBySourceChart />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Row 4: "Today's Tasks & Priorities" + "Recent Inquiries" */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Today's Tasks & Urgent Follow-ups */}
+        <Card className="lg:col-span-2 border-border/60 bg-card/75 backdrop-blur-xl shadow-md">
+          <CardHeader className="pb-3 border-b border-border/40 flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-base font-bold text-foreground flex items-center gap-2">
+                <Clock className="h-4 w-4 text-primary" /> Today&apos;s High-Priority Tasks & Appointments
+              </CardTitle>
+              <CardDescription className="text-xs">
+                Time-sensitive follow-ups, calls, and booked student consultations.
+              </CardDescription>
+            </div>
+            <Button variant="ghost" size="sm" asChild className="text-xs text-primary hover:underline">
+              <Link href="/tasks">View All Tasks &rarr;</Link>
+            </Button>
+          </CardHeader>
+
+          <CardContent className="p-5 space-y-4">
+            {/* Appointments today */}
+            <div className="space-y-2">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                Upcoming Sessions Today
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {todayAppointments.map((apt) => (
+                  <div key={apt.id} className="p-3 rounded-xl bg-muted/30 border border-border/40 flex items-start gap-3">
+                    <div className="h-8 w-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-xs shrink-0 mt-0.5">
+                      {apt.time}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-foreground truncate">{apt.studentName}</p>
+                      <p className="text-[11px] text-muted-foreground">{apt.type} • {apt.mode}</p>
+                    </div>
                   </div>
-                  <div className="w-1/6 text-right text-sm font-semibold">{stage.count}</div>
-                </div>
-              ))}
+                ))}
+              </div>
+            </div>
+
+            {/* Overdue / Urgent Tasks */}
+            <div className="space-y-2 pt-2 border-t border-border/30">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                Follow-ups & Reminders
+              </p>
+              <div className="space-y-2">
+                {todayTasks.map((t) => (
+                  <div
+                    key={t.id}
+                    className="p-3 rounded-xl bg-card border border-border/60 flex items-center justify-between gap-3 hover:border-primary/40 transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-foreground truncate">{t.title}</p>
+                        <p className="text-[10px] text-muted-foreground">
+                          Target: {t.entityName} • Assigned: {t.assignedStaff}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted/60 text-muted-foreground font-medium shrink-0">
+                      {t.category}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </CardContent>
         </Card>
-      </div>
 
-      {/* Secondary Row: Priorities & Consultations */}
-      <div className="grid gap-6 md:grid-cols-2 min-w-0">
-        <Card className="border-border/50 shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center">
-              <AlertCircle className="w-4 h-4 mr-2 text-destructive" />
-              Today&apos;s Priorities
-            </CardTitle>
+        {/* Recently Received Inquiries */}
+        <Card className="border-border/60 bg-card/75 backdrop-blur-xl shadow-md flex flex-col justify-between">
+          <CardHeader className="pb-3 border-b border-border/40 flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-base font-bold text-foreground flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-amber-400" /> Recent Inquiries
+              </CardTitle>
+              <CardDescription className="text-xs">Incoming leads from website forms.</CardDescription>
+            </div>
+            <Button variant="ghost" size="sm" asChild className="text-xs text-primary hover:underline">
+              <Link href="/leads">View All</Link>
+            </Button>
           </CardHeader>
-          <CardContent>
-            {data.priorities.overdueTasks.length > 0 ? (
-               <div className="space-y-4">
-                 {data.priorities.overdueTasks.map((task: any) => (
-                    <div key={task.id} className="flex items-start gap-3 p-3 rounded-md border border-destructive/20 bg-destructive/5">
-                      <div className="mt-0.5 h-2 w-2 rounded-full bg-destructive" />
-                      <div>
-                        <p className="text-sm font-semibold text-destructive">{task.title}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">Due {format(new Date(task.due_date), 'MMM d, h:mm a')}</p>
-                      </div>
-                    </div>
-                 ))}
-               </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
-                <CheckCircle className="h-8 w-8 mb-2 opacity-20" />
-                <p className="text-sm font-medium">You&apos;re all caught up!</p>
-                <p className="text-xs">No overdue tasks or urgent items.</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
 
-        <Card className="border-border/50 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">Upcoming Consultations</CardTitle>
-            <Link href="/consultations" className="text-xs text-accent font-medium hover:underline">View All</Link>
-          </CardHeader>
-          <CardContent>
-            {data.upcomingConsultations.length > 0 ? (
-               <div className="space-y-4">
-                 {data.upcomingConsultations.map((consult: any) => (
-                    <div key={consult.id} className="flex items-center gap-4 py-2 border-b last:border-0 border-border/50">
-                      <div className="flex flex-col items-center justify-center w-12 h-12 rounded-lg bg-muted/40 text-center">
-                        <span className="text-xs font-semibold text-primary">{format(new Date(consult.preferred_date || new Date()), 'h:mm')}</span>
-                        <span className="text-[10px] uppercase text-muted-foreground">{format(new Date(consult.preferred_date || new Date()), 'a')}</span>
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-semibold">{consult.name}</p>
-                        <p className="text-xs text-muted-foreground">{consult.email}</p>
-                      </div>
-                      <div className="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-semibold uppercase tracking-wider">
-                        {consult.status}
-                      </div>
-                    </div>
-                 ))}
-               </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
-                <Calendar className="h-8 w-8 mb-2 opacity-20" />
-                <p className="text-sm font-medium">No consultations today</p>
-                <Button variant="link" className="text-xs text-accent h-auto p-0 mt-1">Schedule one</Button>
-              </div>
-            )}
+          <CardContent className="p-4 space-y-3 flex-1">
+            {recentInquiries.map((lead) => (
+              <Link
+                key={lead.id}
+                href={`/leads/${lead.id}`}
+                className="block p-3 rounded-xl bg-muted/30 border border-border/40 hover:border-primary/40 hover:bg-muted/50 transition-all group"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors truncate">
+                    {lead.name}
+                  </span>
+                  {lead.status === "New" && (
+                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40">
+                      NEW
+                    </span>
+                  )}
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-0.5 truncate">
+                  {lead.course} • {lead.preferredDestination}
+                </p>
+                <div className="text-[10px] text-muted-foreground/70 flex items-center justify-between mt-1">
+                  <span>Source: {lead.leadSource}</span>
+                  <span>{lead.intake}</span>
+                </div>
+              </Link>
+            ))}
           </CardContent>
         </Card>
       </div>
 
+      {/* Row 5: Recent Activity Feed */}
+      <Card className="border-border/60 bg-card/75 backdrop-blur-xl shadow-md">
+        <CardHeader className="pb-3 border-b border-border/40 flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-base font-bold text-foreground">Operational Activity Feed</CardTitle>
+            <CardDescription className="text-xs">Live audit stream of staff updates and student submissions.</CardDescription>
+          </div>
+          <Button variant="ghost" size="sm" asChild className="text-xs text-primary hover:underline">
+            <Link href="/audit-logs">Audit Log &rarr;</Link>
+          </Button>
+        </CardHeader>
+        <CardContent className="p-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {INITIAL_ACTIVITY_LOGS.map((act) => (
+              <div key={act.id} className="p-3.5 rounded-xl bg-muted/20 border border-border/40 text-xs space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-primary">{act.actor}</span>
+                  <span className="text-[10px] text-muted-foreground font-mono">{act.timestamp}</span>
+                </div>
+                <p className="text-foreground/90 leading-snug">
+                  {act.action} <strong>{act.entity}</strong>
+                </p>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

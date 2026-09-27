@@ -236,3 +236,86 @@ CREATE POLICY "Authenticated users can manage team_members" ON team_members FOR 
 CREATE POLICY "Authenticated users can manage faqs" ON faqs FOR ALL USING (auth.role() = 'authenticated');
 CREATE POLICY "Authenticated users can manage blog_posts" ON blog_posts FOR ALL USING (auth.role() = 'authenticated');
 CREATE POLICY "Authenticated users can manage blog_categories" ON blog_categories FOR ALL USING (auth.role() = 'authenticated');
+
+-- ============================================================
+-- CRM SCHEMA EXTENSIONS (Consultancy & Student Pipeline)
+-- ============================================================
+
+-- ── LEADS EXTENSIONS ─────────────────────────────────────────
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS phone TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'urgent'));
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS lead_source TEXT DEFAULT 'Website';
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS destination TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS course TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS intake TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS qualification TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS last_contacted_at TIMESTAMPTZ;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS next_followup_at TIMESTAMPTZ;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS assigned_counsellor UUID REFERENCES profiles(id) ON DELETE SET NULL;
+
+-- ── APPLICATIONS EXTENSIONS ──────────────────────────────────
+ALTER TABLE applications ADD COLUMN IF NOT EXISTS offer_status TEXT DEFAULT 'pending' CHECK (offer_status IN ('pending', 'conditional', 'unconditional', 'declined'));
+ALTER TABLE applications ADD COLUMN IF NOT EXISTS deposit_status TEXT DEFAULT 'not_required' CHECK (deposit_status IN ('not_required', 'pending', 'paid'));
+ALTER TABLE applications ADD COLUMN IF NOT EXISTS visa_status TEXT DEFAULT 'not_started' CHECK (visa_status IN ('not_started', 'in_process', 'granted', 'refused'));
+ALTER TABLE applications ADD COLUMN IF NOT EXISTS application_ref TEXT;
+
+-- ── DOCUMENTS EXTENSIONS ─────────────────────────────────────
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS category TEXT;
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS expiry_date DATE;
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT false;
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS file_size INTEGER;
+
+-- ── APPOINTMENTS TABLE ───────────────────────────────────────
+CREATE TABLE IF NOT EXISTS appointments (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  student_id UUID REFERENCES students(id) ON DELETE CASCADE,
+  lead_id UUID REFERENCES leads(id) ON DELETE CASCADE,
+  counsellor_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
+  appointment_type TEXT NOT NULL,
+  scheduled_at TIMESTAMPTZ NOT NULL,
+  duration_minutes INTEGER DEFAULT 45,
+  mode TEXT DEFAULT 'Office In-Person' CHECK (mode IN ('Office In-Person', 'Zoom Video', 'Phone Call')),
+  status TEXT DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'completed', 'cancelled', 'no_show')),
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ── PAYMENTS & INVOICES TABLE ────────────────────────────────
+CREATE TABLE IF NOT EXISTS payments (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  invoice_ref TEXT UNIQUE NOT NULL,
+  student_id UUID REFERENCES students(id) ON DELETE CASCADE,
+  service_description TEXT NOT NULL,
+  total_amount DECIMAL(10,2) NOT NULL,
+  paid_amount DECIMAL(10,2) DEFAULT 0,
+  payment_method TEXT,
+  payment_date DATE DEFAULT CURRENT_DATE,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'partial', 'paid', 'overdue')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ── COMMUNICATIONS LOG TABLE ─────────────────────────────────
+CREATE TABLE IF NOT EXISTS communications (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  lead_id UUID REFERENCES leads(id) ON DELETE CASCADE,
+  student_id UUID REFERENCES students(id) ON DELETE CASCADE,
+  type TEXT NOT NULL CHECK (type IN ('call', 'whatsapp', 'email', 'note')),
+  direction TEXT DEFAULT 'outbound' CHECK (direction IN ('inbound', 'outbound')),
+  subject TEXT,
+  content TEXT NOT NULL,
+  duration_minutes INTEGER,
+  created_by UUID REFERENCES profiles(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS on new tables
+ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE communications ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated users can manage appointments" ON appointments FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Authenticated users can manage payments" ON payments FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Authenticated users can manage communications" ON communications FOR ALL USING (auth.role() = 'authenticated');
+

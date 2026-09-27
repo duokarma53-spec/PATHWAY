@@ -1,69 +1,79 @@
 "use client"
 
-import { Bell, Search, Menu } from "lucide-react"
-import { Input } from "../ui/input"
+import * as React from "react"
+import { Search, Menu } from "lucide-react"
 import { Button } from "../ui/button"
-import { QuickAddButton } from "../actions/quick-actions"
 import { useSidebar } from "@/contexts/sidebar-context"
+import { GlobalSearchDialog } from "./global-search-dialog"
+import { NotificationDropdown } from "./notification-dropdown"
+import { CRMQuickActions } from "../actions/crm-quick-actions"
 
 export function Topbar() {
   const { setIsOpen } = useSidebar()
+  const [searchOpen, setSearchOpen] = React.useState(false)
 
   return (
-    <div className="flex h-[72px] items-center justify-between border-b border-border/40 bg-background/60 backdrop-blur-xl px-4 md:px-6 shadow-[0_4px_24px_-12px_rgba(0,0,0,0.1)] z-10 shrink-0 transition-all duration-300">
-      {/* Mobile Menu */}
-      <div className="flex items-center gap-4 flex-1 min-w-0">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="md:hidden h-9 w-9 shrink-0"
-          onClick={() => setIsOpen(true)}
-        >
-          <Menu className="h-5 w-5" />
-        </Button>
+    <>
+      <div className="flex h-[68px] items-center justify-between glass-topbar px-4 md:px-7 z-20 shrink-0">
+        {/* Left: Mobile menu + Search */}
+        <div className="flex items-center gap-4 flex-1 min-w-0">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden h-9 w-9 shrink-0 text-espresso-light hover:text-foreground hover:bg-white/50"
+            onClick={() => setIsOpen(true)}
+            aria-label="Open sidebar"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
 
-        {/* Global Search */}
-        <div className="relative w-full max-w-lg hidden md:flex items-center group">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-          <Input
-            type="search"
-            placeholder="Search students, leads, applications..."
-            className="w-full bg-muted/30 hover:bg-muted/50 focus:bg-background pl-10 pr-12 py-2 border-border/50 shadow-none transition-all duration-200 h-10 rounded-full"
-          />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
-            <kbd className="hidden sm:inline-flex h-5 items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-              <span className="text-xs">⌘</span>K
+          {/* Global Search trigger */}
+          <button
+            onClick={() => setSearchOpen(true)}
+            className="hidden md:flex w-full max-w-[380px] items-center gap-3
+              bg-white/55 hover:bg-white/80 border border-linen-dark/60
+              hover:border-primary/35 px-3.5 py-2.5 rounded-xl text-left
+              transition-all duration-200 group shadow-sm backdrop-blur-sm"
+          >
+            <Search className="h-[15px] w-[15px] text-espresso-light/50 group-hover:text-primary transition-colors shrink-0" />
+            <span className="text-[12.5px] text-espresso-light/55 group-hover:text-foreground/70 flex-1 truncate font-medium tracking-wide">
+              Search leads, students, universities…
+            </span>
+            <kbd className="hidden sm:inline-flex h-5 items-center gap-1 rounded-md border border-linen-dark bg-surface/60 px-1.5 font-mono text-[10px] font-medium text-espresso-light/50 backdrop-blur-sm">
+              ⌘K
             </kbd>
+          </button>
+        </div>
+
+        {/* Right: Actions + Profile */}
+        <div className="flex items-center gap-2.5 shrink-0">
+          <CRMQuickActions />
+
+          <div className="h-5 w-px bg-linen-dark/60 mx-1 hidden sm:block" />
+
+          <NotificationDropdown />
+
+          {/* Profile pill */}
+          <div className="flex items-center gap-2.5 pl-2 cursor-pointer group select-none">
+            <div className="hidden sm:flex flex-col text-right">
+              <span className="text-[12.5px] font-semibold text-foreground group-hover:text-primary transition-colors leading-tight">
+                Hatim Patel
+              </span>
+              <span className="text-[9.5px] font-bold text-primary tracking-[0.14em] uppercase">
+                Super Admin
+              </span>
+            </div>
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-amber-light to-amber/30
+              border border-amber/40 flex items-center justify-center
+              text-amber-dark font-bold text-[11px] shadow-sm
+              group-hover:scale-105 group-hover:shadow-warm transition-all duration-200">
+              HP
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Right Actions */}
-      <div className="flex items-center gap-3 shrink-0">
-        {/* Quick Add */}
-        <div className="hidden sm:flex">
-          <QuickAddButton className="h-9 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-4 shadow-sm" />
-        </div>
-
-        <div className="h-6 w-px bg-border mx-1 hidden sm:block" />
-
-        {/* Notifications */}
-        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full hover:bg-muted/50">
-          <Bell className="h-4 w-4 text-muted-foreground" />
-          <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-accent ring-2 ring-card"></span>
-        </Button>
-
-        {/* Profile */}
-        <div className="flex items-center gap-3 pl-2 cursor-pointer group">
-          <div className="flex flex-col text-right hidden md:flex">
-            <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">Admin User</span>
-            <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Super Admin</span>
-          </div>
-          <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center border border-border group-hover:border-primary/30 transition-colors">
-            <span className="text-xs font-semibold text-primary">AU</span>
-          </div>
-        </div>
-      </div>
-    </div>
+      <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
+    </>
   )
 }

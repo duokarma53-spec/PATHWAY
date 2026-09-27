@@ -2,83 +2,371 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─────────────────────────────────────────────────────────────
+   PATHWAY ADMIN — LIQUID GLASS LIGHT THEME
+   Palette: Alabaster Cream / Warm Beige / Warm Espresso
+───────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600&display=swap');
+
 @layer base {
   :root {
-    /* Background: Very light warm neutral */
-    --background: 40 33% 98%;
-    /* Foreground: Deep navy-charcoal */
-    --foreground: 220 20% 15%;
+    /* ── Backgrounds ─────────────────────── */
+    --background:      38 30% 96%;   /* #F7F3EE  Alabaster Cream        */
+    --surface:         36 28% 93%;   /* #F0EAE0  Warm Linen             */
+    --surface-raised:  35 25% 98%;   /* #FDFAF6  Near-White Card        */
 
-    /* Card: White to contrast softly with background */
-    --card: 0 0% 100%;
-    --card-foreground: 220 20% 15%;
+    /* ── Text ────────────────────────────── */
+    --foreground:      24 18% 18%;   /* #332B22  Warm Espresso          */
+    --foreground-muted:24 10% 48%;   /* #7D7168  Muted Taupe            */
+    --foreground-faint:24  8% 72%;   /* #B8B0A8  Very faint             */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 15%;
+    /* ── Cards / Popovers ────────────────── */
+    --card:            35 25% 98%;   /* same as surface-raised          */
+    --card-foreground: 24 18% 18%;
 
-    /* Primary: Deep navy-charcoal */
-    --primary: 220 20% 15%;
-    --primary-foreground: 40 33% 98%;
+    --popover:         35 25% 98%;
+    --popover-foreground: 24 18% 18%;
 
-    /* Secondary: Warm ivory */
-    --secondary: 40 20% 94%;
-    --secondary-foreground: 220 20% 15%;
+    /* ── Primary: Terracotta Amber ───────── */
+    --primary:         27 55% 52%;   /* #C07838  Warm Amber             */
+    --primary-foreground: 35 25% 98%;
 
-    /* Muted: Soft cool grey */
-    --muted: 220 10% 94%;
-    --muted-foreground: 220 10% 45%;
+    /* ── Secondary ───────────────────────── */
+    --secondary:       36 22% 90%;   /* #E5DCCF  Warm Stone             */
+    --secondary-foreground: 24 18% 18%;
 
-    /* Accent: Restrained Pathway gold/champagne */
-    --accent: 42 40% 60%;
-    --accent-foreground: 0 0% 100%;
+    /* ── Muted ───────────────────────────── */
+    --muted:           36 20% 91%;   /* #E8E2D9  Slightly darker linen  */
+    --muted-foreground:24 10% 48%;
 
-    /* Destructive: Refined red */
-    --destructive: 0 70% 50%;
-    --destructive-foreground: 40 33% 98%;
+    /* ── Accent: Sage Olive ──────────────── */
+    --accent:          74 22% 62%;   /* #97A87A  Sage                   */
+    --accent-foreground: 24 18% 18%;
 
-    --border: 220 15% 90%;
-    --input: 220 15% 90%;
-    --ring: 220 20% 15%;
+    /* ── Destructive ─────────────────────── */
+    --destructive:     0 62% 52%;    /* Soft Crimson                    */
+    --destructive-foreground: 35 25% 98%;
 
-    --radius: 0.35rem; /* Subtle rounding, not giant pills */
-  }
+    /* ── Borders / Inputs ────────────────── */
+    --border:          35 20% 85%;   /* #D9D1C6  Warm Light Border      */
+    --input:           35 20% 88%;
+    --ring:            27 55% 52%;   /* Matches primary                 */
 
-  .dark {
-    --background: 220 20% 10%;
-    --foreground: 40 33% 98%;
+    /* ── Radius ──────────────────────────── */
+    --radius:          1rem;
 
-    --card: 220 20% 12%;
-    --card-foreground: 40 33% 98%;
+    /* ── Charts ──────────────────────────── */
+    --chart-1: 27 55% 52%;   /* amber       */
+    --chart-2: 74 22% 52%;   /* sage        */
+    --chart-3: 200 45% 55%;  /* dusty blue  */
+    --chart-4: 280 30% 58%;  /* mauve       */
+    --chart-5: 340 40% 58%;  /* dusty rose  */
 
-    --popover: 220 20% 12%;
-    --popover-foreground: 40 33% 98%;
+    /* ── Glass Layer Tokens ──────────────── */
+    --glass-bg:        rgba(253, 250, 246, 0.72);
+    --glass-border:    rgba(208, 196, 180, 0.55);
+    --glass-shadow:    0 8px 32px rgba(80, 60, 40, 0.08);
+    --glass-blur:      18px;
 
-    --primary: 40 33% 98%;
-    --primary-foreground: 220 20% 10%;
-
-    --secondary: 220 20% 16%;
-    --secondary-foreground: 40 33% 98%;
-
-    --muted: 220 20% 16%;
-    --muted-foreground: 220 10% 65%;
-
-    --accent: 42 40% 55%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 60% 40%;
-    --destructive-foreground: 40 33% 98%;
-
-    --border: 220 20% 20%;
-    --input: 220 20% 20%;
-    --ring: 220 10% 40%;
+    /* ── Ambient Orb Colors ──────────────── */
+    --orb-1:  rgba(192, 120, 56, 0.12);   /* amber */
+    --orb-2:  rgba(151, 168, 122, 0.10);  /* sage  */
+    --orb-3:  rgba(220, 200, 170, 0.15);  /* linen */
   }
 }
+
+/* ─── No dark mode — single light theme ─── */
 
 @layer base {
   * {
     @apply border-border;
   }
-  body {
-    @apply bg-background text-foreground;
+
+  html {
+    color-scheme: light;
   }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', sans-serif;
+    selection-color: hsl(var(--primary));
+    -webkit-selection-background: hsl(var(--primary) / 0.15);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   LIQUID MESH BACKGROUND — ambient animated orbs
+───────────────────────────────────────────────────────────── */
+.liquid-mesh-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.liquid-mesh-bg::before,
+.liquid-mesh-bg::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: liquidFloat 18s ease-in-out infinite alternate;
+}
+
+.liquid-mesh-bg::before {
+  width: 55vw;
+  height: 55vw;
+  top: -15%;
+  right: -10%;
+  background: var(--orb-1);
+  animation-duration: 20s;
+}
+
+.liquid-mesh-bg::after {
+  width: 40vw;
+  height: 40vw;
+  bottom: -10%;
+  left: -8%;
+  background: var(--orb-2);
+  animation-duration: 26s;
+  animation-direction: alternate-reverse;
+}
+
+.liquid-orb-3 {
+  position: absolute;
+  width: 30vw;
+  height: 30vw;
+  top: 40%;
+  left: 30%;
+  border-radius: 50%;
+  background: var(--orb-3);
+  filter: blur(60px);
+  animation: liquidFloat 22s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes liquidFloat {
+  0%   { transform: translate(0,    0)    scale(1);    }
+  33%  { transform: translate(4%,  -6%)   scale(1.06); }
+  66%  { transform: translate(-3%,  4%)   scale(0.96); }
+  100% { transform: translate(5%,   3%)   scale(1.04); }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   GLASSMORPHISM PANELS
+───────────────────────────────────────────────────────────── */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-card {
+  background: rgba(253, 250, 246, 0.80);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(208, 196, 180, 0.50);
+  box-shadow:
+    0 2px 12px rgba(80, 60, 40, 0.06),
+    0 1px 3px rgba(80, 60, 40, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.80);
+  transition: box-shadow 0.25s ease, transform 0.2s ease;
+}
+
+.glass-card:hover {
+  box-shadow:
+    0 8px 28px rgba(80, 60, 40, 0.10),
+    0 2px 6px rgba(80, 60, 40, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.90);
+  transform: translateY(-1px);
+}
+
+.glass-sidebar {
+  background: rgba(247, 243, 238, 0.82);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid rgba(208, 196, 180, 0.50);
+}
+
+.glass-topbar {
+  background: rgba(253, 250, 246, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(208, 196, 180, 0.45);
+  box-shadow: 0 2px 16px rgba(80, 60, 40, 0.06);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   LIQUID BUTTON — primary CTA
+───────────────────────────────────────────────────────────── */
+.btn-liquid {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, hsl(27 55% 52%), hsl(27 55% 44%));
+  color: #fdfaf6;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.btn-liquid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.btn-liquid:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(192, 120, 56, 0.35);
+}
+
+.btn-liquid:hover::before {
+  opacity: 1;
+}
+
+.btn-liquid:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(192, 120, 56, 0.25);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   WARM GLOW EFFECT (replaces gold-glow)
+───────────────────────────────────────────────────────────── */
+.warm-glow {
+  box-shadow: 0 0 30px -5px rgba(192, 120, 56, 0.20);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SCROLLBAR — warm minimal
+───────────────────────────────────────────────────────────── */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--foreground-muted) / 0.4);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   ACTIVE NAV INDICATOR
+───────────────────────────────────────────────────────────── */
+.nav-active-pill {
+  background: linear-gradient(
+    90deg,
+    hsl(27 55% 52% / 0.14),
+    hsl(27 55% 52% / 0.04)
+  );
+  border-left: 2.5px solid hsl(27 55% 52%);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SHIMMER SKELETON
+───────────────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 25%,
+    hsl(var(--surface)) 50%,
+    hsl(var(--muted)) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   STAT CARD ACCENT STRIPE
+───────────────────────────────────────────────────────────── */
+.stat-accent-amber  { border-top: 3px solid hsl(27 55% 52%); }
+.stat-accent-sage   { border-top: 3px solid hsl(74 22% 52%); }
+.stat-accent-blue   { border-top: 3px solid hsl(200 45% 55%); }
+.stat-accent-rose   { border-top: 3px solid hsl(340 40% 58%); }
+
+/* ─────────────────────────────────────────────────────────────
+   LIQUID RIPPLE — on interactive tiles
+───────────────────────────────────────────────────────────── */
+@keyframes ripple {
+  0%   { transform: scale(0); opacity: 0.4; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
+.ripple-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-container .ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: hsl(var(--primary) / 0.18);
+  width: 40px;
+  height: 40px;
+  margin-top: -20px;
+  margin-left: -20px;
+  animation: ripple 0.6s linear;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   TYPOGRAPHY HELPERS
+───────────────────────────────────────────────────────────── */
+.font-display {
+  font-family: 'Playfair Display', serif;
+}
+
+.text-muted-warm {
+  color: hsl(var(--foreground-muted));
+}
+
+/* ─────────────────────────────────────────────────────────────
+   BADGE / CHIP UTILS
+───────────────────────────────────────────────────────────── */
+.badge-amber {
+  background: hsl(27 55% 52% / 0.12);
+  color: hsl(27 55% 40%);
+  border: 1px solid hsl(27 55% 52% / 0.28);
+}
+
+.badge-sage {
+  background: hsl(74 22% 52% / 0.12);
+  color: hsl(74 28% 32%);
+  border: 1px solid hsl(74 22% 52% / 0.28);
+}
+
+.badge-blue {
+  background: hsl(200 45% 55% / 0.12);
+  color: hsl(200 45% 35%);
+  border: 1px solid hsl(200 45% 55% / 0.28);
+}
+
+.badge-rose {
+  background: hsl(340 40% 58% / 0.12);
+  color: hsl(340 40% 38%);
+  border: 1px solid hsl(340 40% 58% / 0.28);
+}
+
+.badge-neutral {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground-muted));
+  border: 1px solid hsl(var(--border));
 }
