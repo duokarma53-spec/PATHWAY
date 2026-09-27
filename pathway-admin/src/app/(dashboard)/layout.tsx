@@ -1,5 +1,7 @@
 import { Sidebar } from "@/components/layout/sidebar"
 import { Topbar } from "@/components/layout/topbar"
+import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav"
+import { MobileInstallGate } from "@/components/pwa/install-prompt"
 import { SidebarProvider } from "@/contexts/sidebar-context"
 
 export default function DashboardLayout({
@@ -29,11 +31,17 @@ export default function DashboardLayout({
         <Sidebar />
         <div className="flex flex-1 flex-col overflow-hidden min-w-0">
           <Topbar />
-          <main className="flex-1 overflow-y-auto p-4 md:p-6 md:px-8 min-w-0 custom-scrollbar">
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 md:px-8 pb-24 md:pb-6 min-w-0 custom-scrollbar">
             {children}
           </main>
         </div>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
+
+      {/* Compulsory / Smart App Install Gate on Phone */}
+      <MobileInstallGate />
     </SidebarProvider>
   )
 }

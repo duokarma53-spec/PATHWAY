@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D2824"/>
+      <stop offset="50%" stop-color="#1E1A17"/>
+      <stop offset="100%" stop-color="#14110F"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F3D59B"/>
+      <stop offset="50%" stop-color="#C9944A"/>
+      <stop offset="100%" stop-color="#9C6B28"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Full square background for maskable -->
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <!-- Centered safe-zone monogram -->
+  <g transform="translate(35, 35) scale(0.86)">
+    <!-- Pathway 'P' Monogram -->
+    <path d="M 180 120 
+             L 290 120 
+             C 355 120, 395 158, 395 220 
+             C 395 282, 355 320, 290 320 
+             L 242 320 
+             L 242 392 
+             L 180 392 
+             Z 
+             M 242 178 
+             L 242 262 
+             L 286 262 
+             C 318 262, 336 248, 336 220 
+             C 336 192, 318 178, 286 178 
+             Z" 
+          fill="url(#gold)"/>
+  </g>
+</svg>

@@ -14,6 +14,7 @@ import { Button } from "../ui/button"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { useSidebar } from "@/contexts/sidebar-context"
+import { DownloadAppButton } from "../pwa/install-prompt"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type NavItem = { name: string; href: string; icon: any; badge?: string | number }
@@ -154,7 +155,8 @@ function NavContent({ collapsed, onNavClick }: { collapsed: boolean; onNavClick?
       </div>
 
       {/* Footer */}
-      <div className="border-t border-linen-dark/50 p-3">
+      <div className="border-t border-linen-dark/50 p-3 space-y-1">
+        {!collapsed && <DownloadAppButton variant="sidebar" />}
         <Button
           variant="ghost"
           className={cn(

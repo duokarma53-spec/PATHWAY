@@ -7,6 +7,7 @@ import { useSidebar } from "@/contexts/sidebar-context"
 import { GlobalSearchDialog } from "./global-search-dialog"
 import { NotificationDropdown } from "./notification-dropdown"
 import { CRMQuickActions } from "../actions/crm-quick-actions"
+import { DownloadAppButton } from "../pwa/install-prompt"
 
 export function Topbar() {
   const { setIsOpen } = useSidebar()
@@ -47,6 +48,7 @@ export function Topbar() {
 
         {/* Right: Actions + Profile */}
         <div className="flex items-center gap-2.5 shrink-0">
+          <DownloadAppButton />
           <CRMQuickActions />
 
           <div className="h-5 w-px bg-linen-dark/60 mx-1 hidden sm:block" />
