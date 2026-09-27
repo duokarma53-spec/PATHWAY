@@ -2,13 +2,25 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, Lock, CheckCircle2, ChevronDown, Phone, MessageCircle, MapPin, Clock } from "lucide-react";
+import {
+  ArrowUpRight, Lock, CheckCircle2, ChevronDown,
+  Phone, MessageCircle, MapPin, Clock, Loader2,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
+import { createClient } from "@supabase/supabase-js";
 
-type CustomInputProps = React.InputHTMLAttributes<HTMLInputElement> & React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
-  label: string;
-  isTextArea?: boolean;
-};
+// ── Supabase client (public anon key — safe for browser) ────────────────────
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+// ── Shared UI components ────────────────────────────────────────────────────
+type CustomInputProps = React.InputHTMLAttributes<HTMLInputElement> &
+  React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
+    label: string;
+    isTextArea?: boolean;
+  };
 
 function CustomInput({ label, isTextArea, className, required, ...props }: CustomInputProps) {
   const [isFocused, setIsFocused] = useState(false);
@@ -77,7 +89,7 @@ interface CustomSelectProps {
   label: string;
   value: string;
   onChange: (val: string) => void;
-  options: string[];
+  options: { label: string; value: string }[];
   required?: boolean;
 }
 
@@ -96,6 +108,7 @@ function CustomSelect({ label, value, onChange, options, required }: CustomSelec
   }, []);
 
   const active = isOpen || value;
+  const selectedLabel = options.find((o) => o.value === value)?.label ?? "";
 
   return (
     <div className="relative w-full h-[56px] group" ref={dropdownRef}>
@@ -116,7 +129,7 @@ function CustomSelect({ label, value, onChange, options, required }: CustomSelec
         className="w-full h-full flex items-center justify-between bg-transparent border-none outline-none font-sans text-[15px] text-navy"
       >
         <span className={cn("transition-opacity", value ? "opacity-100" : "opacity-0")}>
-          {value || "Placeholder"}
+          {selectedLabel}
         </span>
         <ChevronDown
           size={15}
@@ -143,20 +156,20 @@ function CustomSelect({ label, value, onChange, options, required }: CustomSelec
           >
             {options.map((option) => (
               <button
-                key={option}
+                key={option.value}
                 type="button"
                 onClick={() => {
-                  onChange(option);
+                  onChange(option.value);
                   setIsOpen(false);
                 }}
                 className={cn(
                   "w-full text-left px-5 py-3 font-sans text-sm transition-colors",
-                  value === option
+                  value === option.value
                     ? "bg-navy/5 text-navy font-bold"
                     : "text-navy/70 hover:bg-navy/5 hover:text-navy"
                 )}
               >
-                {option}
+                {option.label}
               </button>
             ))}
           </motion.div>
@@ -166,7 +179,6 @@ function CustomSelect({ label, value, onChange, options, required }: CustomSelec
   );
 }
 
-// Step indicator
 function StepIndicator({ step }: { step: 1 | 2 }) {
   return (
     <div className="flex items-center gap-3 mb-8">
@@ -175,7 +187,7 @@ function StepIndicator({ step }: { step: 1 | 2 }) {
           "w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300",
           step >= 1 ? "bg-gold text-navy" : "bg-navy/5 text-navy/40"
         )}>1</div>
-        <span className={cn("text-[11px] uppercase tracking-widest font-bold transition-colors", step === 1 ? "text-gold" : "text-navy/30")}>Your Details</span>
+        <span className={cn("text-[11px] uppercase tracking-widest font-bold transition-colors", step === 1 ? "text-gold" : "text-navy/30")}>About You</span>
       </div>
       <div className="flex-1 h-[1px] bg-navy/10 max-w-[40px]" />
       <div className="flex items-center gap-2">
@@ -189,17 +201,67 @@ function StepIndicator({ step }: { step: 1 | 2 }) {
   );
 }
 
+// ── Options ─────────────────────────────────────────────────────────────────
+const QUALIFICATION_OPTIONS = [
+  { value: "10th", label: "10th (SSC)" },
+  { value: "12th", label: "12th (HSC)" },
+  { value: "diploma", label: "Diploma" },
+  { value: "bachelors", label: "Bachelor's Degree" },
+  { value: "masters", label: "Master's Degree" },
+  { value: "other", label: "Other" },
+];
+
+const DESTINATION_OPTIONS = [
+  { value: "UK",        label: "🇬🇧 United Kingdom" },
+  { value: "Canada",    label: "🇨🇦 Canada" },
+  { value: "Australia", label: "🇦🇺 Australia" },
+  { value: "USA",       label: "🇺🇸 United States" },
+  { value: "Ireland",   label: "🇮🇪 Ireland" },
+  { value: "Germany",   label: "🇩🇪 Germany" },
+  { value: "New Zealand",label: "🇳🇿 New Zealand" },
+  { value: "Dubai/UAE", label: "🇦🇪 Dubai / UAE" },
+  { value: "Not decided", label: "Not decided yet — need guidance" },
+];
+
+const INTAKE_OPTIONS = [
+  { value: "Jan 2026",  label: "January 2026" },
+  { value: "Sep 2026",  label: "September 2026" },
+  { value: "Jan 2027",  label: "January 2027" },
+  { value: "Sep 2027",  label: "September 2027" },
+  { value: "flexible",  label: "Flexible / Not sure" },
+];
+
+const SOURCE_OPTIONS = [
+  { value: "Google",       label: "Google Search" },
+  { value: "Instagram",    label: "Instagram" },
+  { value: "Facebook",     label: "Facebook" },
+  { value: "WhatsApp",     label: "WhatsApp" },
+  { value: "Referral",     label: "Friend / Family referral" },
+  { value: "Walk-in",      label: "Walked into the office" },
+  { value: "Education Fair",label: "Education Fair / Event" },
+  { value: "Other",        label: "Other" },
+];
+
+// ── Main Component ───────────────────────────────────────────────────────────
 export function Contact() {
   const [step, setStep] = useState<1 | 2>(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
-    name: "",
+    // Step 1 — identity
+    full_name: "",
     phone: "",
     email: "",
-    interest: "",
-    preferredTime: "",
+    qualification: "",
+    // Step 2 — study plans
+    destination: "",
+    course: "",
+    intake: "",
+    source: "",
     message: "",
   });
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -214,22 +276,37 @@ export function Contact() {
     setStep(2);
   };
 
-  const handleFinalSubmit = (e: React.FormEvent) => {
+  const handleFinalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const { error: supabaseError } = await supabase.from("leads").insert([
+        {
+          full_name:     formData.full_name,
+          phone:         formData.phone,
+          email:         formData.email || null,
+          qualification: formData.qualification || null,
+          destination:   formData.destination || null,
+          course:        formData.course || null,
+          intake:        formData.intake || null,
+          source:        formData.source || "Website Form",
+          message:       formData.message || null,
+          status:        "new",
+          country:       "India",
+        },
+      ]);
+
+      if (supabaseError) throw supabaseError;
+      setIsSubmitted(true);
+    } catch (err) {
+      console.error("Form submission error:", err);
+      setError("Something went wrong. Please try WhatsApp or call us directly.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-
-  const INTEREST_OPTIONS = [
-    "Medical Admissions",
-    "Engineering Admissions",
-    "Higher Education",
-    "Overseas Education",
-    "Visa Assistance",
-    "Career Counselling",
-    "Other",
-  ];
-
-  const TIME_OPTIONS = ["Morning (9 AM – 12 PM)", "Afternoon (12 PM – 3 PM)", "Evening (3 PM – 6 PM)"];
 
   return (
     <section id="contact" className="py-14 md:py-24 bg-[#F7F5EF] relative">
@@ -245,21 +322,12 @@ export function Contact() {
 
         {/* Mobile quick-contact strip */}
         <div className="flex md:hidden gap-3 mb-8">
-          <a
-            href="tel:+917506284722"
-            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl border border-navy/10 text-navy text-sm font-medium bg-white/40 backdrop-blur-md active:bg-white/60 transition-colors"
-          >
-            <Phone size={16} className="text-gold" />
-            Call Us
+          <a href="tel:+917506284722" className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl border border-navy/10 text-navy text-sm font-medium bg-white/40 backdrop-blur-md active:bg-white/60 transition-colors">
+            <Phone size={16} className="text-gold" /> Call Us
           </a>
-          <a
-            href="https://wa.me/917506284722"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] text-sm font-medium backdrop-blur-md active:bg-[#25D366]/20 transition-colors"
-          >
-            <MessageCircle size={16} />
-            WhatsApp
+          <a href="https://wa.me/917506284722" target="_blank" rel="noopener noreferrer"
+            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] text-sm font-medium backdrop-blur-md active:bg-[#25D366]/20 transition-colors">
+            <MessageCircle size={16} /> WhatsApp
           </a>
         </div>
 
@@ -272,22 +340,16 @@ export function Contact() {
                 <span className="text-xs font-bold tracking-[0.2em] text-gold uppercase">Consultation</span>
                 <div className="flex-1 h-[1px] bg-gold/40 max-w-[60px]" />
               </div>
-
               <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl lg:leading-[1.1] text-navy font-bold mb-5">
                 Your next chapter starts with a conversation.
               </h2>
-
               <p className="font-sans text-navy/60 leading-relaxed mb-10 max-w-sm text-sm md:text-base">
                 Tell us what you&apos;re looking for. Our counsellors will help you find the right path for your academic journey.
               </p>
             </div>
 
-            {/* Contact info cards — desktop */}
             <div className="hidden md:flex flex-col gap-4">
-              <a
-                href="tel:+917506284722"
-                className="group flex items-center gap-4 p-4 rounded-2xl border border-navy/5 bg-white/40 backdrop-blur-md hover:bg-white/60 hover:border-gold/30 transition-all duration-300 shadow-[0_4px_20px_-10px_rgba(11,31,51,0.05)]"
-              >
+              <a href="tel:+917506284722" className="group flex items-center gap-4 p-4 rounded-2xl border border-navy/5 bg-white/40 backdrop-blur-md hover:bg-white/60 hover:border-gold/30 transition-all duration-300 shadow-[0_4px_20px_-10px_rgba(11,31,51,0.05)]">
                 <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center shrink-0 group-hover:bg-gold/20 transition-colors">
                   <Phone size={16} className="text-gold" />
                 </div>
@@ -298,12 +360,8 @@ export function Contact() {
                 <ArrowUpRight size={14} className="ml-auto text-navy/30 group-hover:text-gold group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
               </a>
 
-              <a
-                href="https://wa.me/917506284722"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-4 p-4 rounded-2xl border border-navy/5 bg-white/40 backdrop-blur-md hover:bg-[#25D366]/5 hover:border-[#25D366]/30 transition-all duration-300 shadow-[0_4px_20px_-10px_rgba(11,31,51,0.05)]"
-              >
+              <a href="https://wa.me/917506284722" target="_blank" rel="noopener noreferrer"
+                className="group flex items-center gap-4 p-4 rounded-2xl border border-navy/5 bg-white/40 backdrop-blur-md hover:bg-[#25D366]/5 hover:border-[#25D366]/30 transition-all duration-300 shadow-[0_4px_20px_-10px_rgba(11,31,51,0.05)]">
                 <div className="w-10 h-10 rounded-full bg-[#25D366]/10 flex items-center justify-center shrink-0">
                   <MessageCircle size={16} className="text-[#25D366]" />
                 </div>
@@ -358,14 +416,14 @@ export function Contact() {
                         Tell us about your plans.
                       </h3>
                       <p className="font-sans text-sm text-navy/60">
-                        Complete a few details and we&apos;ll be in touch.
+                        Takes 60 seconds — we&apos;ll do the rest.
                       </p>
                     </div>
 
                     <StepIndicator step={step} />
 
-                    {/* Step 1 */}
                     <AnimatePresence mode="wait">
+                      {/* ── STEP 1: Identity ── */}
                       {step === 1 && (
                         <motion.form
                           key="step1"
@@ -378,13 +436,13 @@ export function Contact() {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8 mb-10">
                             <CustomInput
                               label="Full Name"
-                              name="name"
-                              value={formData.name}
+                              name="full_name"
+                              value={formData.full_name}
                               onChange={handleChange}
                               required
                             />
                             <CustomInput
-                              label="Phone Number"
+                              label="Mobile / WhatsApp Number"
                               name="phone"
                               type="tel"
                               value={formData.phone}
@@ -392,36 +450,33 @@ export function Contact() {
                               required
                             />
                             <CustomInput
-                              label="Email Address"
+                              label="Email Address (optional)"
                               name="email"
                               type="email"
                               value={formData.email}
                               onChange={handleChange}
                             />
                             <CustomSelect
-                              label="I'm Interested In"
-                              value={formData.interest}
-                              onChange={handleSelectChange("interest")}
-                              options={INTEREST_OPTIONS}
+                              label="Current Qualification"
+                              value={formData.qualification}
+                              onChange={handleSelectChange("qualification")}
+                              options={QUALIFICATION_OPTIONS}
                               required
                             />
                           </div>
 
                           <button
                             type="submit"
-                            disabled={!formData.name || !formData.phone || !formData.interest}
-                            className="group relative w-full flex items-center justify-center gap-3 bg-gold text-navy h-[54px] px-10 rounded-2xl text-[15px] font-sans font-bold transition-all duration-300 hover:shadow-[0_8px_30px_rgba(200,169,107,0.35)] hover:-translate-y-[1px] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:hover:translate-y-0"
+                            disabled={!formData.full_name || !formData.phone || !formData.qualification}
+                            className="group relative w-full flex items-center justify-center gap-3 bg-gold text-navy h-[54px] px-10 rounded-2xl text-[15px] font-sans font-bold transition-all duration-300 hover:shadow-[0_8px_30px_rgba(200,169,107,0.35)] hover:-translate-y-[1px] disabled:opacity-40 disabled:cursor-not-allowed"
                           >
                             Continue
-                            <ArrowUpRight
-                              size={18}
-                              className="transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300"
-                            />
+                            <ArrowUpRight size={18} className="transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
                           </button>
                         </motion.form>
                       )}
 
-                      {/* Step 2 */}
+                      {/* ── STEP 2: Study Plans ── */}
                       {step === 2 && (
                         <motion.form
                           key="step2"
@@ -431,22 +486,49 @@ export function Contact() {
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
                         >
-                          <div className="flex flex-col gap-8 mb-10">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8 mb-8">
                             <CustomSelect
-                              label="Preferred Time for a Callback"
-                              value={formData.preferredTime}
-                              onChange={handleSelectChange("preferredTime")}
-                              options={TIME_OPTIONS}
+                              label="Where do you want to study?"
+                              value={formData.destination}
+                              onChange={handleSelectChange("destination")}
+                              options={DESTINATION_OPTIONS}
+                              required
+                            />
+                            <CustomSelect
+                              label="Intended Intake"
+                              value={formData.intake}
+                              onChange={handleSelectChange("intake")}
+                              options={INTAKE_OPTIONS}
                             />
                             <CustomInput
-                              label="Anything else you'd like us to know?"
+                              label="Course / Field of Study"
+                              name="course"
+                              value={formData.course}
+                              onChange={handleChange}
+                              className="md:col-span-2"
+                            />
+                            <CustomSelect
+                              label="How did you hear about us?"
+                              value={formData.source}
+                              onChange={handleSelectChange("source")}
+                              options={SOURCE_OPTIONS}
+                              required
+                            />
+                            <CustomInput
+                              label="Anything else for us to know?"
                               name="message"
                               value={formData.message}
                               onChange={handleChange}
                               isTextArea
                               rows={3}
+                              className="md:col-span-1"
                             />
                           </div>
+
+                          {/* Error message */}
+                          {error && (
+                            <p className="text-sm text-red-600 mb-4 text-center font-medium">{error}</p>
+                          )}
 
                           <div className="flex flex-col sm:flex-row gap-3">
                             <button
@@ -458,13 +540,20 @@ export function Contact() {
                             </button>
                             <button
                               type="submit"
-                              className="flex-[2] group relative flex items-center justify-center gap-3 bg-navy text-ivory h-[54px] px-10 rounded-2xl text-[15px] font-sans font-bold transition-all duration-300 hover:shadow-lg hover:bg-midnight hover:-translate-y-[1px]"
+                              disabled={isSubmitting || !formData.destination || !formData.source}
+                              className="flex-[2] group relative flex items-center justify-center gap-3 bg-navy text-ivory h-[54px] px-10 rounded-2xl text-[15px] font-sans font-bold transition-all duration-300 hover:shadow-lg hover:bg-midnight hover:-translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              Start My Journey
-                              <ArrowUpRight
-                                size={18}
-                                className="text-gold transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300"
-                              />
+                              {isSubmitting ? (
+                                <>
+                                  <Loader2 size={18} className="animate-spin" />
+                                  Sending…
+                                </>
+                              ) : (
+                                <>
+                                  Start My Journey
+                                  <ArrowUpRight size={18} className="text-gold transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
+                                </>
+                              )}
                             </button>
                           </div>
                         </motion.form>
@@ -480,7 +569,7 @@ export function Contact() {
                     </div>
                   </motion.div>
                 ) : (
-                  /* Success State */
+                  /* ── Success State ── */
                   <motion.div
                     key="success"
                     initial={{ opacity: 0, scale: 0.95 }}
@@ -501,11 +590,11 @@ export function Contact() {
                       You&apos;re on your way.
                     </h3>
                     <p className="font-sans text-navy/60 mb-10 max-w-sm text-sm leading-relaxed">
-                      Thank you. A Pathway counsellor will review your details and reach out to you shortly.
+                      Thank you, <strong>{formData.full_name.split(" ")[0]}</strong>! A Pathway counsellor will review your details and reach out within 24 hours.
                     </p>
 
                     <a
-                      href="https://wa.me/917506284722?text=Hi%2C%20I%20just%20submitted%20the%20consultation%20form%20on%20your%20website."
+                      href={`https://wa.me/917506284722?text=Hi%2C%20I%27m%20${encodeURIComponent(formData.full_name)}%20and%20I%20just%20submitted%20the%20consultation%20form%20on%20your%20website.%20I%27m%20interested%20in%20studying%20in%20${encodeURIComponent(formData.destination || "a%20new%20country")}.`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-2.5 bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] font-bold px-6 py-3 rounded-full text-sm hover:bg-[#25D366]/20 transition-colors mb-6 shadow-sm"
@@ -516,7 +605,7 @@ export function Contact() {
 
                     <button
                       onClick={() => {
-                        setFormData({ name: "", phone: "", email: "", interest: "", preferredTime: "", message: "" });
+                        setFormData({ full_name: "", phone: "", email: "", qualification: "", destination: "", course: "", intake: "", source: "", message: "" });
                         setIsSubmitted(false);
                         setStep(1);
                       }}
