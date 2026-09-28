@@ -88,6 +88,11 @@ CREATE TABLE IF NOT EXISTS leads (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Relax any older restrictive constraints on leads to ensure all website form submissions succeed
+ALTER TABLE leads ALTER COLUMN email DROP NOT NULL;
+ALTER TABLE leads DROP CONSTRAINT IF EXISTS leads_lead_source_check;
+ALTER TABLE leads DROP CONSTRAINT IF EXISTS leads_status_check;
+
 -- ── 6. STUDENTS (Enrolled Clients) ────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS students (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

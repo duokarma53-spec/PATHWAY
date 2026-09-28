@@ -31,22 +31,63 @@ import { createClient } from "@/lib/supabase/client"
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapDbLeadToLead(row: any): Lead {
   const codeNum = row.id ? row.id.replace(/-/g, "").substring(0, 4).toUpperCase() : (row.phone ? row.phone.slice(-4) : "1001");
+  const nameParts = (row.full_name || "Prospective Student").trim().split(" ");
+  const firstName = nameParts[0] || "Prospective";
+  const lastName = nameParts.slice(1).join(" ") || "Student";
+
+  // Normalize source for UI badge / filter
+  let sourceUI: Lead["leadSource"] = "Website";
+  const rawSource = (row.lead_source || "").toLowerCase();
+  if (rawSource.includes("whatsapp")) sourceUI = "WhatsApp";
+  else if (rawSource.includes("instagram") || rawSource.includes("social")) sourceUI = "Instagram";
+  else if (rawSource.includes("referral")) sourceUI = "Referral";
+  else if (rawSource.includes("walk")) sourceUI = "Walk-in";
+  else if (rawSource.includes("phone")) sourceUI = "Phone";
+  else if (rawSource.includes("website") || rawSource.includes("google") || rawSource.includes("fair")) sourceUI = "Website";
+  else sourceUI = "Other";
+
+  // Normalize status for UI
+  let statusUI: Lead["status"] = "New";
+  const rawStatus = (row.status || "").toLowerCase();
+  if (rawStatus === "contacted") statusUI = "Contacted";
+  else if (rawStatus === "lost") statusUI = "Lost";
+  else if (rawStatus === "enrolled" || rawStatus === "converted") statusUI = "Converted to Student";
+  else if (rawStatus === "interested") statusUI = "Interested";
+  else statusUI = "New";
+
+  const destMap: Record<string, string> = {
+    "UK": "United Kingdom",
+    "USA": "United States",
+    "Canada": "Canada",
+    "Australia": "Australia",
+    "Germany": "Germany",
+    "Ireland": "Ireland",
+    "New Zealand": "New Zealand",
+    "Dubai/UAE": "Dubai / UAE",
+  };
+  const destination = destMap[row.destination] || row.destination || "United Kingdom";
+
   return {
     id: row.id || `lead-live-${row.phone || "demo"}`,
     leadCode: `LD-${codeNum}`,
-    name: row.full_name || "Prospective Student",
+    firstName,
+    lastName,
+    name: row.full_name || `${firstName} ${lastName}`,
     email: row.email || "",
     phone: row.phone || "",
-    preferredDestination: row.destination || "United Kingdom",
+    preferredDestination: destination,
     course: row.course || "Higher Education",
     intake: row.intake || "Upcoming 2026",
     qualification: row.qualification || "Graduate",
-    status: (row.status === "new" ? "New" : "New") as any,
-    priority: "High" as any,
-    leadSource: "Website",
+    status: statusUI,
+    priority: "High",
+    leadSource: sourceUI,
     assignedCounsellor: "Owner",
     createdDate: row.created_at ? new Date(row.created_at).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
-    lastContactDate: "Pending first contact",
+    lastContacted: row.last_contacted_at ? new Date(row.last_contacted_at).toLocaleDateString() : "Pending first contact",
+    nextFollowUp: row.next_followup_at ? new Date(row.next_followup_at).toLocaleDateString() : "To be scheduled",
+    notesCount: row.message ? 1 : 0,
+    message: row.message || "",
     score: 90,
     notes: row.message || "Submitted via website consultation form",
   };

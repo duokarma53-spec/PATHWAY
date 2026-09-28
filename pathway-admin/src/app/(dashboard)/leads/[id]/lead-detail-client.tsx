@@ -30,12 +30,123 @@ import { INITIAL_LEADS, Lead } from "@/lib/mock-data"
 import Link from "next/link"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { createClient } from "@/lib/supabase/client"
+
+// Helper to map DB row to Lead interface
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapDbLeadToLead(row: any): Lead {
+  const codeNum = row.id ? row.id.replace(/-/g, "").substring(0, 4).toUpperCase() : (row.phone ? row.phone.slice(-4) : "1001");
+  const nameParts = (row.full_name || "Prospective Student").trim().split(" ");
+  const firstName = nameParts[0] || "Prospective";
+  const lastName = nameParts.slice(1).join(" ") || "Student";
+
+  let sourceUI: Lead["leadSource"] = "Website";
+  const rawSource = (row.lead_source || "").toLowerCase();
+  if (rawSource.includes("whatsapp")) sourceUI = "WhatsApp";
+  else if (rawSource.includes("instagram") || rawSource.includes("social")) sourceUI = "Instagram";
+  else if (rawSource.includes("referral")) sourceUI = "Referral";
+  else if (rawSource.includes("walk")) sourceUI = "Walk-in";
+  else if (rawSource.includes("phone")) sourceUI = "Phone";
+  else if (rawSource.includes("website") || rawSource.includes("google") || rawSource.includes("fair")) sourceUI = "Website";
+  else sourceUI = "Other";
+
+  let statusUI: Lead["status"] = "New";
+  const rawStatus = (row.status || "").toLowerCase();
+  if (rawStatus === "contacted") statusUI = "Contacted";
+  else if (rawStatus === "lost") statusUI = "Lost";
+  else if (rawStatus === "enrolled" || rawStatus === "converted") statusUI = "Converted to Student";
+  else if (rawStatus === "interested") statusUI = "Interested";
+  else statusUI = "New";
+
+  const destMap: Record<string, string> = {
+    "UK": "United Kingdom",
+    "USA": "United States",
+    "Canada": "Canada",
+    "Australia": "Australia",
+    "Germany": "Germany",
+    "Ireland": "Ireland",
+    "New Zealand": "New Zealand",
+    "Dubai/UAE": "Dubai / UAE",
+  };
+  const destination = destMap[row.destination] || row.destination || "United Kingdom";
+
+  return {
+    id: row.id || `lead-live-${row.phone || "demo"}`,
+    leadCode: `LD-${codeNum}`,
+    firstName,
+    lastName,
+    name: row.full_name || `${firstName} ${lastName}`,
+    email: row.email || "",
+    phone: row.phone || "",
+    preferredDestination: destination,
+    course: row.course || "Higher Education",
+    intake: row.intake || "Upcoming 2026",
+    qualification: row.qualification || "Graduate",
+    status: statusUI,
+    priority: "High",
+    leadSource: sourceUI,
+    assignedCounsellor: "Owner",
+    createdDate: row.created_at ? new Date(row.created_at).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+    lastContacted: row.last_contacted_at ? new Date(row.last_contacted_at).toLocaleDateString() : "Pending first contact",
+    nextFollowUp: row.next_followup_at ? new Date(row.next_followup_at).toLocaleDateString() : "To be scheduled",
+    notesCount: row.message ? 1 : 0,
+    message: row.message || "",
+    notes: row.message || "Submitted via website consultation form",
+  };
+}
 
 export function LeadDetailClient({ leadId }: { leadId: string }) {
   const router = useRouter()
   // Locate lead from mock store (or fallback to first)
   const initialLead = INITIAL_LEADS.find((l) => l.id === leadId) || INITIAL_LEADS[0]
   const [lead, setLead] = React.useState<Lead>(initialLead)
+
+  // Fetch live lead if opened from Supabase or localStorage
+  React.useEffect(() => {
+    const supabase = createClient();
+    async function loadLiveLead() {
+      try {
+        const { data, error } = await supabase
+          .from("leads")
+          .select("*")
+          .eq("id", leadId)
+          .maybeSingle();
+
+        if (data && !error) {
+          const mapped = mapDbLeadToLead(data);
+          setLead(mapped);
+          if (data.message) {
+            setNotes((prev) => [
+              {
+                id: "note-inquiry-msg",
+                author: "Website Lead Form",
+                role: "Inquiry Message",
+                content: data.message,
+                timestamp: mapped.createdDate,
+                isPinned: true,
+              },
+              ...prev.filter((n) => n.id !== "note-inquiry-msg"),
+            ]);
+          }
+          return;
+        }
+
+        // Check local storage fallback
+        if (typeof window !== "undefined") {
+          const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const foundLocal = local.find((l: any) => l.id === leadId);
+          if (foundLocal) {
+            setLead(mapDbLeadToLead(foundLocal));
+          }
+        }
+      } catch (err) {
+        console.debug("Lead fetch error:", err);
+      }
+    }
+
+    loadLiveLead();
+  }, [leadId]);
 
   // Timeline events
   const [timeline, setTimeline] = React.useState(

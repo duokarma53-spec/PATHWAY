@@ -281,44 +281,82 @@ export function Contact() {
     setIsSubmitting(true);
     setError(null);
 
+    // Map user-friendly form sources to database-compliant values
+    const SOURCE_MAPPING: Record<string, string> = {
+      "Google": "Google Search / SEO",
+      "Instagram": "Instagram / Social",
+      "Facebook": "Instagram / Social",
+      "WhatsApp": "Website Inquiry",
+      "Referral": "Direct Referral",
+      "Walk-in": "Walk-in",
+      "Education Fair": "Education Fair",
+      "Other": "Website Inquiry",
+    };
+
+    // Standardize destination countries for consistent CRM filtering
+    const DEST_MAPPING: Record<string, string> = {
+      "UK": "United Kingdom",
+      "USA": "United States",
+      "Canada": "Canada",
+      "Australia": "Australia",
+      "Ireland": "Ireland",
+      "Germany": "Germany",
+      "New Zealand": "New Zealand",
+      "Dubai/UAE": "Dubai / UAE",
+      "Not decided": "Not decided",
+    };
+
+    const cleanDigits = (formData.phone || "").replace(/\D/g, "");
+    const safeEmail = (formData.email && formData.email.trim())
+      ? formData.email.trim()
+      : `${cleanDigits || "student" + Date.now()}@pathway-lead.com`;
+
     const newLeadPayload = {
-      full_name:     formData.full_name,
-      phone:         formData.phone,
-      email:         formData.email || `${formData.phone.replace(/\D/g, '')}@pathway-lead.com`,
+      full_name:     formData.full_name.trim(),
+      phone:         formData.phone.trim(),
+      email:         safeEmail,
       qualification: formData.qualification || null,
-      destination:   formData.destination || null,
-      course:        formData.course || null,
+      destination:   DEST_MAPPING[formData.destination] || formData.destination || null,
+      course:        formData.course?.trim() || null,
       intake:        formData.intake || null,
-      lead_source:   formData.source || "Website Inquiry",
-      message:       formData.message || null,
+      lead_source:   SOURCE_MAPPING[formData.source] || "Website Inquiry",
+      message:       formData.message?.trim() || null,
       status:        "new",
       country:       "India",
     };
 
     try {
-      const { error: supabaseError } = await supabase.from("leads").insert([newLeadPayload]);
+      const { data: insertedData, error: supabaseError } = await supabase
+        .from("leads")
+        .insert([newLeadPayload])
+        .select();
 
       if (supabaseError) {
         console.error("Supabase insert error:", supabaseError);
+        setError("Unable to submit inquiry right now. Please check your details or call our office directly.");
+        setIsSubmitting(false);
+        return;
       }
 
-      // Also broadcast locally across browser tabs
+      const confirmedLead = (insertedData && insertedData[0]) ? insertedData[0] : newLeadPayload;
+
+      // Broadcast across browser tabs to instantly notify Admin CRM
       try {
         if (typeof window !== "undefined") {
           const bc = new BroadcastChannel("pathway_leads_channel");
-          bc.postMessage({ type: "NEW_LEAD", lead: newLeadPayload });
+          bc.postMessage({ type: "NEW_LEAD", lead: confirmedLead });
           const existing = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
-          localStorage.setItem("pathway_local_leads", JSON.stringify([newLeadPayload, ...existing]));
+          localStorage.setItem("pathway_local_leads", JSON.stringify([confirmedLead, ...existing]));
         }
       } catch (bcErr) {
         // ignore broadcast error
       }
 
       setIsSubmitted(true);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Form submission error:", err);
-      // Fallback: still treat as submitted and notify admin locally
-      setIsSubmitted(true);
+      const msg = err instanceof Error ? err.message : "Submission failed. Please try again.";
+      setError(msg);
     } finally {
       setIsSubmitting(false);
     }
