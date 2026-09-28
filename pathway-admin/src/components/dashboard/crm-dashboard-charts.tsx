@@ -42,6 +42,15 @@ const DESTINATION_DATA = [
 ]
 
 export function LeadTrendChart() {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div className="h-[260px] w-full rounded-xl bg-linen/30 animate-pulse" />;
+  }
+
   return (
     <div className="h-[260px] w-full">
       <ResponsiveContainer width="100%" height="100%">
@@ -78,6 +87,15 @@ export function LeadTrendChart() {
 }
 
 export function LeadsBySourceChart() {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div className="h-[240px] w-full rounded-xl bg-linen/30 animate-pulse" />;
+  }
+
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 h-[240px]">
       <div className="h-[200px] w-[200px] shrink-0">
@@ -123,6 +141,15 @@ export function LeadsBySourceChart() {
 }
 
 export function LeadsByDestinationChart() {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div className="h-[220px] w-full rounded-xl bg-linen/30 animate-pulse" />;
+  }
+
   return (
     <div className="h-[220px] w-full">
       <ResponsiveContainer width="100%" height="100%">

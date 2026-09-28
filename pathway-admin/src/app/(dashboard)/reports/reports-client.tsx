@@ -47,6 +47,11 @@ const MONTHLY_REVENUE = [
 
 export function ReportsClientView() {
   const [dateRange, setDateRange] = React.useState("This Month")
+  const [mounted, setMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleExport = (format: string) => {
     toast.success(`Exporting consultancy executive report as ${format.toUpperCase()}...`)
@@ -137,24 +142,28 @@ export function ReportsClientView() {
         </CardHeader>
         <CardContent>
           <div className="h-[250px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={MONTHLY_REVENUE} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.06)" />
-                <XAxis dataKey="month" stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#131B2E",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                    borderRadius: "8px",
-                    color: "#F8FAFC",
-                    fontSize: "12px"
-                  }}
-                />
-                <Bar dataKey="revenue" name="Achieved Revenue" fill="#10B981" radius={[4, 4, 0, 0]} barSize={26} />
-                <Bar dataKey="target" name="Monthly Target" fill="#E5C05D" radius={[4, 4, 0, 0]} barSize={26} />
-              </BarChart>
-            </ResponsiveContainer>
+            {mounted ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={MONTHLY_REVENUE} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.06)" />
+                  <XAxis dataKey="month" stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
+                  <YAxis stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#131B2E",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: "8px",
+                      color: "#F8FAFC",
+                      fontSize: "12px"
+                    }}
+                  />
+                  <Bar dataKey="revenue" name="Achieved Revenue" fill="#10B981" radius={[4, 4, 0, 0]} barSize={26} />
+                  <Bar dataKey="target" name="Monthly Target" fill="#E5C05D" radius={[4, 4, 0, 0]} barSize={26} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-full w-full rounded-xl bg-linen/20 animate-pulse" />
+            )}
           </div>
         </CardContent>
       </Card>

@@ -1,8 +1,10 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const isGithubActions = process.env.GITHUB_ACTIONS || false;
 
 const nextConfig: NextConfig = {
+  outputFileTracingRoot: path.join(__dirname, "../"),
   // On GitHub Actions: static export for GitHub Pages
   // On Vercel: full Next.js server (supports Server Actions)
   ...(isGithubActions
