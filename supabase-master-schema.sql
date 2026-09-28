@@ -501,16 +501,24 @@ DROP POLICY IF EXISTS "Anon read for demo profiles" ON profiles;
 CREATE POLICY "Anon read for demo profiles" ON profiles FOR SELECT USING (true);
 
 -- ==============================================================================
--- 20. INITIAL SEED DATA
+-- 20. INITIAL SEED DATA (Fully Idempotent & Re-runnable)
 -- ==============================================================================
 
 -- Staff Profiles
+DELETE FROM profiles WHERE email = 'owner@pathway.com' AND id != 'a1111111-1111-1111-1111-111111111111';
+DELETE FROM profiles WHERE email = 'admin@pathway.com' AND id != 'a1111111-1111-1111-1111-111111111111';
+
 INSERT INTO profiles (id, email, full_name, role, phone, department) VALUES
   ('a1111111-1111-1111-1111-111111111111', 'owner@pathway.com', 'Owner', 'Super Admin', '+91 98200 11223', 'Executive Management'),
   ('a2222222-2222-2222-2222-222222222222', 'rohan@pathway.com', 'Rohan Varma', 'Counsellor', '+91 98200 44556', 'UK & Europe Admissions'),
   ('a3333333-3333-3333-3333-333333333333', 'priya@pathway.com', 'Priya Iyer', 'Counsellor', '+91 98200 77889', 'Canada & USA Admissions'),
   ('a4444444-4444-4444-4444-444444444444', 'dev@pathway.com', 'Dev Patel', 'Counsellor', '+91 98200 99001', 'Australia & NZ Admissions')
-ON CONFLICT (email) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+  email = EXCLUDED.email,
+  full_name = EXCLUDED.full_name,
+  role = EXCLUDED.role,
+  phone = EXCLUDED.phone,
+  department = EXCLUDED.department;
 
 -- Destinations
 INSERT INTO destinations (name, slug, code, flag, currency, average_tuition, living_cost, visa_processing_time, work_rights, popular_intakes, requirements) VALUES
@@ -521,39 +529,41 @@ INSERT INTO destinations (name, slug, code, flag, currency, average_tuition, liv
 ON CONFLICT (slug) DO NOTHING;
 
 -- Universities
-INSERT INTO universities (name, country, city, global_ranking, tuition_range, acceptance_rate, ielts_minimum, popular_courses, scholarships_available, website) VALUES
-  ('University of Manchester', 'United Kingdom', 'Manchester', 32, '£24,000 - £34,000', '56%', 6.5, ARRAY['MSc Data Science', 'MBA', 'BSc Computer Science'], 'Global Futures Scholarship (£5,000)', 'https://manchester.ac.uk'),
-  ('University of Leeds', 'United Kingdom', 'Leeds', 75, '£22,000 - £30,000', '64%', 6.5, ARRAY['MA Global Media', 'MSc Artificial Intelligence'], 'International Excellence Award (Up to 50%)', 'https://leeds.ac.uk'),
-  ('University of Toronto', 'Canada', 'Toronto', 21, 'CAD $45,000 - $62,000', '43%', 7.0, ARRAY['Master of Management Analytics', 'Computer Engineering'], 'Lester B. Pearson International Scholarship', 'https://utoronto.ca'),
-  ('Columbia University', 'United States', 'New York City', 11, 'USD $58,000 - $68,000', '4%', 7.5, ARRAY['MS Quantitative Finance', 'MA Economics'], 'Merit Fellowship Grants', 'https://columbia.edu'),
-  ('University of Melbourne', 'Australia', 'Melbourne', 14, 'AUD $38,000 - $52,000', '70%', 6.5, ARRAY['Master of Engineering (Robotics)', 'Master of IT'], 'Melbourne International Undergraduate Scholarship', 'https://unimelb.edu.au')
-ON CONFLICT DO NOTHING;
+INSERT INTO universities (id, name, country, city, global_ranking, tuition_range, acceptance_rate, ielts_minimum, popular_courses, scholarships_available, website) VALUES
+  ('c1111111-1111-1111-1111-111111111111', 'University of Manchester', 'United Kingdom', 'Manchester', 32, '£24,000 - £34,000', '56%', 6.5, ARRAY['MSc Data Science', 'MBA', 'BSc Computer Science'], 'Global Futures Scholarship (£5,000)', 'https://manchester.ac.uk'),
+  ('c2222222-2222-2222-2222-222222222222', 'University of Leeds', 'United Kingdom', 'Leeds', 75, '£22,000 - £30,000', '64%', 6.5, ARRAY['MA Global Media', 'MSc Artificial Intelligence'], 'International Excellence Award (Up to 50%)', 'https://leeds.ac.uk'),
+  ('c3333333-3333-3333-3333-333333333333', 'University of Toronto', 'Canada', 'Toronto', 21, 'CAD $45,000 - $62,000', '43%', 7.0, ARRAY['Master of Management Analytics', 'Computer Engineering'], 'Lester B. Pearson International Scholarship', 'https://utoronto.ca'),
+  ('c4444444-4444-4444-4444-444444444444', 'Columbia University', 'United States', 'New York City', 11, 'USD $58,000 - $68,000', '4%', 7.5, ARRAY['MS Quantitative Finance', 'MA Economics'], 'Merit Fellowship Grants', 'https://columbia.edu'),
+  ('c5555555-5555-5555-5555-555555555555', 'University of Melbourne', 'Australia', 'Melbourne', 14, 'AUD $38,000 - $52,000', '70%', 6.5, ARRAY['Master of Engineering (Robotics)', 'Master of IT'], 'Melbourne International Undergraduate Scholarship', 'https://unimelb.edu.au')
+ON CONFLICT (id) DO NOTHING;
 
 -- Initial Leads
-INSERT INTO leads (full_name, email, phone, destination, course, intake, qualification, city, status, priority, lead_source, assigned_counsellor) VALUES
-  ('Aarav Mehta', 'aarav.mehta@example.com', '+91 98201 44521', 'United Kingdom', 'MSc Data Science & AI', 'Sept 2026', 'B.Tech Computer Science (8.4 CGPA)', 'Mumbai', 'new', 'urgent', 'Website Inquiry', 'a2222222-2222-2222-2222-222222222222'),
-  ('Rhea Sengupta', 'rhea.s@example.com', '+91 98334 11209', 'United Kingdom', 'MA Media & Communications', 'Sept 2026', 'BA Journalism (78%)', 'Kolkata', 'counselling_scheduled', 'high', 'Education Fair', 'a2222222-2222-2222-2222-222222222222'),
-  ('Kabir Deshmukh', 'kabir.d@example.com', '+91 98110 55432', 'Canada', 'Postgrad Diploma Cybersecurity', 'Jan 2027', 'BSc IT (3.4 GPA)', 'Pune', 'contacted', 'medium', 'Direct Referral', 'a3333333-3333-3333-3333-333333333333'),
-  ('Sneha Mukherjee', 'sneha.m@example.com', '+91 97665 99812', 'United States', 'MS Quantitative Finance', 'Fall 2026', 'B.Com Honours (85%)', 'Delhi', 'counselling_done', 'high', 'Google Search / SEO', 'a3333333-3333-3333-3333-333333333333'),
-  ('Arjun Nair', 'arjun.nair@example.com', '+91 98450 33211', 'Australia', 'Master of Robotics & Mechatronics', 'Feb 2027', 'B.Tech Mechanical (7.9 CGPA)', 'Bengaluru', 'shortlisting_in_progress', 'urgent', 'Instagram / Social', 'a4444444-4444-4444-4444-444444444444')
-ON CONFLICT DO NOTHING;
+INSERT INTO leads (id, full_name, email, phone, destination, course, intake, qualification, city, status, priority, lead_source, assigned_counsellor) VALUES
+  ('d1111111-1111-1111-1111-111111111111', 'Aarav Mehta', 'aarav.mehta@example.com', '+91 98201 44521', 'United Kingdom', 'MSc Data Science & AI', 'Sept 2026', 'B.Tech Computer Science (8.4 CGPA)', 'Mumbai', 'new', 'urgent', 'Website Inquiry', 'a2222222-2222-2222-2222-222222222222'),
+  ('d2222222-2222-2222-2222-222222222222', 'Rhea Sengupta', 'rhea.s@example.com', '+91 98334 11209', 'United Kingdom', 'MA Media & Communications', 'Sept 2026', 'BA Journalism (78%)', 'Kolkata', 'counselling_scheduled', 'high', 'Education Fair', 'a2222222-2222-2222-2222-222222222222'),
+  ('d3333333-3333-3333-3333-333333333333', 'Kabir Deshmukh', 'kabir.d@example.com', '+91 98110 55432', 'Canada', 'Postgrad Diploma Cybersecurity', 'Jan 2027', 'BSc IT (3.4 GPA)', 'Pune', 'contacted', 'medium', 'Direct Referral', 'a3333333-3333-3333-3333-333333333333'),
+  ('d4444444-4444-4444-4444-444444444444', 'Sneha Mukherjee', 'sneha.m@example.com', '+91 97665 99812', 'United States', 'MS Quantitative Finance', 'Fall 2026', 'B.Com Honours (85%)', 'Delhi', 'counselling_done', 'high', 'Google Search / SEO', 'a3333333-3333-3333-3333-333333333333'),
+  ('d5555555-5555-5555-5555-555555555555', 'Arjun Nair', 'arjun.nair@example.com', '+91 98450 33211', 'Australia', 'Master of Robotics & Mechatronics', 'Feb 2027', 'B.Tech Mechanical (7.9 CGPA)', 'Bengaluru', 'shortlisting_in_progress', 'urgent', 'Instagram / Social', 'a4444444-4444-4444-4444-444444444444')
+ON CONFLICT (id) DO NOTHING;
 
 -- Initial Active Students
 INSERT INTO students (id, first_name, last_name, email, phone, city, country, current_institution, academic_score, english_test_score, target_country, target_intake, document_progress, status, total_billed, total_paid, assigned_counsellor) VALUES
   ('b1111111-1111-1111-1111-111111111111', 'Zainab', 'Al-Mansoor', 'zainab.m@example.com', '+971 50 123 4567', 'Abu Dhabi', 'United Arab Emirates', 'Khalifa University', '3.75 GPA', 'IELTS Academic: 7.5', 'United Kingdom', 'Sept 2026', 85, 'active', 2000.00, 1500.00, 'a2222222-2222-2222-2222-222222222222'),
   ('b2222222-2222-2222-2222-222222222222', 'Rohan', 'Mehta', 'rohan.m@example.com', '+91 98200 55443', 'Mumbai', 'India', 'VJTI Mumbai', '8.9 CGPA', 'IELTS Academic: 8.0', 'United Kingdom', 'Sept 2026', 100, 'visa_approved', 2500.00, 2500.00, 'a2222222-2222-2222-2222-222222222222')
-ON CONFLICT (email) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+  status = EXCLUDED.status,
+  document_progress = EXCLUDED.document_progress;
 
 -- Initial CRM Tasks
-INSERT INTO tasks (title, description, due_date, priority, category, status, assigned_to) VALUES
-  ('Call Aarav Mehta to review Manchester MSc application draft', 'Student is available after 4 PM. Explain course modules and fee structure.', NOW() + INTERVAL '2 hours', 'urgent', 'follow_up', 'pending', 'a2222222-2222-2222-2222-222222222222'),
-  ('Request updated bank statement from Zainab Al-Mansoor', 'CAS issuance requirement for University of Manchester.', NOW() + INTERVAL '1 day', 'high', 'document_collection', 'pending', 'a2222222-2222-2222-2222-222222222222'),
-  ('Submit Columbia University financial affidavit for Sneha', 'Fall 2026 priority deadline approaching on October 15th.', NOW() + INTERVAL '3 days', 'medium', 'application_submission', 'pending', 'a3333333-3333-3333-3333-333333333333')
-ON CONFLICT DO NOTHING;
+INSERT INTO tasks (id, title, description, due_date, priority, category, status, assigned_to) VALUES
+  ('e1111111-1111-1111-1111-111111111111', 'Call Aarav Mehta to review Manchester MSc application draft', 'Student is available after 4 PM. Explain course modules and fee structure.', NOW() + INTERVAL '2 hours', 'urgent', 'follow_up', 'pending', 'a2222222-2222-2222-2222-222222222222'),
+  ('e2222222-2222-2222-2222-222222222222', 'Request updated bank statement from Zainab Al-Mansoor', 'CAS issuance requirement for University of Manchester.', NOW() + INTERVAL '1 day', 'high', 'document_collection', 'pending', 'a2222222-2222-2222-2222-222222222222'),
+  ('e3333333-3333-3333-3333-333333333333', 'Submit Columbia University financial affidavit for Sneha', 'Fall 2026 priority deadline approaching on October 15th.', NOW() + INTERVAL '3 days', 'medium', 'application_submission', 'pending', 'a3333333-3333-3333-3333-333333333333')
+ON CONFLICT (id) DO NOTHING;
 
 -- Initial Appointments
-INSERT INTO appointments (appointment_type, scheduled_at, duration_minutes, mode, status, counsellor_id) VALUES
-  ('1-on-1 Master Profile Evaluation', NOW() + INTERVAL '1 day', 45, 'Zoom Video', 'scheduled', 'a2222222-2222-2222-2222-222222222222'),
-  ('Visa Mock Interview Prep Session', NOW() + INTERVAL '2 days', 60, 'Office In-Person', 'scheduled', 'a2222222-2222-2222-2222-222222222222'),
-  ('Shortlisting Consultation (Canada vs USA)', NOW() + INTERVAL '3 days', 45, 'Zoom Video', 'scheduled', 'a3333333-3333-3333-3333-333333333333')
-ON CONFLICT DO NOTHING;
+INSERT INTO appointments (id, appointment_type, scheduled_at, duration_minutes, mode, status, counsellor_id) VALUES
+  ('f1111111-1111-1111-1111-111111111111', '1-on-1 Master Profile Evaluation', NOW() + INTERVAL '1 day', 45, 'Zoom Video', 'scheduled', 'a2222222-2222-2222-2222-222222222222'),
+  ('f2222222-2222-2222-2222-222222222222', 'Visa Mock Interview Prep Session', NOW() + INTERVAL '2 days', 60, 'Office In-Person', 'scheduled', 'a2222222-2222-2222-2222-222222222222'),
+  ('f3333333-3333-3333-3333-333333333333', 'Shortlisting Consultation (Canada vs USA)', NOW() + INTERVAL '3 days', 45, 'Zoom Video', 'scheduled', 'a3333333-3333-3333-3333-333333333333')
+ON CONFLICT (id) DO NOTHING;
