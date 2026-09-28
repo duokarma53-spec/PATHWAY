@@ -79,8 +79,8 @@ function mapDbLeadToLead(row: any): Lead {
     leadSource: sourceUI,
     assignedCounsellor: "Owner",
     createdDate: row.created_at ? new Date(row.created_at).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
-    lastContacted: row.last_contacted_at ? new Date(row.last_contacted_at).toLocaleDateString() : "Pending first contact",
-    nextFollowUp: row.next_followup_at ? new Date(row.next_followup_at).toLocaleDateString() : "To be scheduled",
+    lastContacted: row.last_contacted_at ? new Date(row.last_contacted_at).toISOString().split("T")[0] : "Pending first contact",
+    nextFollowUp: row.next_followup_at ? new Date(row.next_followup_at).toISOString().split("T")[0] : "To be scheduled",
     notesCount: row.message ? 1 : 0,
     message: row.message || "",
     score: 90,
@@ -225,8 +225,8 @@ export function InquiriesClientView() {
                         )}
                         <span className="text-xs font-mono text-muted-foreground">{inq.leadCode}</span>
                       </div>
-                      <p className="text-xs text-muted-foreground">
-                        Submitted on {new Date(inq.createdDate).toLocaleString()} via Pathway Website Contact Form
+                      <p className="text-xs text-muted-foreground" suppressHydrationWarning>
+                        Submitted on {inq.createdDate} via Pathway Website Contact Form
                       </p>
                     </div>
                   </div>
