@@ -1251,11 +1251,11 @@ export const INITIAL_PAYMENTS: PaymentRecord[] = [
 export const INITIAL_STAFF: StaffMember[] = [
   {
     id: "staff-1",
-    name: "Administrator",
-    avatar: "AD",
-    email: "admin@pathway.com",
+    name: "Owner",
+    avatar: "OW",
+    email: "owner@pathway.com",
     phone: "+91 98200 11223",
-    role: "Admin",
+    role: "Super Admin",
     department: "Management",
     status: "Active",
     assignedLeads: 8,
@@ -1354,8 +1354,8 @@ export const INITIAL_ACTIVITY_LOGS: ActivityLog[] = [
   },
   {
     id: "act-5",
-    actor: "Administrator",
-    actorRole: "Admin",
+    actor: "Owner",
+    actorRole: "Owner",
     action: "recorded payment of ₹1,20,000 (INV-2026-083)",
     entity: "Sneha Mukherjee",
     entityCode: "INV-2026-083",

@@ -62,10 +62,10 @@ export default function DashboardPage() {
               Consultancy Live Operations
             </span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-            Good morning, Admin.
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground font-serif">
+            Good morning, Owner.
           </h1>
-          <p className="text-xs md:text-sm text-muted-foreground">
+          <p className="text-xs md:text-sm text-muted-foreground" suppressHydrationWarning>
             Pathway Education Consultancy overview for {format(currentDate, "EEEE, MMMM do, yyyy")}.
           </p>
         </div>

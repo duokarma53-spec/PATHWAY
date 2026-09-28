@@ -15,6 +15,7 @@ import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { useSidebar } from "@/contexts/sidebar-context"
 import { DownloadAppButton } from "../pwa/install-prompt"
+import { BrandLogo } from "../ui/brand-logo"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type NavItem = { name: string; href: string; icon: any; badge?: string | number }
@@ -194,10 +195,8 @@ export function Sidebar() {
           "flex h-[68px] items-center border-b border-linen-dark/40",
           collapsed ? "justify-center px-4" : "px-5 gap-3"
         )}>
-          {/* Logo mark */}
-          <div className="h-8 w-8 rounded-xl flex items-center justify-center bg-liquid-amber text-primary-foreground font-bold text-sm shadow-warm shrink-0">
-            P
-          </div>
+          {/* Luxury Bespoke Brand Insignia */}
+          <BrandLogo size="sm" withGlow />
           {!collapsed && (
             <div className="flex flex-col leading-tight">
               <span className="text-[15px] font-semibold tracking-[0.08em] text-foreground uppercase">
@@ -244,9 +243,8 @@ export function Sidebar() {
         {/* Drawer Header */}
         <div className="flex h-[68px] items-center justify-between px-5 border-b border-linen-dark/40">
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-xl flex items-center justify-center bg-liquid-amber text-primary-foreground font-bold text-sm shadow-warm">
-              P
-            </div>
+            {/* Luxury Bespoke Brand Insignia */}
+            <BrandLogo size="sm" withGlow />
             <div className="flex flex-col leading-tight">
               <span className="text-[15px] font-semibold tracking-[0.08em] text-foreground uppercase">
                 Pathway

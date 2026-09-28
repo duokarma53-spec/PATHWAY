@@ -59,17 +59,17 @@ export function Topbar() {
           <div className="flex items-center gap-2.5 pl-2 cursor-pointer group select-none">
             <div className="hidden sm:flex flex-col text-right">
               <span className="text-[12.5px] font-semibold text-foreground group-hover:text-primary transition-colors leading-tight">
-                Administrator
+                Owner
               </span>
-              <span className="text-[9.5px] font-bold text-primary tracking-[0.14em] uppercase">
-                Admin
+              <span className="text-[9px] font-bold text-amber-700 tracking-[0.16em] uppercase">
+                SUPER ADMIN
               </span>
             </div>
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-amber-light to-amber/30
-              border border-amber/40 flex items-center justify-center
-              text-amber-dark font-bold text-[11px] shadow-sm
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-[#E6B85C] via-[#C9944A] to-[#8C5D23]
+              border border-[#FBE6B5]/80 flex items-center justify-center
+              text-white font-serif font-bold text-[12px] shadow-warm
               group-hover:scale-105 group-hover:shadow-warm transition-all duration-200">
-              AD
+              OW
             </div>
           </div>
         </div>

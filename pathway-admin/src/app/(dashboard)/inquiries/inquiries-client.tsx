@@ -25,9 +25,9 @@ import { createClient } from "@/lib/supabase/client"
 // Helper to map DB row to Lead interface
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapDbLeadToLead(row: any): Lead {
-  const codeNum = row.id ? row.id.substring(0, 4).toUpperCase() : Math.floor(1000 + Math.random() * 9000);
+  const codeNum = row.id ? row.id.replace(/-/g, "").substring(0, 4).toUpperCase() : (row.phone ? row.phone.slice(-4) : "1001");
   return {
-    id: row.id || `lead-web-${Date.now()}`,
+    id: row.id || `lead-web-${row.phone || "demo"}`,
     leadCode: `WEB-${codeNum}`,
     name: row.full_name || "Prospective Student",
     email: row.email || "",
@@ -39,7 +39,7 @@ function mapDbLeadToLead(row: any): Lead {
     status: (row.status === "new" ? "New" : "New") as any,
     priority: "High" as any,
     leadSource: "Website",
-    assignedCounsellor: "Admin",
+    assignedCounsellor: "Owner",
     createdDate: row.created_at ? new Date(row.created_at).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
     lastContactDate: "Pending first contact",
     score: 90,

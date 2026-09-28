@@ -506,7 +506,7 @@ CREATE POLICY "Anon read for demo profiles" ON profiles FOR SELECT USING (true);
 
 -- Staff Profiles
 INSERT INTO profiles (id, email, full_name, role, phone, department) VALUES
-  ('a1111111-1111-1111-1111-111111111111', 'admin@pathway.com', 'Administrator', 'Super Admin', '+91 98200 11223', 'Executive Management'),
+  ('a1111111-1111-1111-1111-111111111111', 'owner@pathway.com', 'Owner', 'Super Admin', '+91 98200 11223', 'Executive Management'),
   ('a2222222-2222-2222-2222-222222222222', 'rohan@pathway.com', 'Rohan Varma', 'Counsellor', '+91 98200 44556', 'UK & Europe Admissions'),
   ('a3333333-3333-3333-3333-333333333333', 'priya@pathway.com', 'Priya Iyer', 'Counsellor', '+91 98200 77889', 'Canada & USA Admissions'),
   ('a4444444-4444-4444-4444-444444444444', 'dev@pathway.com', 'Dev Patel', 'Counsellor', '+91 98200 99001', 'Australia & NZ Admissions')

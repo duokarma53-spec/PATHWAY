@@ -4,14 +4,17 @@ import { useState, useEffect } from "react";
 import { usePWAInstall } from "@/hooks/use-pwa-install";
 import { Download, Smartphone, Share2, PlusSquare, X, CheckCircle2, ShieldCheck, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/ui/brand-logo";
 
 export function MobileInstallGate() {
+  const [mounted, setMounted] = useState(false);
   const { isInstalled, isIOS, isMobile, isInstallable, installApp } = usePWAInstall();
   const [isOpen, setIsOpen] = useState(false);
   const [hasDismissed, setHasDismissed] = useState(false);
   const [installedSuccess, setInstalledSuccess] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     // Only prompt on mobile devices that are not already running in standalone PWA mode
     if (isMobile && !isInstalled) {
       const dismissed = sessionStorage.getItem("pwa_prompt_dismissed");
@@ -23,7 +26,7 @@ export function MobileInstallGate() {
     }
   }, [isMobile, isInstalled]);
 
-  if (isInstalled || !isOpen || hasDismissed) {
+  if (!mounted || isInstalled || !isOpen || hasDismissed) {
     return null;
   }
 
@@ -50,9 +53,7 @@ export function MobileInstallGate() {
         {/* Header & Monogram */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-liquid-amber to-amber-700 flex items-center justify-center text-white font-bold text-xl shadow-warm border border-white/30">
-              P
-            </div>
+            <BrandLogo size="md" />
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-liquid-amber">
@@ -155,11 +156,16 @@ export function DownloadAppButton({
   variant?: "topbar" | "sidebar" | "login" | "banner";
   className?: string;
 }) {
+  const [mounted, setMounted] = useState(false);
   const { isInstalled, isInstallable, installApp, isIOS } = usePWAInstall();
   const [showIOSModal, setShowIOSModal] = useState(false);
 
-  // If already running standalone, hide the download button
-  if (isInstalled) return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Avoid SSR / client hydration mismatches and hide if installed
+  if (!mounted || isInstalled) return null;
 
   const handleClick = async () => {
     if (isIOS) {

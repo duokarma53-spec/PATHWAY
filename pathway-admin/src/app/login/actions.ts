@@ -14,10 +14,10 @@ export async function login(formData: FormData) {
 
   // Pre-configured staff demo credentials for seamless testing & demonstration
   const isDemoUser =
+    (email === 'owner@pathway.com' && (password === 'pathway2025' || password === 'admin123')) ||
     (email === 'admin@pathway.com' && (password === 'pathway2025' || password === 'admin123')) ||
     (email === 'counsellor@pathway.com' && password === 'pathway2025') ||
-    (email === 'frontdesk@pathway.com' && password === 'pathway2025') ||
-    (email === 'hatim@pathway.com')
+    (email === 'frontdesk@pathway.com' && password === 'pathway2025');
 
   try {
     const supabase = await createClient()
