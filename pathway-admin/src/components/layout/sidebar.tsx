@@ -46,6 +46,14 @@ const navigationGroups: NavGroup[] = [
     ]
   },
   {
+    label: "Website",
+    items: [
+      { name: 'Inquiries',    href: '/inquiries',    icon: Inbox,   badge: 'New' },
+      { name: 'Content',      href: '/content',      icon: Layers },
+      { name: 'Testimonials', href: '/testimonials', icon: Star },
+    ]
+  },
+  {
     label: "Student Management",
     items: [
       { name: 'Documents',    href: '/documents',    icon: FolderOpen, badge: '8' },
@@ -59,14 +67,6 @@ const navigationGroups: NavGroup[] = [
     items: [
       { name: 'Reports',     href: '/reports',     icon: BarChart3 },
       { name: 'Performance', href: '/performance', icon: TrendingUp },
-    ]
-  },
-  {
-    label: "Website",
-    items: [
-      { name: 'Inquiries',    href: '/inquiries',    icon: Inbox,   badge: 'New' },
-      { name: 'Content',      href: '/content',      icon: Layers },
-      { name: 'Testimonials', href: '/testimonials', icon: Star },
     ]
   },
   {

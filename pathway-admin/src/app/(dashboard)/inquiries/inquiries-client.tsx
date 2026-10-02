@@ -11,7 +11,8 @@ import {
   CheckCircle2,
   AlertTriangle,
   Clock,
-  ArrowRight
+  ArrowRight,
+  Trash2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -87,9 +88,9 @@ function mapDbLeadToLead(row: any): Lead {
 }
 
 export function InquiriesClientView() {
-  const websiteInquiries = INITIAL_LEADS.filter(l => l.leadSource === "Website")
-  const [inquiries, setInquiries] = React.useState<Lead[]>(websiteInquiries)
+  const [inquiries, setInquiries] = React.useState<Lead[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
+  const [isClearing, setIsClearing] = React.useState(false)
 
   // Fetch live leads from Supabase and listen for real-time events
   React.useEffect(() => {
@@ -102,14 +103,20 @@ export function InquiriesClientView() {
           .select("*")
           .order("created_at", { ascending: false });
 
-        if (!error && data && data.length > 0) {
+        if (!error && data !== null) {
           const liveLeads = data.map(mapDbLeadToLead);
-          // Merge live leads on top of initial mock data without duplicates
-          setInquiries((prev) => {
-            const liveIds = new Set(liveLeads.map((l) => l.id));
-            const remainingMock = prev.filter((p) => !liveIds.has(p.id));
-            return [...liveLeads, ...remainingMock];
-          });
+          // Check local storage submissions too
+          let localMapped: Lead[] = [];
+          try {
+            const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
+            if (local.length > 0) {
+              localMapped = local.map(mapDbLeadToLead);
+            }
+          } catch (e) {}
+
+          const liveIds = new Set(liveLeads.map((l) => l.id));
+          const uniqueLocal = localMapped.filter((l) => !liveIds.has(l.id));
+          setInquiries([...liveLeads, ...uniqueLocal]);
         }
       } catch (err) {
         console.debug("Live inquiry fetch error:", err);
@@ -119,15 +126,6 @@ export function InquiriesClientView() {
     }
 
     loadLiveInquiries();
-
-    // Check localStorage for any inquiries submitted in this browser
-    try {
-      const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
-      if (local.length > 0) {
-        const localMapped = local.map(mapDbLeadToLead);
-        setInquiries((prev) => [...localMapped, ...prev]);
-      }
-    } catch (e) {}
 
     // Listen to real-time custom event dispatched by LeadNotificationListener
     const handleNewLeadEvent = (e: Event) => {
@@ -144,6 +142,37 @@ export function InquiriesClientView() {
     };
   }, []);
 
+  const handleClearAllInquiries = async () => {
+    if (!window.confirm("Are you sure you want to clear all inquiries? This will permanently remove all website inquiries.")) {
+      return;
+    }
+
+    setIsClearing(true);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase
+        .from("leads")
+        .delete()
+        .neq("id", "00000000-0000-0000-0000-000000000000");
+
+      if (error) {
+        console.warn("Supabase delete failed:", error.message);
+      }
+
+      try {
+        localStorage.removeItem("pathway_local_leads");
+      } catch (e) {}
+
+      setInquiries([]);
+      toast.success("All inquiries cleared successfully");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to clear inquiries");
+    } finally {
+      setIsClearing(false);
+    }
+  };
+
   const handleAssignCounsellor = (id: string, counsellor: string) => {
     setInquiries(prev => prev.map(l => l.id === id ? { ...l, assignedCounsellor: counsellor, status: "Contacted" } : l))
     toast.success(`Assigned to ${counsellor} and scheduled follow-up`)
@@ -156,7 +185,7 @@ export function InquiriesClientView() {
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto pb-16 min-w-0">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
@@ -171,7 +200,18 @@ export function InquiriesClientView() {
           </p>
         </div>
 
-
+        <div className="flex items-center gap-2 shrink-0">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleClearAllInquiries}
+            disabled={isClearing || inquiries.length === 0}
+            className="h-9 px-3.5 text-xs text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 border-rose-500/30 rounded-xl font-medium transition-colors"
+          >
+            <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+            {isClearing ? "Clearing..." : "Clear All Inquiries"}
+          </Button>
+        </div>
       </div>
 
       {/* Duplicate detection badge explanation */}
@@ -185,6 +225,19 @@ export function InquiriesClientView() {
       </div>
 
       {/* Inquiries Feed Cards */}
+      {inquiries.length === 0 && !isLoading ? (
+        <Card className="border border-dashed border-border/60 bg-card/40 p-12 text-center rounded-2xl">
+          <div className="flex flex-col items-center justify-center gap-3">
+            <div className="h-12 w-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+              <Inbox className="h-6 w-6" />
+            </div>
+            <h3 className="text-base font-semibold text-foreground">No inquiries found</h3>
+            <p className="text-xs text-muted-foreground max-w-sm">
+              All inquiries have been cleared. New submissions from website contact and inquiry forms will automatically arrive here in real-time.
+            </p>
+          </div>
+        </Card>
+      ) : (
       <div className="space-y-4">
         {inquiries.map((inq) => {
           const isNew = inq.status === "New"
@@ -272,6 +325,7 @@ export function InquiriesClientView() {
           )
         })}
       </div>
+      )}
     </div>
   )
 }
