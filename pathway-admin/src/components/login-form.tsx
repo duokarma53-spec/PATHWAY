@@ -6,7 +6,7 @@ import { login } from "@/app/login/actions";
 import { useSearchParams } from "next/navigation";
 import { 
   Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, 
-  Sparkles, CheckCircle2, AlertCircle, Loader2, KeyRound, Smartphone
+  AlertCircle, Loader2, Smartphone
 } from "lucide-react";
 import { DownloadAppButton } from "./pwa/install-prompt";
 import { BrandLogo } from "./ui/brand-logo";
@@ -25,10 +25,6 @@ export function LoginForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
 
-  const fillDemo = (roleEmail: string) => {
-    setEmail(roleEmail);
-    setPassword("pathway2025");
-  };
 
   return (
     <div className={cn("w-full max-w-[480px] mx-auto", className)} {...props}>
@@ -74,54 +70,6 @@ export function LoginForm({
           </p>
         </div>
 
-        {/* ── VIP Quick Access Badges (Owner, Counsellor, Reception) ── */}
-        <div className="mb-6 p-3 rounded-2xl bg-white/75 border border-[#E5DAC6] shadow-xs">
-          <div className="flex items-center justify-between mb-2 px-1">
-            <span className="text-[10.5px] font-bold text-[#8C6B28] uppercase tracking-wider flex items-center gap-1.5">
-              <KeyRound className="h-3.5 w-3.5 text-[#D4AF37]" />
-              Quick Demo Access
-            </span>
-            <span className="text-[10px] text-[#9C8F84]">Click role to autofill</span>
-          </div>
-          <div className="grid grid-cols-3 gap-1.5">
-            <button
-              type="button"
-              onClick={() => fillDemo("owner@pathway.com")}
-              className={cn(
-                "py-2 px-2 rounded-xl text-[11px] font-medium transition-all text-center truncate border",
-                email === "owner@pathway.com"
-                  ? "bg-[#201814] text-[#FBE6B5] border-[#D4AF37] shadow-sm font-semibold"
-                  : "bg-white/85 hover:bg-white text-[#3D342D] border-[#E3D9CC] hover:border-[#D4AF37]/60"
-              )}
-            >
-              👑 Owner
-            </button>
-            <button
-              type="button"
-              onClick={() => fillDemo("counsellor@pathway.com")}
-              className={cn(
-                "py-2 px-2 rounded-xl text-[11px] font-medium transition-all text-center truncate border",
-                email === "counsellor@pathway.com"
-                  ? "bg-[#201814] text-[#FBE6B5] border-[#D4AF37] shadow-sm font-semibold"
-                  : "bg-white/85 hover:bg-white text-[#3D342D] border-[#E3D9CC] hover:border-[#D4AF37]/60"
-              )}
-            >
-              🎓 Counsellor
-            </button>
-            <button
-              type="button"
-              onClick={() => fillDemo("frontdesk@pathway.com")}
-              className={cn(
-                "py-2 px-2 rounded-xl text-[11px] font-medium transition-all text-center truncate border",
-                email === "frontdesk@pathway.com"
-                  ? "bg-[#201814] text-[#FBE6B5] border-[#D4AF37] shadow-sm font-semibold"
-                  : "bg-white/85 hover:bg-white text-[#3D342D] border-[#E3D9CC] hover:border-[#D4AF37]/60"
-              )}
-            >
-              📋 Reception
-            </button>
-          </div>
-        </div>
 
         {/* ── Error Banner ──────────────────────────── */}
         {errorMessage && (
@@ -260,14 +208,14 @@ export function LoginForm({
           <div className="w-full max-w-sm bg-[#FAF8F5] border border-[#DDD3C4] rounded-3xl p-6 shadow-2xl backdrop-blur-2xl">
             <h4 className="font-bold text-sm text-[#1E1915] mb-2 flex items-center gap-2 font-serif">
               <Lock className="h-4 w-4 text-[#C99742]" />
-              Staff Account Security
+              Reset Owner Password
             </h4>
             <p className="text-xs text-[#6B5E54] mb-4 leading-relaxed">
-              Staff accounts are provisioned and managed by Pathway System Administrators. Please contact the Owner or System Admin to reset your workspace access.
+              To reset your password, go to your <strong>Supabase project → Authentication → Users</strong>, find the owner account and use <strong>&ldquo;Send password reset email&rdquo;</strong>. A reset link will be sent to your registered email.
             </p>
             <div className="p-3 rounded-xl bg-white border border-[#E3D9CC] text-xs text-[#52473F] mb-4 space-y-1">
-              <div><strong>Admin Support:</strong> support@pathway.com</div>
-              <div><strong>Owner Direct:</strong> owner@pathway.com</div>
+              <div><strong>Owner Email:</strong> owner@pathway.com</div>
+              <div><strong>Supabase Dashboard:</strong> supabase.com/dashboard</div>
             </div>
             <button
               type="button"
