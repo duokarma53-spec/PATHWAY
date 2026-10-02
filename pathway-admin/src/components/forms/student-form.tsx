@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Loader2 } from "lucide-react"
 
 const initialState = {
-  message: null,
+  message: "",
   errors: {},
 }
 

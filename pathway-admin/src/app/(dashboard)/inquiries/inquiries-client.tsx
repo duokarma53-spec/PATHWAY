@@ -11,8 +11,7 @@ import {
   CheckCircle2,
   AlertTriangle,
   Clock,
-  ArrowRight,
-  ExternalLink
+  ArrowRight
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -83,7 +82,6 @@ function mapDbLeadToLead(row: any): Lead {
     nextFollowUp: row.next_followup_at ? new Date(row.next_followup_at).toISOString().split("T")[0] : "To be scheduled",
     notesCount: row.message ? 1 : 0,
     message: row.message || "",
-    score: 90,
     notes: row.message || "Submitted via website consultation form",
   };
 }
@@ -173,14 +171,7 @@ export function InquiriesClientView() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" asChild className="rounded-xl border-border/70 text-xs">
-            <a href="http://localhost:3000/contact" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5">
-              <span>View Public Website Form</span>
-              <ExternalLink className="h-3.5 w-3.5" />
-            </a>
-          </Button>
-        </div>
+
       </div>
 
       {/* Duplicate detection badge explanation */}

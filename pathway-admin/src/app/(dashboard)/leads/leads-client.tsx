@@ -88,7 +88,6 @@ function mapDbLeadToLead(row: any): Lead {
     nextFollowUp: row.next_followup_at ? new Date(row.next_followup_at).toISOString().split("T")[0] : "To be scheduled",
     notesCount: row.message ? 1 : 0,
     message: row.message || "",
-    score: 90,
     notes: row.message || "Submitted via website consultation form",
   };
 }

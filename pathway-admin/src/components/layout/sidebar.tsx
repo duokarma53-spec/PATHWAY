@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Users, GraduationCap, FileText, Settings,
   MessageSquare, Compass, CheckSquare, FolderOpen, Activity, Calendar,
   CreditCard, BarChart3, TrendingUp, Inbox, Layers, Star,
-  ShieldCheck, Landmark, UserCheck, X, ChevronLeft, ChevronRight, LogOut
+  Landmark, UserCheck, X, ChevronLeft, ChevronRight, LogOut
 } from "lucide-react"
 import { useState } from "react"
 import { Button } from "../ui/button"
@@ -72,8 +72,6 @@ const navigationGroups: NavGroup[] = [
   {
     label: "Administration",
     items: [
-      { name: 'Staff',             href: '/staff',       icon: Users },
-      { name: 'Roles & Permissions', href: '/roles',     icon: ShieldCheck },
       { name: 'Activity Logs',     href: '/audit-logs',  icon: Activity },
       { name: 'Settings',          href: '/settings',    icon: Settings },
     ]

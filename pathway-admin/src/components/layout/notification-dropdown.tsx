@@ -1,18 +1,62 @@
 "use client"
 
 import * as React from "react"
-import { Bell, Check, Clock, AlertTriangle, FileText, UserPlus, Inbox, CheckCircle2 } from "lucide-react"
+import { Bell, Check, Clock, FileText, UserPlus, Inbox, CheckCircle2, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { INITIAL_NOTIFICATIONS, NotificationItem } from "@/lib/mock-data"
-import Link from "next/link"
 import { cn } from "@/lib/utils"
+import Link from "next/link"
+import { createClient } from "@/lib/supabase/client"
+import { formatDistanceToNow } from "date-fns"
+
+interface LiveNotification {
+  id: string
+  title: string
+  message: string
+  type: "inquiry" | "lead" | "followup" | "document" | "deadline" | "payment"
+  createdAt: Date
+  read: boolean
+  link: string
+}
+
+function relativeTime(date: Date): string {
+  try {
+    return formatDistanceToNow(date, { addSuffix: true })
+  } catch {
+    return "just now"
+  }
+}
+
+// Static non-inquiry notifications (offers, follow-ups etc.)
+const STATIC_NOTIFICATIONS: LiveNotification[] = [
+  {
+    id: "static-offer-1",
+    title: "Offer Received!",
+    message: "University of Manchester released a conditional offer for Zainab Al-Mansoor.",
+    type: "deadline",
+    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+    read: false,
+    link: "/applications",
+  },
+  {
+    id: "static-followup-1",
+    title: "Follow-up Overdue",
+    message: "Australian high commission follow-up for Arjun Nair is overdue by 1 day.",
+    type: "followup",
+    createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000),
+    read: false,
+    link: "/tasks",
+  },
+]
 
 export function NotificationDropdown() {
   const [isOpen, setIsOpen] = React.useState(false)
-  const [notifications, setNotifications] = React.useState<NotificationItem[]>(INITIAL_NOTIFICATIONS)
   const dropdownRef = React.useRef<HTMLDivElement>(null)
 
-  const unreadCount = notifications.filter(n => !n.read).length
+  const [liveNotifs, setLiveNotifs] = React.useState<LiveNotification[]>([])
+  const [staticRead, setStaticRead] = React.useState<Set<string>>(new Set())
+  const [readIds, setReadIds] = React.useState<Set<string>>(new Set())
+  // Tick every 60s to refresh relative times
+  const [, setTick] = React.useState(0)
 
   React.useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -24,30 +68,110 @@ export function NotificationDropdown() {
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
+  React.useEffect(() => {
+    const timer = setInterval(() => setTick(t => t + 1), 60000)
+    return () => clearInterval(timer)
+  }, [])
+
+  React.useEffect(() => {
+    const supabase = createClient()
+
+    async function loadRecentLeads() {
+      const { data, error } = await supabase
+        .from("leads")
+        .select("id, full_name, destination, course, created_at")
+        .order("created_at", { ascending: false })
+        .limit(10)
+
+      if (!error && data) {
+        const mapped: LiveNotification[] = data.map((row) => ({
+          id: `lead-${row.id}`,
+          title: "New Website Inquiry",
+          message: `${row.full_name || "Prospective Student"} submitted an inquiry for ${row.course || "Higher Education"} (${row.destination || "Study Abroad"}).`,
+          type: "inquiry" as const,
+          createdAt: new Date(row.created_at),
+          read: false,
+          link: "/inquiries",
+        }))
+        setLiveNotifs(mapped)
+      }
+    }
+
+    loadRecentLeads()
+
+    const channel = supabase
+      .channel("notif_leads_realtime")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "leads" },
+        (payload) => {
+          const row = payload.new as { id: string; full_name: string; destination: string; course: string; created_at: string }
+          const newNotif: LiveNotification = {
+            id: `lead-${row.id}`,
+            title: "New Website Inquiry",
+            message: `${row.full_name || "Prospective Student"} submitted an inquiry for ${row.course || "Higher Education"} (${row.destination || "Study Abroad"}).`,
+            type: "inquiry",
+            createdAt: new Date(row.created_at || Date.now()),
+            read: false,
+            link: "/inquiries",
+          }
+          setLiveNotifs((prev) => [newNotif, ...prev.filter(n => n.id !== newNotif.id)])
+        }
+      )
+      .subscribe()
+
+    const handleWindowEvent = (e: Event) => {
+      const detail = (e as CustomEvent).detail
+      if (!detail) return
+      const newNotif: LiveNotification = {
+        id: `lead-${detail.id || Date.now()}`,
+        title: "New Website Inquiry",
+        message: `${detail.full_name || "Prospective Student"} submitted an inquiry for ${detail.course || "Higher Education"} (${detail.destination || "Study Abroad"}).`,
+        type: "inquiry",
+        createdAt: new Date(detail.created_at || Date.now()),
+        read: false,
+        link: "/inquiries",
+      }
+      setLiveNotifs((prev) => [newNotif, ...prev.filter(n => n.id !== newNotif.id)])
+    }
+    window.addEventListener("pathway_new_lead", handleWindowEvent)
+
+    return () => {
+      supabase.removeChannel(channel)
+      window.removeEventListener("pathway_new_lead", handleWindowEvent)
+    }
+  }, [])
+
+  const allNotifications = React.useMemo(() => {
+    const statics = STATIC_NOTIFICATIONS.map(n => ({ ...n, read: staticRead.has(n.id) }))
+    const live = liveNotifs.map(n => ({ ...n, read: readIds.has(n.id) }))
+    return [...live, ...statics].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+  }, [liveNotifs, readIds, staticRead])
+
+  const unreadCount = allNotifications.filter(n => !n.read).length
+
   const markAllRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+    setReadIds(new Set(liveNotifs.map(n => n.id)))
+    setStaticRead(new Set(STATIC_NOTIFICATIONS.map(n => n.id)))
   }
 
   const markItemRead = (id: string) => {
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n))
+    if (STATIC_NOTIFICATIONS.some(n => n.id === id)) {
+      setStaticRead(prev => new Set([...prev, id]))
+    } else {
+      setReadIds(prev => new Set([...prev, id]))
+    }
   }
 
-  const getIcon = (type: NotificationItem["type"]) => {
+  const getIcon = (type: LiveNotification["type"]) => {
     switch (type) {
-      case "inquiry":
-        return <Inbox className="h-4 w-4 text-amber-400" />
-      case "lead":
-        return <UserPlus className="h-4 w-4 text-primary" />
-      case "followup":
-        return <Clock className="h-4 w-4 text-destructive" />
-      case "document":
-        return <FileText className="h-4 w-4 text-blue-400" />
-      case "deadline":
-        return <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-      case "payment":
-        return <AlertTriangle className="h-4 w-4 text-purple-400" />
-      default:
-        return <Bell className="h-4 w-4 text-muted-foreground" />
+      case "inquiry":  return <Inbox className="h-4 w-4 text-amber-400" />
+      case "lead":     return <UserPlus className="h-4 w-4 text-primary" />
+      case "followup": return <Clock className="h-4 w-4 text-destructive" />
+      case "document": return <FileText className="h-4 w-4 text-blue-400" />
+      case "deadline": return <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+      case "payment":  return <AlertTriangle className="h-4 w-4 text-purple-400" />
+      default:         return <Bell className="h-4 w-4 text-muted-foreground" />
     }
   }
 
@@ -90,12 +214,12 @@ export function NotificationDropdown() {
           </div>
 
           <div className="max-h-[380px] overflow-y-auto custom-scrollbar divide-y divide-border/30">
-            {notifications.length === 0 ? (
+            {allNotifications.length === 0 ? (
               <div className="py-8 text-center text-xs text-muted-foreground">
                 No notifications right now
               </div>
             ) : (
-              notifications.map((notif) => (
+              allNotifications.map((notif) => (
                 <Link
                   key={notif.id}
                   href={notif.link}
@@ -116,8 +240,8 @@ export function NotificationDropdown() {
                       <p className={cn("text-xs font-semibold truncate", !notif.read ? "text-foreground" : "text-muted-foreground")}>
                         {notif.title}
                       </p>
-                      <span className="text-[10px] text-muted-foreground/70 shrink-0">
-                        {notif.time}
+                      <span className="text-[10px] text-muted-foreground/70 shrink-0 whitespace-nowrap">
+                        {relativeTime(notif.createdAt)}
                       </span>
                     </div>
                     <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed line-clamp-2">

@@ -1,39 +1,23 @@
-import * as React from "react"
 import {
   Users,
-  UserPlus,
   GraduationCap,
   FileText,
-  CheckCircle2,
-  ShieldCheck,
-  Clock,
-  FolderOpen,
-  ArrowUpRight,
-  Calendar,
-  AlertTriangle,
   Sparkles,
-  ExternalLink,
-  ChevronRight,
-  PhoneCall,
-  Check
+  Calendar,
+  Clock
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { KPICard } from "@/components/ui/kpi-card"
 import { Button } from "@/components/ui/button"
 import {
   LeadTrendChart,
-  LeadsBySourceChart,
-  LeadsByDestinationChart,
   ConversionFunnel
 } from "@/components/dashboard/crm-dashboard-charts"
 import { CRMQuickActions } from "@/components/actions/crm-quick-actions"
 import {
   INITIAL_LEADS,
-  INITIAL_STUDENTS,
-  INITIAL_APPLICATIONS,
   INITIAL_TASKS,
   INITIAL_APPOINTMENTS,
-  INITIAL_ACTIVITY_LOGS
 } from "@/lib/mock-data"
 import Link from "next/link"
 import { format } from "date-fns"
@@ -80,7 +64,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Top 8 KPI Cards Grid */}
+      {/* KPI Cards - 4 core metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
         <KPICard
           title="Total Leads"
@@ -113,7 +97,7 @@ export default function DashboardPage() {
           iconBg="bg-emerald-500/10 border-emerald-500/20"
         />
         <KPICard
-          title="Applications in Progress"
+          title="Applications In Progress"
           value="28"
           subtitle="Under university review"
           trend="+4 this week"
@@ -121,46 +105,6 @@ export default function DashboardPage() {
           icon={FileText}
           iconColor="text-blue-400"
           iconBg="bg-blue-500/10 border-blue-500/20"
-        />
-        <KPICard
-          title="Offers Received"
-          value="19"
-          subtitle="Conditional & Firm"
-          trend="68% offer rate"
-          trendPositive={true}
-          icon={CheckCircle2}
-          iconColor="text-teal-400"
-          iconBg="bg-teal-500/10 border-teal-500/20"
-        />
-        <KPICard
-          title="Visa Applications"
-          value="12"
-          subtitle="Lodged at embassies"
-          trend="100% grant rate"
-          trendPositive={true}
-          icon={ShieldCheck}
-          iconColor="text-violet-400"
-          iconBg="bg-violet-500/10 border-violet-500/20"
-        />
-        <KPICard
-          title="Upcoming Follow-ups"
-          value="9"
-          subtitle="Due within 48 hours"
-          trend="2 urgent calls"
-          trendPositive={false}
-          icon={Clock}
-          iconColor="text-orange-400"
-          iconBg="bg-orange-500/10 border-orange-500/20"
-        />
-        <KPICard
-          title="Pending Documents"
-          value="15"
-          subtitle="Awaiting student upload"
-          trend="Action required"
-          trendPositive={false}
-          icon={FolderOpen}
-          iconColor="text-cyan-400"
-          iconBg="bg-cyan-500/10 border-cyan-500/20"
         />
       </div>
 
@@ -198,28 +142,6 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      {/* Row 3: Destination Distribution & Source Breakdown */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="border-border/60 bg-card/75 backdrop-blur-xl shadow-md">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-bold text-foreground">Leads by Destination Country</CardTitle>
-            <CardDescription className="text-xs">Top study abroad destinations preferred by prospective students.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <LeadsByDestinationChart />
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/75 backdrop-blur-xl shadow-md">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-bold text-foreground">Lead Acquisition Channels</CardTitle>
-            <CardDescription className="text-xs">Breakdown of sources feeding the CRM pipeline.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <LeadsBySourceChart />
-          </CardContent>
-        </Card>
-      </div>
 
       {/* Row 4: "Today's Tasks & Priorities" + "Recent Inquiries" */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -334,33 +256,6 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      {/* Row 5: Recent Activity Feed */}
-      <Card className="border-border/60 bg-card/75 backdrop-blur-xl shadow-md">
-        <CardHeader className="pb-3 border-b border-border/40 flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="text-base font-bold text-foreground">Operational Activity Feed</CardTitle>
-            <CardDescription className="text-xs">Live audit stream of staff updates and student submissions.</CardDescription>
-          </div>
-          <Button variant="ghost" size="sm" asChild className="text-xs text-primary hover:underline">
-            <Link href="/audit-logs">Audit Log &rarr;</Link>
-          </Button>
-        </CardHeader>
-        <CardContent className="p-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {INITIAL_ACTIVITY_LOGS.map((act) => (
-              <div key={act.id} className="p-3.5 rounded-xl bg-muted/20 border border-border/40 text-xs space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-primary">{act.actor}</span>
-                  <span className="text-[10px] text-muted-foreground font-mono">{act.timestamp}</span>
-                </div>
-                <p className="text-foreground/90 leading-snug">
-                  {act.action} <strong>{act.entity}</strong>
-                </p>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }
