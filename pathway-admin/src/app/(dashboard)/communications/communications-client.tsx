@@ -20,8 +20,21 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { INITIAL_LEADS, INITIAL_COMM_TEMPLATES } from "@/lib/mock-data"
 import { toast } from "sonner"
 
+const DEFAULT_RECIPIENT = {
+  id: "",
+  name: "Prospective Student",
+  avatar: "PS",
+  leadCode: "LD-0000",
+  course: "Higher Education",
+  preferredDestination: "Target Country",
+  intake: "Upcoming Intake",
+  assignedCounsellor: "Owner",
+  phone: "+91",
+  email: "student@example.com"
+};
+
 export function CommunicationsClientView() {
-  const [selectedLead, setSelectedLead] = React.useState(INITIAL_LEADS[0])
+  const [selectedLead, setSelectedLead] = React.useState(INITIAL_LEADS[0] || DEFAULT_RECIPIENT)
   const [activeTab, setActiveTab] = React.useState<"templates" | "history">("templates")
   const [copiedId, setCopiedId] = React.useState<string | null>(null)
   const [composedMessage, setComposedMessage] = React.useState("")
@@ -34,7 +47,7 @@ export function CommunicationsClientView() {
       .replace(/{{course}}/g, selectedLead.course)
       .replace(/{{intake}}/g, selectedLead.intake)
       .replace(/{{counsellor}}/g, selectedLead.assignedCounsellor)
-      .replace(/{{university}}/g, "University of Manchester")
+      .replace(/{{university}}/g, "Target University")
 
     setComposedMessage(replaced)
     toast.success(`Loaded template: ${tpl.name}`)
@@ -58,7 +71,7 @@ export function CommunicationsClientView() {
       const subject = encodeURIComponent(`Pathway Advisory: ${selectedLead.course}`)
       const body = encodeURIComponent(composedMessage)
       window.open(`mailto:${selectedLead.email}?subject=${subject}&body=${body}`, "_blank")
-      toast.success("Opened default email client")
+      toast.success("Opened default mail client")
     }
   }
 
@@ -82,24 +95,30 @@ export function CommunicationsClientView() {
             <CardDescription className="text-xs">Choose a lead or student to personalize outreach.</CardDescription>
           </CardHeader>
           <CardContent className="p-3 space-y-2 max-h-[600px] overflow-y-auto custom-scrollbar">
-            {INITIAL_LEADS.map((lead) => (
-              <button
-                key={lead.id}
-                onClick={() => setSelectedLead(lead)}
-                className={`w-full text-left p-3 rounded-xl border transition-all ${
-                  selectedLead.id === lead.id
-                    ? "bg-primary/10 border-primary/40 shadow-sm"
-                    : "bg-card border-border/40 hover:bg-muted/30"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs text-foreground">{lead.name}</span>
-                  <span className="text-[10px] text-primary font-mono">{lead.leadCode}</span>
-                </div>
-                <p className="text-[11px] text-muted-foreground mt-0.5 truncate">{lead.course}</p>
-                <p className="text-[10px] text-muted-foreground/70">{lead.phone} • {lead.preferredDestination}</p>
-              </button>
-            ))}
+            {INITIAL_LEADS.length === 0 ? (
+              <p className="text-xs text-muted-foreground p-4 text-center">
+                No leads found. Incoming inquiries will appear here for one-click messaging.
+              </p>
+            ) : (
+              INITIAL_LEADS.map((lead) => (
+                <button
+                  key={lead.id}
+                  onClick={() => setSelectedLead(lead)}
+                  className={`w-full text-left p-3 rounded-xl border transition-all ${
+                    selectedLead.id === lead.id
+                      ? "bg-primary/10 border-primary/40 shadow-sm"
+                      : "bg-card border-border/40 hover:bg-muted/30"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-xs text-foreground">{lead.name}</span>
+                    <span className="text-[10px] text-primary font-mono">{lead.leadCode}</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-0.5 truncate">{lead.course}</p>
+                  <p className="text-[10px] text-muted-foreground/70">{lead.phone} • {lead.preferredDestination}</p>
+                </button>
+              ))
+            )}
           </CardContent>
         </Card>
 

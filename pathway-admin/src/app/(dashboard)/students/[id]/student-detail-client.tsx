@@ -47,9 +47,35 @@ import Link from "next/link"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
+const FALLBACK_EMPTY_STUDENT: Student = {
+  id: "",
+  studentCode: "STU-0000",
+  name: "Student Profile",
+  email: "",
+  phone: "",
+  dob: "",
+  passportNumber: "",
+  city: "",
+  country: "",
+  highestQualification: "",
+  institution: "",
+  gpaOrPercentage: "",
+  englishTest: "",
+  englishScore: "",
+  destination: "",
+  course: "",
+  intake: "",
+  counsellor: "Owner",
+  status: "Active",
+  visaStatus: "Not Applied",
+  stage: "Discovery",
+  documentsCompletedPercentage: 0,
+  enrolledDate: new Date().toISOString().split("T")[0],
+};
+
 export function StudentDetailClient({ studentId }: { studentId: string }) {
   const router = useRouter()
-  const initialStudent = INITIAL_STUDENTS.find(s => s.id === studentId) || INITIAL_STUDENTS[0]
+  const initialStudent = INITIAL_STUDENTS.find(s => s.id === studentId) || FALLBACK_EMPTY_STUDENT
   const [student, setStudent] = React.useState<Student>(initialStudent)
 
   const handleDeleteStudent = () => {

@@ -11,7 +11,21 @@ export function generateStaticParams() {
 
 export default async function ApplicationDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
-  const app = INITIAL_APPLICATIONS.find(a => a.id === resolvedParams.id) || INITIAL_APPLICATIONS[0]
+  const app = INITIAL_APPLICATIONS.find(a => a.id === resolvedParams.id)
+
+  if (!app) {
+    return (
+      <div className="flex flex-col gap-6 max-w-5xl mx-auto pb-16 text-center py-16">
+        <h2 className="text-xl font-bold text-foreground">Application Not Found</h2>
+        <p className="text-sm text-muted-foreground">This application does not exist or has been removed.</p>
+        <div>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/applications">Back to Applications</Link>
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col gap-6 max-w-5xl mx-auto pb-16">

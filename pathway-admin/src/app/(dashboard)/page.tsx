@@ -68,9 +68,9 @@ export default function DashboardPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
         <KPICard
           title="Total Leads"
-          value="142"
+          value="0"
           subtitle="All time inquiries"
-          trend="+18% MoM"
+          trend="Ready to test"
           trendPositive={true}
           icon={Users}
           iconColor="text-primary"
@@ -78,9 +78,9 @@ export default function DashboardPage() {
         />
         <KPICard
           title="New Inquiries"
-          value="14"
+          value="0"
           subtitle="Needs first response"
-          trend="+5 today"
+          trend="No pending"
           trendPositive={true}
           icon={Sparkles}
           iconColor="text-amber-400"
@@ -88,9 +88,9 @@ export default function DashboardPage() {
         />
         <KPICard
           title="Active Students"
-          value="38"
+          value="0"
           subtitle="Converted profiles"
-          trend="85% retention"
+          trend="Fresh pipeline"
           trendPositive={true}
           icon={GraduationCap}
           iconColor="text-emerald-400"
@@ -98,9 +98,9 @@ export default function DashboardPage() {
         />
         <KPICard
           title="Applications In Progress"
-          value="28"
+          value="0"
           subtitle="Under university review"
-          trend="+4 this week"
+          trend="0 active"
           trendPositive={true}
           icon={FileText}
           iconColor="text-blue-400"
@@ -188,25 +188,29 @@ export default function DashboardPage() {
                 Follow-ups & Reminders
               </p>
               <div className="space-y-2">
-                {todayTasks.map((t) => (
-                  <div
-                    key={t.id}
-                    className="p-3 rounded-xl bg-card border border-border/60 flex items-center justify-between gap-3 hover:border-primary/40 transition-colors"
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-foreground truncate">{t.title}</p>
-                        <p className="text-[10px] text-muted-foreground">
-                          Target: {t.entityName} • Assigned: {t.assignedStaff}
-                        </p>
+                {todayTasks.length === 0 ? (
+                  <p className="text-xs text-muted-foreground py-6 text-center">No tasks or appointments scheduled.</p>
+                ) : (
+                  todayTasks.map((t) => (
+                    <div
+                      key={t.id}
+                      className="p-3 rounded-xl bg-card border border-border/60 flex items-center justify-between gap-3 hover:border-primary/40 transition-colors"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-foreground truncate">{t.title}</p>
+                          <p className="text-[10px] text-muted-foreground">
+                            Target: {t.entityName} • Assigned: {t.assignedStaff}
+                          </p>
+                        </div>
                       </div>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted/60 text-muted-foreground font-medium shrink-0">
+                        {t.category}
+                      </span>
                     </div>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted/60 text-muted-foreground font-medium shrink-0">
-                      {t.category}
-                    </span>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           </CardContent>
@@ -227,31 +231,37 @@ export default function DashboardPage() {
           </CardHeader>
 
           <CardContent className="p-4 space-y-3 flex-1">
-            {recentInquiries.map((lead) => (
-              <Link
-                key={lead.id}
-                href={`/leads/${lead.id}`}
-                className="block p-3 rounded-xl bg-muted/30 border border-border/40 hover:border-primary/40 hover:bg-muted/50 transition-all group"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors truncate">
-                    {lead.name}
-                  </span>
-                  {lead.status === "New" && (
-                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40">
-                      NEW
+            {recentInquiries.length === 0 ? (
+              <p className="text-xs text-muted-foreground py-8 text-center">
+                No inquiries yet. Real submissions from the website will appear here live.
+              </p>
+            ) : (
+              recentInquiries.map((lead) => (
+                <Link
+                  key={lead.id}
+                  href={`/leads/${lead.id}`}
+                  className="block p-3 rounded-xl bg-muted/30 border border-border/40 hover:border-primary/40 hover:bg-muted/50 transition-all group"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors truncate">
+                      {lead.name}
                     </span>
-                  )}
-                </div>
-                <p className="text-[11px] text-muted-foreground mt-0.5 truncate">
-                  {lead.course} • {lead.preferredDestination}
-                </p>
-                <div className="text-[10px] text-muted-foreground/70 flex items-center justify-between mt-1">
-                  <span>Source: {lead.leadSource}</span>
-                  <span>{lead.intake}</span>
-                </div>
-              </Link>
-            ))}
+                    {lead.status === "New" && (
+                      <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40">
+                        NEW
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-0.5 truncate">
+                    {lead.course} • {lead.preferredDestination}
+                  </p>
+                  <div className="text-[10px] text-muted-foreground/70 flex items-center justify-between mt-1">
+                    <span>Source: {lead.leadSource}</span>
+                    <span>{lead.intake}</span>
+                  </div>
+                </Link>
+              ))
+            )}
           </CardContent>
         </Card>
       </div>

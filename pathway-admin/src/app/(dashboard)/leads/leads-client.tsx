@@ -115,13 +115,9 @@ export function LeadsClientView() {
           .select("*")
           .order("created_at", { ascending: false });
 
-        if (!error && data && data.length > 0) {
+        if (!error && data !== null) {
           const live = data.map(mapDbLeadToLead);
-          setLeads((prev) => {
-            const liveIds = new Set(live.map((l) => l.id));
-            const remainingMock = prev.filter((p) => !liveIds.has(p.id));
-            return [...live, ...remainingMock];
-          });
+          setLeads(live);
         }
       } catch (err) {
         console.debug("Error fetching live leads:", err);

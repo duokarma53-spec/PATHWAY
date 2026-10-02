@@ -31,16 +31,16 @@ const navigationGroups: NavGroup[] = [
   {
     label: "CRM",
     items: [
-      { name: 'Leads',          href: '/leads',          icon: Users,     badge: '10' },
-      { name: 'Students',       href: '/students',       icon: GraduationCap, badge: '5' },
-      { name: 'Follow-ups',     href: '/follow-ups',     icon: UserCheck, badge: '3' },
+      { name: 'Leads',          href: '/leads',          icon: Users },
+      { name: 'Students',       href: '/students',       icon: GraduationCap },
+      { name: 'Follow-ups',     href: '/follow-ups',     icon: UserCheck },
       { name: 'Communications', href: '/communications', icon: MessageSquare },
     ]
   },
   {
     label: "Applications",
     items: [
-      { name: 'Applications', href: '/applications', icon: FileText, badge: '7' },
+      { name: 'Applications', href: '/applications', icon: FileText },
       { name: 'Universities', href: '/universities', icon: Landmark },
       { name: 'Destinations', href: '/destinations', icon: Compass },
     ]
@@ -48,7 +48,7 @@ const navigationGroups: NavGroup[] = [
   {
     label: "Website",
     items: [
-      { name: 'Inquiries',    href: '/inquiries',    icon: Inbox,   badge: 'New' },
+      { name: 'Inquiries',    href: '/inquiries',    icon: Inbox },
       { name: 'Content',      href: '/content',      icon: Layers },
       { name: 'Testimonials', href: '/testimonials', icon: Star },
     ]
@@ -56,9 +56,9 @@ const navigationGroups: NavGroup[] = [
   {
     label: "Student Management",
     items: [
-      { name: 'Documents',    href: '/documents',    icon: FolderOpen, badge: '8' },
-      { name: 'Appointments', href: '/appointments', icon: Calendar,   badge: '4' },
-      { name: 'Tasks',        href: '/tasks',        icon: CheckSquare, badge: '6' },
+      { name: 'Documents',    href: '/documents',    icon: FolderOpen },
+      { name: 'Appointments', href: '/appointments', icon: Calendar },
+      { name: 'Tasks',        href: '/tasks',        icon: CheckSquare },
       { name: 'Payments',     href: '/payments',     icon: CreditCard },
     ]
   },

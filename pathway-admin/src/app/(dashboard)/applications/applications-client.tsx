@@ -329,10 +329,17 @@ export function ApplicationsClientView() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
-                {filteredApps.map((app) => (
-                  <tr key={app.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-medium text-muted-foreground">
-                      {app.applicationCode}
+                {filteredApps.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="py-12 text-center text-muted-foreground">
+                      No application records found. Click &quot;New Application&quot; to submit an application.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredApps.map((app) => (
+                    <tr key={app.id} className="hover:bg-muted/30 transition-colors">
+                      <td className="py-3.5 px-4 font-mono font-medium text-muted-foreground">
+                        {app.applicationCode}
                     </td>
                     <td className="py-3.5 px-3 font-semibold text-foreground">
                       {app.studentName}
@@ -371,8 +378,9 @@ export function ApplicationsClientView() {
                       </button>
                     </td>
                   </tr>
-                ))}
-              </tbody>
+                ))
+              )}
+            </tbody>
             </table>
           </div>
         </Card>

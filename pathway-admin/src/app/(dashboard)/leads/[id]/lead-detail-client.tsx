@@ -95,10 +95,32 @@ function mapDbLeadToLead(row: any): Lead {
   };
 }
 
+const FALLBACK_EMPTY_LEAD: Lead = {
+  id: "",
+  leadCode: "LD-0000",
+  firstName: "Lead",
+  lastName: "Profile",
+  name: "Lead Profile",
+  email: "",
+  phone: "",
+  preferredDestination: "Not selected",
+  course: "General Counseling",
+  intake: "Upcoming",
+  qualification: "Undergraduate",
+  leadSource: "Website",
+  assignedCounsellor: "Owner",
+  status: "New",
+  priority: "Medium",
+  createdDate: new Date().toISOString().split("T")[0],
+  lastContacted: "Not yet",
+  nextFollowUp: "To be scheduled",
+  notesCount: 0,
+};
+
 export function LeadDetailClient({ leadId }: { leadId: string }) {
   const router = useRouter()
-  // Locate lead from mock store (or fallback to first)
-  const initialLead = INITIAL_LEADS.find((l) => l.id === leadId) || INITIAL_LEADS[0]
+  // Locate lead from store (or fallback)
+  const initialLead = INITIAL_LEADS.find((l) => l.id === leadId) || FALLBACK_EMPTY_LEAD
   const [lead, setLead] = React.useState<Lead>(initialLead)
 
   // Fetch live lead if opened from Supabase or localStorage
