@@ -9,10 +9,13 @@ import { NotificationDropdown } from "./notification-dropdown"
 import { CRMQuickActions } from "../actions/crm-quick-actions"
 import { DownloadAppButton } from "../pwa/install-prompt"
 import { BrandLogo } from "../ui/brand-logo"
+import Link from "next/link"
+import { useAdminProfile } from "@/lib/profile/use-admin-profile"
 
 export function Topbar() {
   const { setIsOpen } = useSidebar()
   const [searchOpen, setSearchOpen] = React.useState(false)
+  const { profile, initials } = useAdminProfile()
 
   return (
     <>
@@ -56,31 +59,39 @@ export function Topbar() {
         </div>
 
         {/* Right: Actions + Profile */}
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
           <DownloadAppButton />
-          <CRMQuickActions />
+
+          {/* Quick Create visible on desktop/tablets; hidden on mobile to prevent header overlap */}
+          <div className="hidden md:block">
+            <CRMQuickActions />
+          </div>
 
           <div className="h-5 w-px bg-linen-dark/60 mx-1 hidden sm:block" />
 
           <NotificationDropdown />
 
-          {/* Profile pill */}
-          <div className="flex items-center gap-2.5 pl-2 cursor-pointer group select-none">
+          {/* Profile pill linking to settings */}
+          <Link
+            href="/settings"
+            className="flex items-center gap-2.5 pl-1.5 cursor-pointer group select-none"
+            title="Account Settings"
+          >
             <div className="hidden sm:flex flex-col text-right">
-              <span className="text-[12.5px] font-semibold text-foreground group-hover:text-primary transition-colors leading-tight">
-                Owner
+              <span className="text-[12.5px] font-semibold text-foreground group-hover:text-primary transition-colors leading-tight truncate max-w-[120px]">
+                {profile.name}
               </span>
               <span className="text-[9px] font-bold text-amber-700 tracking-[0.16em] uppercase">
-                SUPER ADMIN
+                {profile.role}
               </span>
             </div>
             <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-[#E6B85C] via-[#C9944A] to-[#8C5D23]
               border border-[#FBE6B5]/80 flex items-center justify-center
               text-white font-serif font-bold text-[12px] shadow-warm
               group-hover:scale-105 group-hover:shadow-warm transition-all duration-200">
-              OW
+              {initials}
             </div>
-          </div>
+          </Link>
         </div>
       </div>
 

@@ -14,6 +14,7 @@ import {
   ConversionFunnel
 } from "@/components/dashboard/crm-dashboard-charts"
 import { CRMQuickActions } from "@/components/actions/crm-quick-actions"
+import { DashboardGreeting } from "@/components/dashboard/dashboard-greeting"
 import {
   INITIAL_LEADS,
   INITIAL_TASKS,
@@ -46,9 +47,7 @@ export default function DashboardPage() {
               Consultancy Live Operations
             </span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground font-serif">
-            Good morning, Owner.
-          </h1>
+          <DashboardGreeting />
           <p className="text-xs md:text-sm text-muted-foreground" suppressHydrationWarning>
             Pathway Education Consultancy overview for {format(currentDate, "EEEE, MMMM do, yyyy")}.
           </p>
