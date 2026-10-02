@@ -26,34 +26,12 @@ function relativeTime(date: Date): string {
   }
 }
 
-// Static non-inquiry notifications (offers, follow-ups etc.)
-const STATIC_NOTIFICATIONS: LiveNotification[] = [
-  {
-    id: "static-offer-1",
-    title: "Offer Received!",
-    message: "University of Manchester released a conditional offer for Zainab Al-Mansoor.",
-    type: "deadline",
-    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
-    read: false,
-    link: "/applications",
-  },
-  {
-    id: "static-followup-1",
-    title: "Follow-up Overdue",
-    message: "Australian high commission follow-up for Arjun Nair is overdue by 1 day.",
-    type: "followup",
-    createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000),
-    read: false,
-    link: "/tasks",
-  },
-]
-
+// Only real live notifications from Supabase
 export function NotificationDropdown() {
   const [isOpen, setIsOpen] = React.useState(false)
   const dropdownRef = React.useRef<HTMLDivElement>(null)
 
   const [liveNotifs, setLiveNotifs] = React.useState<LiveNotification[]>([])
-  const [staticRead, setStaticRead] = React.useState<Set<string>>(new Set())
   const [readIds, setReadIds] = React.useState<Set<string>>(new Set())
   // Tick every 60s to refresh relative times
   const [, setTick] = React.useState(0)
@@ -143,24 +121,19 @@ export function NotificationDropdown() {
   }, [])
 
   const allNotifications = React.useMemo(() => {
-    const statics = STATIC_NOTIFICATIONS.map(n => ({ ...n, read: staticRead.has(n.id) }))
-    const live = liveNotifs.map(n => ({ ...n, read: readIds.has(n.id) }))
-    return [...live, ...statics].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-  }, [liveNotifs, readIds, staticRead])
+    return liveNotifs
+      .map(n => ({ ...n, read: readIds.has(n.id) }))
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+  }, [liveNotifs, readIds])
 
   const unreadCount = allNotifications.filter(n => !n.read).length
 
   const markAllRead = () => {
     setReadIds(new Set(liveNotifs.map(n => n.id)))
-    setStaticRead(new Set(STATIC_NOTIFICATIONS.map(n => n.id)))
   }
 
   const markItemRead = (id: string) => {
-    if (STATIC_NOTIFICATIONS.some(n => n.id === id)) {
-      setStaticRead(prev => new Set([...prev, id]))
-    } else {
-      setReadIds(prev => new Set([...prev, id]))
-    }
+    setReadIds(prev => new Set([...prev, id]))
   }
 
   const getIcon = (type: LiveNotification["type"]) => {
@@ -193,7 +166,7 @@ export function NotificationDropdown() {
       </Button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl border border-border/70 bg-card/95 backdrop-blur-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in-0 zoom-in-95 duration-150">
+        <div className="fixed top-16 right-2 sm:absolute sm:top-full sm:right-0 sm:mt-2 w-[calc(100vw-1rem)] sm:w-96 max-w-[380px] rounded-2xl border border-border/70 bg-card/95 backdrop-blur-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in-0 zoom-in-95 duration-150">
           <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-muted/20">
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold text-foreground">Notifications</span>

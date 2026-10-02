@@ -12,9 +12,9 @@ export function MobileBottomNav() {
 
   const navItems = [
     { label: "Overview", href: "/", icon: LayoutDashboard },
-    { label: "Leads", href: "/leads", icon: Users, badge: "10" },
+    { label: "Leads", href: "/leads", icon: Users },
     { label: "Students", href: "/students", icon: GraduationCap },
-    { label: "Tasks", href: "/tasks", icon: CheckSquare, badge: "6" },
+    { label: "Tasks", href: "/tasks", icon: CheckSquare },
   ];
 
   return (
