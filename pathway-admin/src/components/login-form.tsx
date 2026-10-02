@@ -23,7 +23,6 @@ export function LoginForm({
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showForgotModal, setShowForgotModal] = useState(false);
 
 
   return (
@@ -111,21 +110,12 @@ export function LoginForm({
 
           {/* Password */}
           <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <label 
+            <label 
                 htmlFor="password" 
                 className="text-[11px] font-bold uppercase tracking-wider text-[#63554B] block"
               >
                 Password
               </label>
-              <button
-                type="button"
-                onClick={() => setShowForgotModal(true)}
-                className="text-[11px] text-[#A67C2E] hover:text-[#805C1C] font-semibold transition-colors"
-              >
-                Forgot password?
-              </button>
-            </div>
             <div className="relative group">
               <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A8988B] group-focus-within:text-[#D4AF37] transition-colors" />
               <input
@@ -204,31 +194,7 @@ export function LoginForm({
         </div>
       </div>
 
-      {/* Forgot Password Security Modal */}
-      {showForgotModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="w-full max-w-sm bg-[#FAF8F5] border border-[#DDD3C4] rounded-3xl p-6 shadow-2xl backdrop-blur-2xl">
-            <h4 className="font-bold text-sm text-[#1E1915] mb-2 flex items-center gap-2 font-serif">
-              <Lock className="h-4 w-4 text-[#C99742]" />
-              Reset Owner Password
-            </h4>
-            <p className="text-xs text-[#6B5E54] mb-4 leading-relaxed">
-              To reset your password, go to your <strong>Supabase project → Authentication → Users</strong>, find the owner account and use <strong>&ldquo;Send password reset email&rdquo;</strong>. A reset link will be sent to your registered email.
-            </p>
-            <div className="p-3 rounded-xl bg-white border border-[#E3D9CC] text-xs text-[#52473F] mb-4 space-y-1">
-              <div><strong>Owner Email:</strong> owner@pathway.com</div>
-              <div><strong>Supabase Dashboard:</strong> supabase.com/dashboard</div>
-            </div>
-            <button
-              type="button"
-              onClick={() => setShowForgotModal(false)}
-              className="w-full h-10 rounded-xl bg-[#201A16] text-[#FBE6B5] text-xs font-semibold hover:bg-black transition-colors"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }
