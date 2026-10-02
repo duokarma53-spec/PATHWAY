@@ -17,7 +17,8 @@ import {
   AlertCircle,
   Download,
   Building2,
-  DollarSign
+  DollarSign,
+  Trash2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -108,6 +109,15 @@ export function ApplicationsClientView() {
     document.body.removeChild(link)
     toast.success(`Exported ${filteredApps.length} applications`)
   }
+
+  // Delete application
+  const handleDeleteApplication = (id: string, code: string) => {
+    if (!window.confirm(`Are you sure you want to delete application "${code}"?`)) {
+      return;
+    }
+    setApplications((prev) => prev.filter((a) => a.id !== id));
+    toast.success(`Application "${code}" deleted`);
+  };
 
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto pb-12 min-w-0">
@@ -242,7 +252,16 @@ export function ApplicationsClientView() {
                         >
                           <div className="flex items-start justify-between gap-1">
                             <h4 className="text-xs font-bold text-foreground leading-tight">{app.university}</h4>
-                            <span className="text-[10px] font-mono text-muted-foreground shrink-0">{app.applicationCode}</span>
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              <span className="text-[10px] font-mono text-muted-foreground">{app.applicationCode}</span>
+                              <button
+                                onClick={() => handleDeleteApplication(app.id, app.applicationCode)}
+                                className="text-muted-foreground/60 hover:text-rose-500 transition-colors p-0.5"
+                                title="Delete Application"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </button>
+                            </div>
                           </div>
 
                           <p className="text-[11px] text-primary font-medium truncate">{app.course}</p>
@@ -306,6 +325,7 @@ export function ApplicationsClientView() {
                   <th className="py-3 px-3">Offer Status</th>
                   <th className="py-3 px-3">Deposit</th>
                   <th className="py-3 px-3">Deadline</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
@@ -340,6 +360,15 @@ export function ApplicationsClientView() {
                     </td>
                     <td className="py-3.5 px-3 text-muted-foreground font-mono">
                       {app.deadline}
+                    </td>
+                    <td className="py-3.5 px-4 text-right">
+                      <button
+                        onClick={() => handleDeleteApplication(app.id, app.applicationCode)}
+                        className="p-1 rounded-lg text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
+                        title="Delete Application"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
                     </td>
                   </tr>
                 ))}

@@ -15,7 +15,8 @@ import {
   ArrowUpDown,
   Plus,
   RefreshCw,
-  ExternalLink
+  ExternalLink,
+  Trash2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -214,6 +215,55 @@ export function LeadsClientView() {
     toast.success(`Updated ${selectedLeads.length} leads to ${newStatus}`)
     setSelectedLeads([])
   }
+
+  // Delete single lead
+  const handleDeleteLead = async (id: string, name: string) => {
+    if (!window.confirm(`Are you sure you want to delete lead "${name}"?`)) {
+      return;
+    }
+    try {
+      const supabase = createClient();
+      await supabase.from("leads").delete().eq("id", id);
+      try {
+        const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const filtered = local.filter((l: any) => l.id !== id);
+        localStorage.setItem("pathway_local_leads", JSON.stringify(filtered));
+      } catch (e) {}
+
+      setLeads((prev) => prev.filter((l) => l.id !== id));
+      setSelectedLeads((prev) => prev.filter((selId) => selId !== id));
+      toast.success(`Lead "${name}" deleted`);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete lead");
+    }
+  };
+
+  // Bulk delete leads
+  const handleBulkDelete = async () => {
+    if (!window.confirm(`Are you sure you want to delete ${selectedLeads.length} selected leads?`)) {
+      return;
+    }
+    try {
+      const supabase = createClient();
+      await supabase.from("leads").delete().in("id", selectedLeads);
+      try {
+        const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
+        const selSet = new Set(selectedLeads);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const filtered = local.filter((l: any) => !selSet.has(l.id));
+        localStorage.setItem("pathway_local_leads", JSON.stringify(filtered));
+      } catch (e) {}
+
+      setLeads((prev) => prev.filter((l) => !selectedLeads.includes(l.id)));
+      toast.success(`Deleted ${selectedLeads.length} leads`);
+      setSelectedLeads([]);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete leads");
+    }
+  };
 
   // Export CSV
   const handleExportCSV = () => {
@@ -466,6 +516,15 @@ export function LeadsClientView() {
                 >
                   Convert to Student
                 </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleBulkDelete}
+                  className="h-7 text-xs rounded-lg text-rose-500 border-rose-500/30 hover:bg-rose-500/10 hover:text-rose-600"
+                >
+                  <Trash2 className="h-3 w-3 mr-1" />
+                  Delete Selected
+                </Button>
               </div>
             </div>
           )}
@@ -625,6 +684,16 @@ export function LeadsClientView() {
                             <Link href={`/leads/${lead.id}`}>
                               View Profile
                             </Link>
+                          </Button>
+
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteLead(lead.id, lead.name)}
+                            className="h-8 w-8 p-0 text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
+                            title="Delete Lead"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                         </div>
                       </td>

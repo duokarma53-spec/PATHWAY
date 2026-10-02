@@ -14,7 +14,8 @@ import {
   MessageCircle,
   Mail,
   User,
-  AlertTriangle
+  AlertTriangle,
+  Trash2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -69,6 +70,14 @@ export function TasksClientView({ defaultCategory }: { defaultCategory?: string 
         return { ...t, status: newStatus }
       })
     )
+  }
+
+  const handleDeleteTask = (id: string, title: string) => {
+    if (!window.confirm(`Are you sure you want to delete task "${title}"?`)) {
+      return
+    }
+    setTasks((prev) => prev.filter((t) => t.id !== id))
+    toast.success(`Task "${title}" deleted`)
   }
 
   const handleAddTaskSubmit = (e: React.FormEvent) => {
@@ -306,6 +315,16 @@ export function TasksClientView({ defaultCategory }: { defaultCategory?: string 
                       className="h-8 text-xs rounded-xl border-border/60 hover:bg-muted/60"
                     >
                       {isCompleted ? "Reopen" : "Done"}
+                    </Button>
+
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleDeleteTask(t.id, t.title)}
+                      className="h-8 w-8 p-0 text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 rounded-xl transition-colors"
+                      title="Delete Task"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>
                 </CardContent>

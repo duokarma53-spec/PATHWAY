@@ -14,7 +14,8 @@ import {
   ChevronRight,
   ShieldCheck,
   CheckCircle2,
-  Clock
+  Clock,
+  Trash2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -75,6 +76,15 @@ export function StudentsClientView() {
     document.body.removeChild(link)
     toast.success(`Exported ${filteredStudents.length} student records`)
   }
+
+  // Delete student
+  const handleDeleteStudent = (id: string, name: string) => {
+    if (!window.confirm(`Are you sure you want to delete student "${name}"?`)) {
+      return;
+    }
+    setStudents((prev) => prev.filter((s) => s.id !== id));
+    toast.success(`Student "${name}" deleted`);
+  };
 
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto pb-12 min-w-0">
@@ -329,6 +339,15 @@ export function StudentsClientView() {
                           <Link href={`/students/${s.id}`}>
                             View Profile
                           </Link>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteStudent(s.id, s.name)}
+                          className="h-8 w-8 p-0 text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
+                          title="Delete Student"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       </div>
                     </td>

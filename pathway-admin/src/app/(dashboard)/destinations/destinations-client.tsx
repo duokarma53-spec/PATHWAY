@@ -12,7 +12,8 @@ import {
   Sparkles,
   BookOpen,
   MapPin,
-  Clock
+  Clock,
+  Trash2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -60,6 +61,19 @@ export function DestinationsClientView() {
     toast.success(`Destination ${dest.name} added successfully`)
   }
 
+  const handleDeleteDestination = (id: string, name: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!window.confirm(`Are you sure you want to delete destination "${name}"?`)) {
+      return
+    }
+    const filtered = destinations.filter((d) => d.id !== id)
+    setDestinations(filtered)
+    if (selectedDest.id === id && filtered.length > 0) {
+      setSelectedDest(filtered[0])
+    }
+    toast.success(`Destination "${name}" deleted`)
+  }
+
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto pb-12 min-w-0">
       {/* Header */}
@@ -89,21 +103,30 @@ export function DestinationsClientView() {
       {/* Country Selection Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {destinations.map((dest) => (
-          <button
+          <div
             key={dest.id}
             onClick={() => setSelectedDest(dest)}
-            className={`p-4 rounded-2xl border text-left transition-all ${
+            className={`p-4 rounded-2xl border text-left transition-all cursor-pointer relative group ${
               selectedDest.id === dest.id
                 ? "bg-primary/10 border-primary/50 shadow-md ring-1 ring-primary/40"
                 : "bg-card/75 border-border/60 hover:border-border hover:bg-card"
             }`}
           >
-            <div className="text-3xl mb-2">{dest.flag}</div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-3xl">{dest.flag}</span>
+              <button
+                onClick={(e) => handleDeleteDestination(dest.id, dest.name, e)}
+                className="opacity-0 group-hover:opacity-100 p-1 rounded-lg text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-all"
+                title="Delete Destination"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </div>
             <h3 className="font-bold text-foreground text-sm truncate">{dest.name}</h3>
             <p className="text-xs text-muted-foreground mt-0.5">
               {dest.universitiesCount}+ Universities
             </p>
-          </button>
+          </div>
         ))}
       </div>
 

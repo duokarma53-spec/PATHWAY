@@ -221,6 +221,28 @@ export function LeadDetailClient({ leadId }: { leadId: string }) {
     toast.success("Internal note added to lead profile")
   }
 
+  const handleDeleteLead = async () => {
+    if (!window.confirm(`Are you sure you want to permanently delete lead "${lead.name}"?`)) {
+      return
+    }
+    try {
+      const supabase = createClient()
+      await supabase.from("leads").delete().eq("id", lead.id)
+      try {
+        const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]")
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const filtered = local.filter((l: any) => l.id !== lead.id)
+        localStorage.setItem("pathway_local_leads", JSON.stringify(filtered))
+      } catch (e) {}
+
+      toast.success(`Lead "${lead.name}" deleted`)
+      router.push("/leads")
+    } catch (err) {
+      console.error(err)
+      toast.error("Failed to delete lead")
+    }
+  }
+
   // Pin / Unpin Note
   const handleTogglePin = (noteId: string) => {
     setNotes((prev) =>
@@ -338,6 +360,14 @@ export function LeadDetailClient({ leadId }: { leadId: string }) {
                   <CheckCircle2 className="h-4 w-4" /> Converted Student
                 </span>
               )}
+
+              <Button
+                variant="outline"
+                onClick={handleDeleteLead}
+                className="border-rose-500/30 text-rose-500 hover:bg-rose-500/10 hover:text-rose-600 rounded-xl text-xs font-semibold flex items-center gap-1.5"
+              >
+                <Trash2 className="h-3.5 w-3.5" /> Delete Lead
+              </Button>
             </div>
           </div>
         </CardContent>

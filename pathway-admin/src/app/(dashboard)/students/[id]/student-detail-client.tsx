@@ -22,7 +22,8 @@ import {
   Pin,
   ExternalLink,
   ChevronRight,
-  Send
+  Send,
+  Trash2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -44,10 +45,20 @@ import {
 } from "@/lib/mock-data"
 import Link from "next/link"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 export function StudentDetailClient({ studentId }: { studentId: string }) {
+  const router = useRouter()
   const initialStudent = INITIAL_STUDENTS.find(s => s.id === studentId) || INITIAL_STUDENTS[0]
   const [student, setStudent] = React.useState<Student>(initialStudent)
+
+  const handleDeleteStudent = () => {
+    if (!window.confirm(`Are you sure you want to delete student "${student.name}"?`)) {
+      return
+    }
+    toast.success(`Student "${student.name}" deleted`)
+    router.push("/students")
+  }
   const [activeTab, setActiveTab] = React.useState<"overview" | "applications" | "documents" | "tasks" | "appointments" | "notes" | "payments" | "activity">("overview")
 
   // Sub-entity data
@@ -178,6 +189,13 @@ export function StudentDetailClient({ studentId }: { studentId: string }) {
               >
                 <Mail className="h-3.5 w-3.5 text-amber-400" /> Email
               </a>
+              <Button
+                variant="outline"
+                onClick={handleDeleteStudent}
+                className="border-rose-500/30 text-rose-500 hover:bg-rose-500/10 hover:text-rose-600 rounded-xl text-xs font-semibold flex items-center gap-1.5"
+              >
+                <Trash2 className="h-3.5 w-3.5" /> Delete Student
+              </Button>
             </div>
           </div>
 

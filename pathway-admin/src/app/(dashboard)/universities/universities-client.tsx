@@ -13,7 +13,8 @@ import {
   BookOpen,
   DollarSign,
   GraduationCap,
-  Sparkles
+  Sparkles,
+  Trash2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -78,6 +79,14 @@ export function UniversitiesClientView() {
     setNewUni({})
     toast.success(`Added ${uni.name} to University Database`)
   }
+
+  const handleDeleteUniversity = (id: string, name: string) => {
+    if (!window.confirm(`Are you sure you want to delete "${name}"?`)) {
+      return;
+    }
+    setUniversities((prev) => prev.filter((u) => u.id !== id));
+    toast.success(`University "${name}" deleted`);
+  };
 
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto pb-12 min-w-0">
@@ -226,14 +235,23 @@ export function UniversitiesClientView() {
 
             <div className="px-6 py-3.5 border-t border-border/40 bg-muted/20 flex items-center justify-between text-xs">
               <span className="text-muted-foreground text-[11px]">Entry: {uni.entryRequirements}</span>
-              <a
-                href={uni.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline font-semibold flex items-center gap-1 shrink-0 ml-3"
-              >
-                Official Site <ExternalLink className="h-3 w-3" />
-              </a>
+              <div className="flex items-center gap-3">
+                <a
+                  href={uni.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline font-semibold flex items-center gap-1 shrink-0"
+                >
+                  Official Site <ExternalLink className="h-3 w-3" />
+                </a>
+                <button
+                  onClick={() => handleDeleteUniversity(uni.id, uni.name)}
+                  className="p-1 rounded text-muted-foreground/60 hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
+                  title="Delete University"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
           </Card>
         ))}

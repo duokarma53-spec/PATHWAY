@@ -14,7 +14,8 @@ import {
   Eye,
   ShieldCheck,
   Calendar,
-  Plus
+  Plus,
+  Trash2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -83,6 +84,14 @@ export function DocumentsClientView() {
     setShowUploadModal(false)
     setNewDoc({})
     toast.success("Document uploaded successfully")
+  }
+
+  const handleDeleteDocument = (id: string, name: string) => {
+    if (!window.confirm(`Are you sure you want to delete document "${name}"?`)) {
+      return
+    }
+    setDocuments((prev) => prev.filter((d) => d.id !== id))
+    toast.success(`Document "${name}" deleted`)
   }
 
   return (
@@ -250,6 +259,15 @@ export function DocumentsClientView() {
                           Reject
                         </Button>
                       )}
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleDeleteDocument(doc.id, doc.fileName)}
+                        className="h-7 w-7 p-0 text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
+                        title="Delete Document"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
                     </div>
                   </td>
                 </tr>

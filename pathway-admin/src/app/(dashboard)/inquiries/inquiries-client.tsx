@@ -173,6 +173,29 @@ export function InquiriesClientView() {
     }
   };
 
+  const handleDeleteInquiry = async (id: string, name: string) => {
+    if (!window.confirm(`Are you sure you want to delete inquiry for "${name}"?`)) {
+      return;
+    }
+
+    try {
+      const supabase = createClient();
+      await supabase.from("leads").delete().eq("id", id);
+      try {
+        const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const filtered = local.filter((l: any) => l.id !== id);
+        localStorage.setItem("pathway_local_leads", JSON.stringify(filtered));
+      } catch (e) {}
+
+      setInquiries(prev => prev.filter(l => l.id !== id));
+      toast.success(`Inquiry for ${name} deleted`);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete inquiry");
+    }
+  };
+
   const handleAssignCounsellor = (id: string, counsellor: string) => {
     setInquiries(prev => prev.map(l => l.id === id ? { ...l, assignedCounsellor: counsellor, status: "Contacted" } : l))
     toast.success(`Assigned to ${counsellor} and scheduled follow-up`)
@@ -317,6 +340,16 @@ export function InquiriesClientView() {
                       <Link href={`/leads/${inq.id}`}>
                         Open Profile &rarr;
                       </Link>
+                    </Button>
+
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleDeleteInquiry(inq.id, inq.name)}
+                      className="h-8 w-8 p-0 text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 rounded-xl transition-colors"
+                      title="Delete inquiry"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>
                 </div>

@@ -12,7 +12,8 @@ import {
   Clock,
   ArrowUpRight,
   Receipt,
-  FileText
+  FileText,
+  Trash2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -80,6 +81,14 @@ export function PaymentsClientView() {
     setShowAddModal(false)
     setNewPay({})
     toast.success(`Invoice ${record.invoiceRef} generated`)
+  }
+
+  const handleDeletePayment = (id: string, ref: string) => {
+    if (!window.confirm(`Are you sure you want to delete invoice "${ref}"?`)) {
+      return
+    }
+    setPayments((prev) => prev.filter((p) => p.id !== id))
+    toast.success(`Payment record "${ref}" deleted`)
   }
 
   // Export CSV
@@ -215,7 +224,8 @@ export function PaymentsClientView() {
                 <th className="py-3 px-3">Paid Amount</th>
                 <th className="py-3 px-3">Remaining Due</th>
                 <th className="py-3 px-3">Method & Date</th>
-                <th className="py-3 px-4 text-right">Status</th>
+                <th className="py-3 px-3 text-center">Status</th>
+                <th className="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40">
@@ -244,8 +254,17 @@ export function PaymentsClientView() {
                   <td className="py-3.5 px-3 whitespace-nowrap text-muted-foreground">
                     <span>{p.method}</span> • <span>{p.paymentDate}</span>
                   </td>
-                  <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                  <td className="py-3.5 px-3 text-center whitespace-nowrap">
                     <StatusBadge status={p.status} />
+                  </td>
+                  <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                    <button
+                      onClick={() => handleDeletePayment(p.id, p.invoiceRef)}
+                      className="p-1 rounded text-muted-foreground/60 hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
+                      title="Delete Payment Record"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
                   </td>
                 </tr>
               ))}

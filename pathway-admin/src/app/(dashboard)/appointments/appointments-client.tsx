@@ -14,7 +14,8 @@ import {
   Filter,
   CheckCircle2,
   XCircle,
-  AlertCircle
+  AlertCircle,
+  Trash2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -51,6 +52,14 @@ export function AppointmentsClientView() {
       prev.map((a) => (a.id === id ? { ...a, status: newStatus } : a))
     )
     toast.success(`Appointment status updated to ${newStatus}`)
+  }
+
+  const handleDeleteAppointment = (id: string, title: string) => {
+    if (!window.confirm(`Are you sure you want to delete appointment "${title}"?`)) {
+      return
+    }
+    setAppointments((prev) => prev.filter((a) => a.id !== id))
+    toast.success(`Appointment "${title}" deleted`)
   }
 
   const handleAddSubmit = (e: React.FormEvent) => {
@@ -222,6 +231,16 @@ export function AppointmentsClientView() {
                     className="h-7 text-xs text-emerald-400 hover:bg-emerald-500/10 rounded-lg px-2"
                   >
                     Mark Done
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => handleDeleteAppointment(apt.id, apt.title)}
+                    className="h-7 w-7 p-0 text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
+                    title="Delete Appointment"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
                   </Button>
                 </div>
               </CardContent>
