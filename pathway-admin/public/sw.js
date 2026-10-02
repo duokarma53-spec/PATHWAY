@@ -1,5 +1,7 @@
 // Pathway Admin CRM Service Worker
-const CACHE_NAME = 'pathway-admin-v1';
+// Cache version is based on timestamp — bumped on each deploy via next.config
+const CACHE_VERSION = Date.now().toString().slice(0, 8);
+const CACHE_NAME = `pathway-admin-${CACHE_VERSION}`;
 const STATIC_ASSETS = [
   '/',
   '/icon.svg',
@@ -32,18 +34,25 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Let Next.js dynamic app and Supabase API handle fetch with network-first
   if (event.request.method !== 'GET') return;
-  
-  // For navigation requests, fallback to network
-  if (event.request.mode === 'navigate') {
+
+  const url = new URL(event.request.url);
+
+  // Network-first for HTML pages and ALL Next.js JS/CSS chunks
+  // This guarantees new deployments always load fresh
+  const isNavigation = event.request.mode === 'navigate';
+  const isNextChunk  = url.pathname.startsWith('/_next/');
+
+  if (isNavigation || isNextChunk) {
     event.respondWith(
-      fetch(event.request).catch(() => caches.match('/'))
+      fetch(event.request).catch(() =>
+        caches.match(event.request).then((cached) => cached || caches.match('/'))
+      )
     );
     return;
   }
 
-  // Cache static images or assets when available
+  // Cache-first only for icons and manifest
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       return cachedResponse || fetch(event.request);
