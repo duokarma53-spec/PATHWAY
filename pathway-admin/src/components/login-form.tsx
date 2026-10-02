@@ -23,6 +23,26 @@ export function LoginForm({
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const formRef = React.useRef<HTMLFormElement>(null);
+  const emailRef = React.useRef<HTMLInputElement>(null);
+  const passwordRef = React.useRef<HTMLInputElement>(null);
+
+  const quickLogin = () => {
+    if (!formRef.current) return;
+    // Directly set native input values so server action receives them in formData
+    if (emailRef.current) {
+      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+      nativeInputValueSetter?.call(emailRef.current, 'owner@pathway.com');
+      emailRef.current.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    if (passwordRef.current) {
+      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+      nativeInputValueSetter?.call(passwordRef.current, 'pathway2025');
+      passwordRef.current.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    setIsSubmitting(true);
+    setTimeout(() => formRef.current?.requestSubmit(), 80);
+  };
 
 
   return (
@@ -69,6 +89,21 @@ export function LoginForm({
           </p>
         </div>
 
+        {/* ── One-Click Owner Access ──────────────────── */}
+        <button
+          type="button"
+          onClick={quickLogin}
+          disabled={isSubmitting}
+          className="w-full mb-5 py-3 rounded-2xl bg-[#D4AF37]/15 border border-[#D4AF37]/50 hover:bg-[#D4AF37]/25 hover:border-[#D4AF37]/70 active:scale-[0.98] transition-all duration-200 text-[12px] font-semibold text-[#7A5C1E] flex items-center justify-center gap-2 disabled:opacity-60"
+        >
+          {isSubmitting ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin text-[#D4AF37]" />
+          ) : (
+            <span>👑</span>
+          )}
+          <span>Quick Owner Access — Enter Workspace</span>
+          <ArrowRight className="h-3.5 w-3.5" />
+        </button>
 
         {/* ── Error Banner ──────────────────────────── */}
         {errorMessage && (
@@ -80,6 +115,7 @@ export function LoginForm({
 
         {/* ── Form ──────────────────────────────────── */}
         <form 
+          ref={formRef}
           action={login} 
           onSubmit={() => setIsSubmitting(true)}
           className="space-y-4 relative z-10"
@@ -95,6 +131,7 @@ export function LoginForm({
             <div className="relative group">
               <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A8988B] group-focus-within:text-[#D4AF37] transition-colors" />
               <input
+                ref={emailRef}
                 id="email"
                 name="email"
                 type="email"
@@ -119,6 +156,7 @@ export function LoginForm({
             <div className="relative group">
               <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A8988B] group-focus-within:text-[#D4AF37] transition-colors" />
               <input
+                ref={passwordRef}
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
