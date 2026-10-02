@@ -8,6 +8,7 @@ import { GlobalSearchDialog } from "./global-search-dialog"
 import { NotificationDropdown } from "./notification-dropdown"
 import { CRMQuickActions } from "../actions/crm-quick-actions"
 import { DownloadAppButton } from "../pwa/install-prompt"
+import { BrandLogo } from "../ui/brand-logo"
 
 export function Topbar() {
   const { setIsOpen } = useSidebar()
@@ -17,7 +18,7 @@ export function Topbar() {
     <>
       <div className="flex h-[68px] items-center justify-between glass-topbar px-4 md:px-7 z-20 shrink-0">
         {/* Left: Mobile menu + Search */}
-        <div className="flex items-center gap-4 flex-1 min-w-0">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
           <Button
             variant="ghost"
             size="icon"
@@ -27,6 +28,14 @@ export function Topbar() {
           >
             <Menu className="h-5 w-5" />
           </Button>
+
+          {/* Mobile Topbar Brand Logo */}
+          <div className="flex md:hidden items-center gap-2 select-none">
+            <BrandLogo size="xs" withGlow={false} />
+            <span className="text-[13px] font-bold tracking-[0.06em] text-foreground uppercase">
+              Pathway
+            </span>
+          </div>
 
           {/* Global Search trigger */}
           <button
