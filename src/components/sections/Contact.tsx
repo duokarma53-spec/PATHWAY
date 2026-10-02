@@ -263,11 +263,22 @@ export function Contact() {
     message: "",
   });
 
+  const [honeypot, setHoneypot] = useState("");
+  const [formStartedAt, setFormStartedAt] = useState<number | null>(null);
+
+  const startTracking = () => {
+    if (!formStartedAt) {
+      setFormStartedAt(Date.now());
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    startTracking();
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSelectChange = (field: string) => (value: string) => {
+    startTracking();
     setFormData({ ...formData, [field]: value });
   };
 
@@ -280,6 +291,60 @@ export function Contact() {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
+
+    // ── Bot Defense 1: Invisible Honeypot Trap ──────────────────────────────
+    if (honeypot.trim() !== "") {
+      console.warn("Honeypot trap triggered by automated scraper/bot.");
+      // Silently return fake success so bots don't learn bypasses
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setIsSubmitted(true);
+      }, 700);
+      return;
+    }
+
+    // ── Bot Defense 2: Velocity Check (Time-to-Submit) ─────────────────────
+    const elapsedSeconds = formStartedAt ? (Date.now() - formStartedAt) / 1000 : 0;
+    if (elapsedSeconds > 0 && elapsedSeconds < 2.5) {
+      setError("Form completed too quickly. Please verify your details and submit again in a moment.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // ── Bot Defense 3: Rate Limiting (Flood Prevention) ────────────────────
+    const SUBMIT_HISTORY_KEY = "pathway_form_submissions";
+    const DUPLICATE_LEAD_KEY = "pathway_last_submitted_lead";
+    const now = Date.now();
+    const tenMinutesAgo = now - 10 * 60 * 1000;
+
+    let recentTimestamps: number[] = [];
+    try {
+      recentTimestamps = JSON.parse(sessionStorage.getItem(SUBMIT_HISTORY_KEY) || "[]");
+    } catch {}
+
+    const validRecent = recentTimestamps.filter((ts) => ts > tenMinutesAgo);
+    if (validRecent.length >= 4) {
+      setError("Submission limit reached for this session. Please call our office directly on +91 98200 11223 or connect via WhatsApp.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // ── Bot Defense 4: Duplicate Lead Throttling ───────────────────────────
+    const cleanDigits = (formData.phone || "").replace(/\D/g, "");
+    try {
+      const lastLead = JSON.parse(sessionStorage.getItem(DUPLICATE_LEAD_KEY) || "{}");
+      if (lastLead.phone === cleanDigits && (now - (lastLead.time || 0)) < 120000) {
+        setError("An inquiry with this phone number was already received just now. Our team is already reviewing your inquiry!");
+        setIsSubmitting(false);
+        return;
+      }
+    } catch {}
+
+    // ── Bot Defense 5: Input Sanitization ──────────────────────────────────
+    const sanitize = (text: string | null | undefined) => {
+      if (!text) return "";
+      return text.replace(/<[^>]*>?/gm, "").trim();
+    };
 
     // Map user-friendly form sources to database-compliant values
     const SOURCE_MAPPING: Record<string, string> = {
@@ -306,21 +371,20 @@ export function Contact() {
       "Not decided": "Not decided",
     };
 
-    const cleanDigits = (formData.phone || "").replace(/\D/g, "");
     const safeEmail = (formData.email && formData.email.trim())
-      ? formData.email.trim()
+      ? sanitize(formData.email)
       : `${cleanDigits || "student" + Date.now()}@pathway-lead.com`;
 
     const newLeadPayload = {
-      full_name:     formData.full_name.trim(),
-      phone:         formData.phone.trim(),
+      full_name:     sanitize(formData.full_name),
+      phone:         sanitize(formData.phone),
       email:         safeEmail,
       qualification: formData.qualification || null,
       destination:   DEST_MAPPING[formData.destination] || formData.destination || null,
-      course:        formData.course?.trim() || null,
+      course:        sanitize(formData.course) || null,
       intake:        formData.intake || null,
       lead_source:   SOURCE_MAPPING[formData.source] || "Website Inquiry",
-      message:       formData.message?.trim() || null,
+      message:       sanitize(formData.message) || null,
       status:        "new",
       country:       "India",
     };
@@ -339,6 +403,12 @@ export function Contact() {
       }
 
       const confirmedLead = (insertedData && insertedData[0]) ? insertedData[0] : newLeadPayload;
+
+      // Update rate-limiting & duplicate prevention tracking in session
+      try {
+        sessionStorage.setItem(SUBMIT_HISTORY_KEY, JSON.stringify([...validRecent, now]));
+        sessionStorage.setItem(DUPLICATE_LEAD_KEY, JSON.stringify({ phone: cleanDigits, time: now }));
+      } catch {}
 
       // Broadcast across browser tabs to instantly notify Admin CRM
       try {
@@ -487,6 +557,20 @@ export function Contact() {
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
                         >
+                          {/* Invisible Honeypot Trap for automated bots */}
+                          <div className="hidden opacity-0 pointer-events-none absolute -left-[9999px]" aria-hidden="true" tabIndex={-1}>
+                            <label htmlFor="sec_hp_verification">Leave this blank</label>
+                            <input
+                              id="sec_hp_verification"
+                              type="text"
+                              name="sec_hp_verification"
+                              value={honeypot}
+                              onChange={(e) => setHoneypot(e.target.value)}
+                              tabIndex={-1}
+                              autoComplete="off"
+                            />
+                          </div>
+
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8 mb-10">
                             <CustomInput
                               label="Full Name"
@@ -540,6 +624,19 @@ export function Contact() {
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.3 }}
                         >
+                          {/* Invisible Honeypot Trap for automated bots */}
+                          <div className="hidden opacity-0 pointer-events-none absolute -left-[9999px]" aria-hidden="true" tabIndex={-1}>
+                            <label htmlFor="sec_hp_verification_step2">Leave this blank</label>
+                            <input
+                              id="sec_hp_verification_step2"
+                              type="text"
+                              name="sec_hp_verification_step2"
+                              value={honeypot}
+                              onChange={(e) => setHoneypot(e.target.value)}
+                              tabIndex={-1}
+                              autoComplete="off"
+                            />
+                          </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8 mb-8">
                             <CustomSelect
                               label="Where do you want to study?"

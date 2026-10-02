@@ -5,6 +5,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { FloatingContactWidget } from "@/components/ui/FloatingContactWidget";
 import { NewsTicker } from "@/components/ui/NewsTicker";
+import { CookieConsentBanner } from "@/components/ui/CookieConsentBanner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -36,6 +37,7 @@ export default function RootLayout({
         <Navbar />
         <main>{children}</main>
         <FloatingContactWidget />
+        <CookieConsentBanner />
         <Footer />
       </body>
     </html>
