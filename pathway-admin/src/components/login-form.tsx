@@ -37,7 +37,7 @@ export function LoginForm({
     }
     if (passwordRef.current) {
       const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
-      nativeInputValueSetter?.call(passwordRef.current, 'pathway2025');
+      nativeInputValueSetter?.call(passwordRef.current, 'pathway2026');
       passwordRef.current.dispatchEvent(new Event('input', { bubbles: true }));
     }
     setIsSubmitting(true);
