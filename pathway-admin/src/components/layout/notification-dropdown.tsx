@@ -26,6 +26,13 @@ function relativeTime(date: Date): string {
   }
 }
 
+import {
+  getPushPermissionState,
+  requestPushPermission,
+  sendTestPhoneNotification,
+  PushPermissionState,
+} from "@/lib/notifications/push-service"
+
 // Only real live notifications from Supabase
 export function NotificationDropdown() {
   const [isOpen, setIsOpen] = React.useState(false)
@@ -33,8 +40,22 @@ export function NotificationDropdown() {
 
   const [liveNotifs, setLiveNotifs] = React.useState<LiveNotification[]>([])
   const [readIds, setReadIds] = React.useState<Set<string>>(new Set())
+  const [pushStatus, setPushStatus] = React.useState<PushPermissionState>("default")
   // Tick every 60s to refresh relative times
   const [, setTick] = React.useState(0)
+
+  React.useEffect(() => {
+    setPushStatus(getPushPermissionState())
+  }, [isOpen])
+
+  const handleEnablePush = async () => {
+    const granted = await requestPushPermission()
+    setPushStatus(granted ? "granted" : "denied")
+  }
+
+  const handleTestPush = async () => {
+    await sendTestPhoneNotification()
+  }
 
   React.useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -182,6 +203,38 @@ export function NotificationDropdown() {
                 className="text-xs text-primary hover:underline font-medium flex items-center gap-1"
               >
                 <Check className="h-3 w-3" /> Mark all read
+              </button>
+            )}
+          </div>
+
+          {/* Mobile Phone Push Notification Action Bar */}
+          <div className="px-3.5 py-2.5 bg-primary/10 border-b border-border/40 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className={cn(
+                "h-2 w-2 rounded-full shrink-0",
+                pushStatus === "granted" ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]" : "bg-amber-500 animate-pulse"
+              )} />
+              <span className="text-[11.5px] font-medium text-foreground truncate">
+                {pushStatus === "granted" ? "Phone Alerts Active" : "Get Phone Push Alerts"}
+              </span>
+            </div>
+
+            {pushStatus === "granted" ? (
+              <button
+                type="button"
+                onClick={handleTestPush}
+                className="shrink-0 text-[10.5px] font-semibold px-2.5 py-1 rounded-lg bg-primary/20 text-primary hover:bg-primary/30 transition-colors"
+                title="Send a sample notification to your phone"
+              >
+                Send Test Alert
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleEnablePush}
+                className="shrink-0 text-[10.5px] font-semibold px-3 py-1 rounded-lg bg-primary text-primary-foreground shadow-sm hover:opacity-90 transition-opacity"
+              >
+                Turn On
               </button>
             )}
           </div>

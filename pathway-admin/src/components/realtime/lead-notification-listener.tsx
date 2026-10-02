@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { showLocalNativeNotification, requestPushPermission } from "@/lib/notifications/push-service";
 
 // Play a pleasant 2-tone luxury chime using Web Audio API
 function playChime() {
@@ -46,18 +47,31 @@ export function LeadNotificationListener() {
   const router = useRouter();
   const seenIds = useRef<Set<string>>(new Set());
 
+  // Automatically request push permission if installed as standalone PWA
+  useEffect(() => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      if (Notification.permission === "granted") {
+        requestPushPermission();
+      }
+    }
+  }, []);
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const notifyNewLead = (lead: any) => {
     const leadIdentifier = lead.id || `${lead.full_name}-${lead.phone}`;
     if (seenIds.current.has(leadIdentifier)) return;
     seenIds.current.add(leadIdentifier);
 
-    // Play subtle audible chime
+    const studentName = lead.full_name || "New Student";
+    const destination = lead.destination || "Study Abroad";
+    const course = lead.course || "Degree Consultation";
+
+    // 1. Play subtle audible chime
     playChime();
 
-    // Show rich Sonner notification
+    // 2. Show rich Sonner notification in-app
     toast.success("🔔 New Website Inquiry Received!", {
-      description: `${lead.full_name || "Prospective Student"} interested in ${lead.destination || "Study Abroad"} (${lead.course || "Undergraduate/Postgraduate"})`,
+      description: `${studentName} interested in ${destination} (${course})`,
       action: {
         label: "Open Inquiries",
         onClick: () => router.push("/inquiries"),
@@ -65,7 +79,15 @@ export function LeadNotificationListener() {
       duration: 8000,
     });
 
-    // Notify open components to auto-refresh table state
+    // 3. Trigger native phone notification (appears on phone lockscreen / status bar)
+    showLocalNativeNotification({
+      title: `🔔 New Inquiry: ${studentName}`,
+      body: `Interested in ${destination} (${course}). Tap to open and reply.`,
+      tag: `lead-${lead.id || Date.now()}`,
+      url: "/inquiries",
+    });
+
+    // 4. Notify open components to auto-refresh table state
     if (typeof window !== "undefined") {
       window.dispatchEvent(new CustomEvent("pathway_new_lead", { detail: lead }));
     }
