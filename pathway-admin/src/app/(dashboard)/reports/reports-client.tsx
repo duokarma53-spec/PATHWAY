@@ -28,30 +28,150 @@ import {
   Line
 } from "recharts"
 import { toast } from "sonner"
-
-const COUNSELLOR_PERF = [
-  { name: "Rohan Varma", leads: 42, converted: 18, conversionRate: "42.8%", revenue: "$36,000" },
-  { name: "Neha Sharma", leads: 38, converted: 14, conversionRate: "36.8%", revenue: "$28,500" },
-  { name: "Dev Patel", leads: 31, converted: 12, conversionRate: "38.7%", revenue: "$24,000" },
-  { name: "Admin", leads: 22, converted: 11, conversionRate: "50.0%", revenue: "$22,000" },
-]
-
-const MONTHLY_REVENUE = [
-  { month: "Apr", revenue: 14000, target: 12000 },
-  { month: "May", revenue: 19500, target: 15000 },
-  { month: "Jun", revenue: 24000, target: 20000 },
-  { month: "Jul", revenue: 28500, target: 25000 },
-  { month: "Aug", revenue: 34000, target: 30000 },
-  { month: "Sep", revenue: 39500, target: 35000 },
-]
+import { createClient } from "@/lib/supabase/client"
 
 export function ReportsClientView() {
   const [dateRange, setDateRange] = React.useState("This Month")
   const [mounted, setMounted] = React.useState(false)
 
+  // Real-time data states
+  const [leads, setLeads] = React.useState<any[]>([])
+  const [applications, setApplications] = React.useState<any[]>([])
+
   React.useEffect(() => {
     setMounted(true)
+    
+    const supabase = createClient()
+    
+    async function fetchReportsData() {
+      try {
+        const { data: leadsData } = await supabase.from("leads").select("*")
+        if (leadsData) setLeads(leadsData)
+          
+        const { data: appsData } = await supabase.from("applications").select("*")
+        if (appsData) setApplications(appsData)
+      } catch (err) {
+        console.error("Error fetching reports data", err)
+      }
+    }
+    
+    fetchReportsData()
+    
+    const channel = supabase
+      .channel("reports-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "leads" }, fetchReportsData)
+      .on("postgres_changes", { event: "*", schema: "public", table: "applications" }, fetchReportsData)
+      .subscribe()
+      
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [])
+
+  // Derived Metrics
+  const metrics = React.useMemo(() => {
+    let convertedLeads = 0
+    let totalRevenue = 0
+    leads.forEach(lead => {
+      const status = (lead.status || "").toLowerCase()
+      if (status === "enrolled" || status === "converted" || status === "converted to student") {
+        convertedLeads++
+        totalRevenue += lead.revenue ? Number(lead.revenue) : 2000
+      }
+    })
+    const conversionRate = leads.length > 0 ? (convertedLeads / leads.length) * 100 : 0
+
+    let offers = 0
+    let submitted = 0
+    let visaCompleted = 0
+    let visaTotal = 0
+    
+    applications.forEach(app => {
+      const status = app.status || ""
+      const isOffer = ["Conditional Offer", "Unconditional Offer", "Deposit Pending", "Deposit Paid", "Visa Processing", "Completed"].includes(status)
+      if (isOffer) offers++
+      
+      const isSubmitted = ["Application Submitted", "Under Review", "Conditional Offer", "Unconditional Offer", "Deposit Pending", "Deposit Paid", "Visa Processing", "Completed"].includes(status)
+      if (isSubmitted) submitted++
+      
+      const isVisaStage = ["Visa Processing", "Completed"].includes(status)
+      if (isVisaStage) {
+        visaTotal++
+        if (status === "Completed") visaCompleted++
+      }
+    })
+    
+    const offerRatio = submitted > 0 ? (offers / submitted) * 100 : 0
+    const visaSuccessRate = visaTotal > 0 ? (visaCompleted / visaTotal) * 100 : 0
+
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    const revenueByMonth = new Array(12).fill(0)
+    leads.forEach(lead => {
+      const status = (lead.status || "").toLowerCase()
+      if (status === "enrolled" || status === "converted" || status === "converted to student") {
+        if (lead.created_at) {
+          const d = new Date(lead.created_at)
+          revenueByMonth[d.getMonth()] += lead.revenue ? Number(lead.revenue) : 2000
+        }
+      }
+    })
+
+    const currentMonth = new Date().getMonth()
+    const monthlyData = []
+    for (let i = 5; i >= 0; i--) {
+      let m = currentMonth - i
+      if (m < 0) m += 12
+      monthlyData.push({
+        month: months[m],
+        revenue: revenueByMonth[m],
+        target: 15000 
+      })
+    }
+
+    const counsellorStats: Record<string, { leads: number; converted: number; revenue: number }> = {}
+    leads.forEach(lead => {
+      // Extract from meta notes or default to Admin
+      let assigned = "Admin"
+      try {
+        if (lead.notes && typeof lead.notes === 'string' && lead.notes.startsWith('{')) {
+          const meta = JSON.parse(lead.notes)
+          if (meta.counsellor) assigned = meta.counsellor
+        }
+      } catch(e) {}
+      
+      const counsellor = lead.assigned_to || assigned
+      if (!counsellorStats[counsellor]) counsellorStats[counsellor] = { leads: 0, converted: 0, revenue: 0 }
+      
+      counsellorStats[counsellor].leads++
+      
+      const status = (lead.status || "").toLowerCase()
+      if (status === "enrolled" || status === "converted" || status === "converted to student") {
+        counsellorStats[counsellor].converted++
+        counsellorStats[counsellor].revenue += lead.revenue ? Number(lead.revenue) : 2000
+      }
+    })
+    
+    let counsellorPerf = Object.entries(counsellorStats).map(([name, data]) => ({
+      name,
+      leads: data.leads,
+      converted: data.converted,
+      conversionRate: data.leads > 0 ? ((data.converted / data.leads) * 100).toFixed(1) + "%" : "0%",
+      revenue: `$${data.revenue.toLocaleString()}`
+    })).sort((a, b) => Number(b.revenue.replace(/[^0-9.-]+/g,"")) - Number(a.revenue.replace(/[^0-9.-]+/g,"")))
+    
+    if (counsellorPerf.length === 0) {
+      counsellorPerf = [{ name: "Admin", leads: 0, converted: 0, conversionRate: "0%", revenue: "$0" }]
+    }
+
+    return {
+      conversionRate,
+      offerRatio,
+      visaSuccessRate,
+      totalRevenue,
+      monthlyData,
+      counsellorPerf
+    }
+  }, [leads, applications])
 
   const handleExport = (format: string) => {
     toast.success(`Exporting consultancy executive report as ${format.toUpperCase()}...`)
@@ -112,23 +232,23 @@ export function ReportsClientView() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
         <Card className="border-border/60 bg-card/75 p-4">
           <p className="text-xs text-muted-foreground uppercase font-semibold">Consultancy Conversion Rate</p>
-          <p className="text-2xl font-bold text-emerald-400 mt-1">39.2%</p>
-          <p className="text-[11px] text-muted-foreground mt-1">+4.8% vs last quarter</p>
+          <p className="text-2xl font-bold text-emerald-400 mt-1">{metrics.conversionRate.toFixed(1)}%</p>
+          <p className="text-[11px] text-muted-foreground mt-1">Based on all captured leads</p>
         </Card>
         <Card className="border-border/60 bg-card/75 p-4">
           <p className="text-xs text-muted-foreground uppercase font-semibold">University Offer Ratio</p>
-          <p className="text-2xl font-bold text-primary mt-1">74.5%</p>
+          <p className="text-2xl font-bold text-primary mt-1">{metrics.offerRatio.toFixed(1)}%</p>
           <p className="text-[11px] text-muted-foreground mt-1">From total submissions</p>
         </Card>
         <Card className="border-border/60 bg-card/75 p-4">
           <p className="text-xs text-muted-foreground uppercase font-semibold">Visa Success Rate</p>
-          <p className="text-2xl font-bold text-violet-400 mt-1">98.2%</p>
-          <p className="text-[11px] text-muted-foreground mt-1">UK, USA, CA & AU</p>
+          <p className="text-2xl font-bold text-violet-400 mt-1">{metrics.visaSuccessRate.toFixed(1)}%</p>
+          <p className="text-[11px] text-muted-foreground mt-1">From completed visa processing</p>
         </Card>
         <Card className="border-border/60 bg-card/75 p-4">
           <p className="text-xs text-muted-foreground uppercase font-semibold">Total Net Billed</p>
-          <p className="text-2xl font-bold text-foreground mt-1">$110,500</p>
-          <p className="text-[11px] text-emerald-400 mt-1">On track for fiscal targets</p>
+          <p className="text-2xl font-bold text-foreground mt-1">${metrics.totalRevenue.toLocaleString()}</p>
+          <p className="text-[11px] text-emerald-400 mt-1">Real-time synced</p>
         </Card>
       </div>
 
@@ -144,7 +264,7 @@ export function ReportsClientView() {
           <div className="h-[250px] w-full">
             {mounted ? (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={MONTHLY_REVENUE} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <BarChart data={metrics.monthlyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.06)" />
                   <XAxis dataKey="month" stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
                   <YAxis stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
@@ -191,7 +311,7 @@ export function ReportsClientView() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40">
-              {COUNSELLOR_PERF.map((c) => (
+              {metrics.counsellorPerf.map((c) => (
                 <tr key={c.name} className="hover:bg-muted/30 transition-colors">
                   <td className="py-3.5 px-4 font-semibold text-foreground">
                     {c.name}
