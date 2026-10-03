@@ -124,7 +124,7 @@ export function LeadsClientView() {
   const [sortField, setSortField] = React.useState<"name" | "createdDate" | "priority">("createdDate")
   const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("desc")
 
-  // Live Supabase Leads Sync & Real-time Auto-Refresh
+  // Live Supabase Leads Sync & Real-time Subscriptions (INSERT / UPDATE / DELETE)
   React.useEffect(() => {
     const supabase = createClient();
 
@@ -135,40 +135,58 @@ export function LeadsClientView() {
           .select("*")
           .order("created_at", { ascending: false });
 
-        if (!error && data !== null) {
-          const live = data.map(mapDbLeadToLead);
-          setLeads(live);
-          // Supabase returned data — skip localStorage fallback to avoid stale data
+        if (error) {
+          console.error("Error fetching leads:", error);
           return;
         }
-      } catch (err) {
-        console.debug("Error fetching live leads:", err);
-      }
-
-      // Only use localStorage as a true fallback when Supabase returns nothing
-      try {
-        const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
-        if (local.length > 0) {
-          const localMapped = local.map(mapDbLeadToLead);
-          setLeads(localMapped);
+        if (data !== null) {
+          setLeads(data.map(mapDbLeadToLead));
         }
-      } catch (e) {}
+      } catch (err) {
+        console.error("Unexpected error fetching leads:", err);
+      }
     }
 
+    // Initial fetch
     fetchLiveLeads();
 
-    // Listen to real-time custom event
-    const handleNewLeadEvent = (e: Event) => {
-      const customEvent = e as CustomEvent;
-      if (customEvent.detail) {
-        const newLeadItem = mapDbLeadToLead(customEvent.detail);
-        setLeads((prev) => [newLeadItem, ...prev.filter((p) => p.id !== newLeadItem.id)]);
-      }
-    };
+    // Subscribe to ALL changes on the leads table (INSERT, UPDATE, DELETE)
+    const channel = supabase
+      .channel("leads_client_sync")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "leads" },
+        (payload) => {
+          const newLead = mapDbLeadToLead(payload.new);
+          setLeads((prev) => [newLead, ...prev.filter((p) => p.id !== newLead.id)]);
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "leads" },
+        (payload) => {
+          const updatedLead = mapDbLeadToLead(payload.new);
+          setLeads((prev) =>
+            prev.map((l) => (l.id === updatedLead.id ? updatedLead : l))
+          );
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: "leads" },
+        (payload) => {
+          // payload.old contains the deleted row's data (at minimum the id)
+          const deletedId = payload.old?.id;
+          if (deletedId) {
+            setLeads((prev) => prev.filter((l) => l.id !== deletedId));
+            setSelectedLeads((prev) => prev.filter((selId) => selId !== deletedId));
+          }
+        }
+      )
+      .subscribe();
 
-    window.addEventListener("pathway_new_lead", handleNewLeadEvent);
     return () => {
-      window.removeEventListener("pathway_new_lead", handleNewLeadEvent);
+      supabase.removeChannel(channel);
     };
   }, []);
 
@@ -239,29 +257,33 @@ export function LeadsClientView() {
     if (!window.confirm(`Are you sure you want to delete lead "${name}"?`)) {
       return;
     }
+
+    // Snapshot the lead before removing (needed to restore on failure)
+    const snapshot = leads.find((l) => l.id === id);
+
     // Optimistically remove from UI immediately
     setLeads((prev) => prev.filter((l) => l.id !== id));
     setSelectedLeads((prev) => prev.filter((selId) => selId !== id));
-
-    // Always clean localStorage first (remove stale entry regardless of DB result)
-    try {
-      const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const filtered = local.filter((l: any) => l.id !== id);
-      localStorage.setItem("pathway_local_leads", JSON.stringify(filtered));
-    } catch (e) {}
 
     try {
       const supabase = createClient();
       const { error } = await supabase.from("leads").delete().eq("id", id);
       if (error) {
         console.error("Supabase delete error:", error);
-        toast.error(`Failed to delete lead "${name}" from database: ${error.message}`);
+        // Restore lead in UI — DB delete failed
+        if (snapshot) {
+          setLeads((prev) => [snapshot, ...prev.filter((l) => l.id !== id)]);
+        }
+        toast.error(`Failed to delete lead "${name}": ${error.message}`);
         return;
       }
+      // Realtime DELETE event will also fire and keep other tabs in sync
       toast.success(`Lead "${name}" deleted`);
     } catch (err) {
       console.error(err);
+      if (snapshot) {
+        setLeads((prev) => [snapshot, ...prev.filter((l) => l.id !== id)]);
+      }
       toast.error("Failed to delete lead");
     }
   };
@@ -273,30 +295,30 @@ export function LeadsClientView() {
     }
     const toDelete = [...selectedLeads];
 
+    // Snapshot leads to delete (needed to restore on failure)
+    const snapshots = leads.filter((l) => toDelete.includes(l.id));
+
     // Optimistically remove from UI
     setLeads((prev) => prev.filter((l) => !toDelete.includes(l.id)));
     setSelectedLeads([]);
-
-    // Clean localStorage for all deleted IDs first
-    try {
-      const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
-      const selSet = new Set(toDelete);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const filtered = local.filter((l: any) => !selSet.has(l.id));
-      localStorage.setItem("pathway_local_leads", JSON.stringify(filtered));
-    } catch (e) {}
 
     try {
       const supabase = createClient();
       const { error } = await supabase.from("leads").delete().in("id", toDelete);
       if (error) {
         console.error("Supabase bulk delete error:", error);
-        toast.error(`Failed to delete leads from database: ${error.message}`);
+        // Restore all leads that failed to delete
+        setLeads((prev) => [...snapshots, ...prev]);
+        setSelectedLeads(toDelete);
+        toast.error(`Failed to delete leads: ${error.message}`);
         return;
       }
+      // Realtime DELETE events will keep other tabs in sync
       toast.success(`Deleted ${toDelete.length} leads`);
     } catch (err) {
       console.error(err);
+      setLeads((prev) => [...snapshots, ...prev]);
+      setSelectedLeads(toDelete);
       toast.error("Failed to delete leads");
     }
   };

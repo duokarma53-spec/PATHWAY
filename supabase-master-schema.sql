@@ -405,6 +405,12 @@ CREATE POLICY "Public can insert leads" ON leads FOR INSERT WITH CHECK (true);
 DROP POLICY IF EXISTS "Public can read leads" ON leads;
 CREATE POLICY "Public can read leads" ON leads FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Public can update leads" ON leads;
+CREATE POLICY "Public can update leads" ON leads FOR UPDATE USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Public can delete leads" ON leads;
+CREATE POLICY "Public can delete leads" ON leads FOR DELETE USING (true);
+
 DROP POLICY IF EXISTS "Public can insert consultations" ON consultations;
 CREATE POLICY "Public can insert consultations" ON consultations FOR INSERT WITH CHECK (true);
 

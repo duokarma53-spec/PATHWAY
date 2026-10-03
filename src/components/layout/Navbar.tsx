@@ -354,27 +354,6 @@ export function Navbar() {
 
           {/* CTA */}
           <div className="hidden lg:flex items-center gap-3 shrink-0">
-            {/* Instagram quick-link */}
-            <a
-              href="https://www.instagram.com/pathwayeduconsultancy?stkn=YnY3M2R0MzFwNzk="
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-pink-500/25 bg-pink-500/10 text-pink-600 hover:bg-pink-600 hover:text-white transition-all duration-200 group shadow-2xs"
-              title="Official Instagram (@pathwayeduconsultancy)"
-              aria-label="Pathway Instagram"
-            >
-              <InstagramIcon size={17} className="group-hover:scale-110 transition-transform" />
-            </a>
-
-            {/* Phone quick-link */}
-            <a
-              href="tel:+917506284722"
-              className="hidden xl:flex items-center gap-2 text-[13px] font-semibold text-navy/70 hover:text-navy transition-colors duration-200 tracking-wide"
-            >
-              <Phone size={13} strokeWidth={2.5} className="text-gold" />
-              +91 75062 84722
-            </a>
-            <div className="hidden xl:block w-px h-5 bg-navy/15" />
             <Link
               href="#contact"
               className="group flex items-center justify-center gap-2 bg-navy text-ivory h-[50px] px-8 rounded-[13px] text-[14px] font-sans font-semibold tracking-wide shadow-[0_4px_16px_-4px_rgba(11,31,51,0.4)] transition-all duration-300 hover:bg-midnight hover:shadow-[0_8px_28px_-6px_rgba(11,31,51,0.55)] active:scale-[0.97]"
@@ -523,8 +502,6 @@ export function Navbar() {
                 Start Your Journey <ArrowUpRight size={20} className="text-gold" />
               </Link>
               <div className="flex justify-between items-center px-4">
-                <a href="tel:+917506284722" className="text-navy font-medium font-sans text-xs sm:text-sm">+91 75062 84722</a>
-                <span className="w-1.5 h-1.5 bg-gold rounded-full" />
                 <a href="https://wa.me/917506284722" target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-semibold font-sans uppercase tracking-wider text-xs">WhatsApp</a>
                 <span className="w-1.5 h-1.5 bg-gold rounded-full" />
                 <a href="https://www.instagram.com/pathwayeduconsultancy?stkn=YnY3M2R0MzFwNzk=" target="_blank" rel="noopener noreferrer" className="text-pink-600 font-semibold font-sans uppercase tracking-wider text-xs flex items-center gap-1">
