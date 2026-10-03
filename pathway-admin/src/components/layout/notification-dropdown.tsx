@@ -304,15 +304,7 @@ export function NotificationDropdown() {
             )}
           </div>
 
-          <div className="p-2 border-t border-border/50 text-center bg-muted/10">
-            <Link
-              href="/audit-logs"
-              onClick={() => setIsOpen(false)}
-              className="text-xs text-muted-foreground hover:text-primary transition-colors font-medium"
-            >
-              View System Activity Logs &rarr;
-            </Link>
-          </div>
+        
         </div>
       )}
     </div>

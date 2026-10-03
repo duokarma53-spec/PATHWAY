@@ -74,8 +74,7 @@ const navigationGroups: NavGroup[] = [
   {
     label: "Administration",
     items: [
-      { name: 'Activity Logs',     href: '/audit-logs',  icon: Activity },
-      { name: 'Settings',          href: '/settings',    icon: Settings },
+      { name: 'Settings', href: '/settings', icon: Settings },
     ]
   }
 ]

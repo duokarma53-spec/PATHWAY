@@ -7,11 +7,144 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useAdminProfile } from "@/lib/profile/use-admin-profile";
-import { User, Mail, Shield, Phone, Building2, KeyRound, Bell, CheckCircle2, Save } from "lucide-react";
+import { User, Mail, Shield, Phone, Building2, KeyRound, Lock, Save, Eye, EyeOff } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
+const SETTINGS_PIN = "1010";
+
+// ── PIN Gate ─────────────────────────────────────────────────────────────────
+function PinGate({ onUnlock }: { onUnlock: () => void }) {
+  const [pin, setPin] = React.useState(["", "", "", ""]);
+  const [error, setError] = React.useState(false);
+  const [shaking, setShaking] = React.useState(false);
+  const refs = [
+    React.useRef<HTMLInputElement>(null),
+    React.useRef<HTMLInputElement>(null),
+    React.useRef<HTMLInputElement>(null),
+    React.useRef<HTMLInputElement>(null),
+  ];
+
+  const handleChange = (index: number, value: string) => {
+    const digit = value.replace(/\D/g, "").slice(-1);
+    const next = [...pin];
+    next[index] = digit;
+    setPin(next);
+    setError(false);
+
+    if (digit && index < 3) {
+      refs[index + 1].current?.focus();
+    }
+
+    // Auto-submit when all 4 digits entered
+    if (digit && index === 3) {
+      const fullPin = [...next].join("");
+      if (fullPin === SETTINGS_PIN) {
+        onUnlock();
+      } else {
+        setError(true);
+        setShaking(true);
+        setTimeout(() => {
+          setShaking(false);
+          setPin(["", "", "", ""]);
+          refs[0].current?.focus();
+        }, 600);
+      }
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === "Backspace" && !pin[index] && index > 0) {
+      refs[index - 1].current?.focus();
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const fullPin = pin.join("");
+    if (fullPin === SETTINGS_PIN) {
+      onUnlock();
+    } else {
+      setError(true);
+      setShaking(true);
+      setTimeout(() => {
+        setShaking(false);
+        setPin(["", "", "", ""]);
+        refs[0].current?.focus();
+      }, 600);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-8">
+      <div className="flex flex-col items-center gap-3">
+        <div className="h-16 w-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-lg">
+          <Lock className="h-8 w-8 text-primary" />
+        </div>
+        <h2 className="text-2xl font-bold text-foreground">Settings Access</h2>
+        <p className="text-sm text-muted-foreground text-center max-w-xs">
+          Enter your 4-digit PIN to access account settings and security options.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="flex flex-col items-center gap-6">
+        <div
+          className={`flex gap-3 transition-transform ${shaking ? "animate-[shake_0.5s_ease-in-out]" : ""}`}
+          style={shaking ? { animation: "shake 0.5s ease-in-out" } : {}}
+        >
+          {pin.map((digit, i) => (
+            <input
+              key={i}
+              ref={refs[i]}
+              type="password"
+              inputMode="numeric"
+              maxLength={1}
+              value={digit}
+              autoFocus={i === 0}
+              onChange={(e) => handleChange(i, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(i, e)}
+              className={`w-14 h-14 text-center text-2xl font-bold rounded-2xl border-2 bg-card outline-none transition-all
+                ${error
+                  ? "border-red-500 text-red-500 bg-red-500/5"
+                  : digit
+                    ? "border-primary text-foreground"
+                    : "border-border/60 text-foreground focus:border-primary"
+                }`}
+            />
+          ))}
+        </div>
+
+        {error && (
+          <p className="text-xs text-red-500 font-semibold animate-in fade-in">
+            Incorrect PIN. Please try again.
+          </p>
+        )}
+
+        <Button
+          type="submit"
+          className="bg-primary text-primary-foreground font-semibold rounded-xl px-8 shadow-md shadow-primary/20"
+          disabled={pin.some((d) => !d)}
+        >
+          Unlock Settings
+        </Button>
+      </form>
+
+      <style>{`
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          20%       { transform: translateX(-8px); }
+          40%       { transform: translateX(8px); }
+          60%       { transform: translateX(-6px); }
+          80%       { transform: translateX(6px); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+// ── Main Settings View ────────────────────────────────────────────────────────
 export function SettingsClientView() {
-  const { profile, updateProfile, initials } = useAdminProfile();
+  const { profile, updateProfile } = useAdminProfile();
+  const [unlocked, setUnlocked] = React.useState(false);
 
   const [formState, setFormState] = React.useState({
     name: profile.name,
@@ -22,10 +155,11 @@ export function SettingsClientView() {
   });
 
   const [passwordState, setPasswordState] = React.useState({
-    currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
+  const [showNew, setShowNew] = React.useState(false);
+  const [showConfirm, setShowConfirm] = React.useState(false);
 
   const [isSaving, setIsSaving] = React.useState(false);
   const [isSavingPassword, setIsSavingPassword] = React.useState(false);
@@ -48,7 +182,6 @@ export function SettingsClientView() {
   const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-
     try {
       await updateProfile(formState);
       toast.success("Profile alterations saved successfully!", {
@@ -65,7 +198,7 @@ export function SettingsClientView() {
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (passwordState.newPassword !== passwordState.confirmPassword) {
-      toast.error("New passwords do not match. Please verify.");
+      toast.error("Passwords do not match. Please verify.");
       return;
     }
     if (passwordState.newPassword.length < 6) {
@@ -76,27 +209,31 @@ export function SettingsClientView() {
     setIsSavingPassword(true);
     try {
       const supabase = createClient();
+      // Updates the authenticated user's password directly in Supabase Auth
       const { error } = await supabase.auth.updateUser({
         password: passwordState.newPassword,
       });
 
       if (error) {
-        toast.error(error.message);
+        toast.error(error.message || "Failed to update password. Please try again.");
       } else {
-        toast.success("Password updated successfully!");
-        setPasswordState({
-          currentPassword: "",
-          newPassword: "",
-          confirmPassword: "",
+        toast.success("Password updated successfully in Supabase Auth!", {
+          description: "Your new password is now active. Use it on your next login.",
         });
+        setPasswordState({ newPassword: "", confirmPassword: "" });
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to update password";
+      const msg = err instanceof Error ? err.message : "Unexpected error updating password";
       toast.error(msg);
     } finally {
       setIsSavingPassword(false);
     }
   };
+
+  // Show PIN gate until unlocked
+  if (!unlocked) {
+    return <PinGate onUnlock={() => setUnlocked(true)} />;
+  }
 
   return (
     <div className="flex flex-col gap-6 max-w-4xl mx-auto w-full pb-16 min-w-0">
@@ -104,7 +241,7 @@ export function SettingsClientView() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-            Account & System Settings
+            Account &amp; System Settings
           </h1>
           <p className="text-xs md:text-sm text-muted-foreground mt-1">
             Manage your personal administrative profile, contact details, security and preferences.
@@ -262,9 +399,9 @@ export function SettingsClientView() {
               <KeyRound className="h-4 w-4" />
             </div>
             <div>
-              <CardTitle className="text-base font-semibold">Security & Password</CardTitle>
+              <CardTitle className="text-base font-semibold">Security &amp; Password</CardTitle>
               <CardDescription className="text-xs">
-                Update your administrative login credentials.
+                Changes your Supabase Auth login password. You will use the new password on next sign-in.
               </CardDescription>
             </div>
           </div>
@@ -276,39 +413,82 @@ export function SettingsClientView() {
                 <Label htmlFor="newPassword" className="text-xs font-semibold">
                   New Password
                 </Label>
-                <Input
-                  id="newPassword"
-                  type="password"
-                  value={passwordState.newPassword}
-                  onChange={(e) => setPasswordState({ ...passwordState, newPassword: e.target.value })}
-                  className="h-10 rounded-xl text-xs bg-muted/20 border-border/60"
-                  placeholder="Enter at least 6 characters"
-                />
+                <div className="relative">
+                  <Input
+                    id="newPassword"
+                    type={showNew ? "text" : "password"}
+                    value={passwordState.newPassword}
+                    onChange={(e) =>
+                      setPasswordState({ ...passwordState, newPassword: e.target.value })
+                    }
+                    className="h-10 rounded-xl text-xs bg-muted/20 border-border/60 pr-10"
+                    placeholder="Enter at least 6 characters"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNew((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showNew ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-1.5">
                 <Label htmlFor="confirmPassword" className="text-xs font-semibold">
                   Confirm New Password
                 </Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={passwordState.confirmPassword}
-                  onChange={(e) => setPasswordState({ ...passwordState, confirmPassword: e.target.value })}
-                  className="h-10 rounded-xl text-xs bg-muted/20 border-border/60"
-                  placeholder="Re-enter new password"
-                />
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirm ? "text" : "password"}
+                    value={passwordState.confirmPassword}
+                    onChange={(e) =>
+                      setPasswordState({ ...passwordState, confirmPassword: e.target.value })
+                    }
+                    className="h-10 rounded-xl text-xs bg-muted/20 border-border/60 pr-10"
+                    placeholder="Re-enter new password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirm((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showConfirm ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                  </button>
+                </div>
               </div>
             </div>
+
+            {/* Password match indicator */}
+            {passwordState.newPassword && passwordState.confirmPassword && (
+              <p
+                className={`text-xs font-semibold ${
+                  passwordState.newPassword === passwordState.confirmPassword
+                    ? "text-emerald-500"
+                    : "text-red-500"
+                }`}
+              >
+                {passwordState.newPassword === passwordState.confirmPassword
+                  ? "✓ Passwords match"
+                  : "✗ Passwords do not match"}
+              </p>
+            )}
 
             <div className="pt-2 flex justify-end">
               <Button
                 type="submit"
-                disabled={isSavingPassword || !passwordState.newPassword}
+                disabled={
+                  isSavingPassword ||
+                  !passwordState.newPassword ||
+                  passwordState.newPassword !== passwordState.confirmPassword
+                }
                 variant="outline"
                 className="font-semibold rounded-xl text-xs px-5 border-border/70"
               >
-                {isSavingPassword ? "Updating Password..." : "Update Password"}
+                {isSavingPassword ? "Updating Password in Supabase..." : "Update Password"}
               </Button>
             </div>
           </form>
