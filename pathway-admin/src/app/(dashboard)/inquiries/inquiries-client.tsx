@@ -200,11 +200,17 @@ export function InquiriesClientView() {
 
     try {
       const supabase = createClient();
-      await supabase.from("leads").delete().eq("id", id);
+      const { error } = await supabase.from("leads").delete().eq("id", id);
+      if (error) console.warn("Supabase delete failed (may be local only or RLS blocked):", error);
+      
       try {
         const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const filtered = local.filter((l: any) => l.id !== id);
+        const filtered = local.filter((l: any) => {
+          const generatedWebId = `lead-web-${l.phone || "demo"}`;
+          const generatedLiveId = `lead-live-${l.phone || "demo"}`;
+          return l.id !== id && generatedWebId !== id && generatedLiveId !== id;
+        });
         localStorage.setItem("pathway_local_leads", JSON.stringify(filtered));
       } catch (e) {}
 
