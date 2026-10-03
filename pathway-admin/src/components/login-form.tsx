@@ -3,13 +3,16 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { login } from "@/app/login/actions";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { 
   Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, 
   AlertCircle, Loader2, Smartphone
 } from "lucide-react";
 import { DownloadAppButton } from "./pwa/install-prompt";
 import { BrandLogo } from "./ui/brand-logo";
+
+const SESSION_START_KEY = "pathway_session_start";
+
 
 export function LoginForm({
   className,
@@ -41,8 +44,13 @@ export function LoginForm({
       passwordRef.current.dispatchEvent(new Event('input', { bubbles: true }));
     }
     setIsSubmitting(true);
+    // Record fresh session start before logging in
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(SESSION_START_KEY, String(Date.now()));
+    }
     setTimeout(() => formRef.current?.requestSubmit(), 80);
   };
+
 
 
   return (
@@ -117,7 +125,13 @@ export function LoginForm({
         <form 
           ref={formRef}
           action={login} 
-          onSubmit={() => setIsSubmitting(true)}
+          onSubmit={() => {
+            setIsSubmitting(true)
+            // Record fresh session start on manual login
+            if (typeof window !== 'undefined') {
+              localStorage.setItem(SESSION_START_KEY, String(Date.now()))
+            }
+          }}
           className="space-y-4 relative z-10"
         >
           {/* Email */}

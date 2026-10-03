@@ -8,9 +8,9 @@ import {
   MessageSquare, Compass, CheckSquare, FolderOpen, Activity, Calendar,
   CreditCard, BarChart3, TrendingUp, Inbox,
   Landmark, UserCheck, X, ChevronLeft, ChevronRight, LogOut,
-  ExternalLink
+  ExternalLink, ShieldAlert, Clock
 } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "../ui/button"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
@@ -18,6 +18,73 @@ import { useSidebar } from "@/contexts/sidebar-context"
 import { DownloadAppButton } from "../pwa/install-prompt"
 import { BrandLogo } from "../ui/brand-logo"
 import { InstagramIcon } from "../ui/instagram-icon"
+
+// ── 5-Hour Security Session Reminder ─────────────────────────────
+const SESSION_DURATION_MS = 5 * 60 * 60 * 1000 // 5 hours
+const SESSION_START_KEY = "pathway_session_start"
+
+function useSessionReminder(onExpired: () => void) {
+  const [showReminder, setShowReminder] = useState(false)
+  const [minutesLeft, setMinutesLeft] = useState(0)
+  const timerRef = useRef<ReturnType<typeof setTimeout>>()
+  const intervalRef = useRef<ReturnType<typeof setInterval>>()
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    // Record session start if not already set
+    let sessionStart = parseInt(localStorage.getItem(SESSION_START_KEY) || "0", 10)
+    if (!sessionStart || isNaN(sessionStart)) {
+      sessionStart = Date.now()
+      localStorage.setItem(SESSION_START_KEY, String(sessionStart))
+    }
+
+    const timeElapsed = Date.now() - sessionStart
+    const timeRemaining = SESSION_DURATION_MS - timeElapsed
+
+    // Already past 5 hours when they loaded — show immediately
+    if (timeRemaining <= 0) {
+      setShowReminder(true)
+      setMinutesLeft(0)
+      return
+    }
+
+    // Show reminder when 5 hours are up
+    timerRef.current = setTimeout(() => {
+      setShowReminder(true)
+      setMinutesLeft(0)
+    }, timeRemaining)
+
+    // Countdown ticker every minute for the last 30 min
+    if (timeRemaining <= 30 * 60 * 1000) {
+      setMinutesLeft(Math.ceil(timeRemaining / 60000))
+      intervalRef.current = setInterval(() => {
+        const left = SESSION_DURATION_MS - (Date.now() - sessionStart)
+        if (left <= 0) {
+          setShowReminder(true)
+          setMinutesLeft(0)
+          clearInterval(intervalRef.current)
+        } else {
+          setMinutesLeft(Math.ceil(left / 60000))
+        }
+      }, 60000)
+    }
+
+    return () => {
+      clearTimeout(timerRef.current)
+      clearInterval(intervalRef.current)
+    }
+  }, [])
+
+  const dismiss = () => setShowReminder(false)
+
+  const logoutNow = () => {
+    localStorage.removeItem(SESSION_START_KEY)
+    onExpired()
+  }
+
+  return { showReminder, minutesLeft, dismiss, logoutNow }
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type NavItem = { name: string; href: string; icon: any; badge?: string | number }
@@ -83,14 +150,48 @@ function NavContent({ collapsed, onNavClick }: { collapsed: boolean; onNavClick?
   const supabase = createClient()
 
   const handleLogout = async () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(SESSION_START_KEY)
+    }
     await supabase.auth.signOut()
     router.push('/login')
   }
 
+  const { showReminder, minutesLeft, dismiss, logoutNow } = useSessionReminder(handleLogout)
+
   return (
     <>
+      {/* 5-Hour Security Reminder Banner */}
+      {showReminder && (
+        <div className="mx-3 mt-3 mb-0 rounded-xl bg-amber-50 border border-amber-300 p-3 flex flex-col gap-2 shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex items-start gap-2">
+            <ShieldAlert className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+            <div className="flex-1 min-w-0">
+              <p className="text-[11.5px] font-bold text-amber-800 leading-tight">Security Reminder</p>
+              <p className="text-[10.5px] text-amber-700 mt-0.5 leading-snug">
+                You&apos;ve been logged in for 5 hours. For security, please log out and sign back in.
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-1.5">
+            <button
+              onClick={logoutNow}
+              className="flex-1 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-[10.5px] font-semibold transition-colors"
+            >
+              Logout Now
+            </button>
+            <button
+              onClick={dismiss}
+              className="px-3 py-1.5 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-800 text-[10.5px] font-medium transition-colors"
+            >
+              Later
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Navigation */}
-      <div className="flex-1 overflow-auto py-6 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden py-4 custom-scrollbar">
         <nav className="flex flex-col gap-6 px-3">
           {navigationGroups.map((group) => (
             <div key={group.label} className="flex flex-col gap-0.5">
@@ -152,16 +253,16 @@ function NavContent({ collapsed, onNavClick }: { collapsed: boolean; onNavClick?
         </nav>
       </div>
 
-      {/* Footer */}
-      <div className="border-t border-linen-dark/50 p-3 space-y-1.5">
+      {/* Footer — always visible, sticks to bottom */}
+      <div className="shrink-0 border-t border-linen-dark/50 px-3 pt-2 pb-3 space-y-1.5">
         {/* Instagram Direct Link */}
         <a
           href="https://www.instagram.com/pathwayeduconsultancy?stkn=YnY3M2R0MzFwNzk="
           target="_blank"
           rel="noopener noreferrer"
           className={cn(
-            "flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-[12.5px] font-medium text-pink-700 bg-pink-500/10 hover:bg-pink-500/15 border border-pink-500/20 transition-all duration-200 group shadow-2xs",
-            collapsed && "justify-center px-0"
+            "flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-[12.5px] font-medium text-pink-700 bg-pink-500/10 hover:bg-pink-500/15 border border-pink-500/20 transition-all duration-200 group",
+            collapsed && "justify-center px-2"
           )}
           title="Official Instagram (@pathwayeduconsultancy)"
         >
@@ -176,10 +277,12 @@ function NavContent({ collapsed, onNavClick }: { collapsed: boolean; onNavClick?
         </a>
 
         {!collapsed && <DownloadAppButton variant="sidebar" />}
+
+        {/* Logout — always visible */}
         <Button
           variant="ghost"
           className={cn(
-            "w-full justify-start text-espresso-light/70 hover:text-foreground hover:bg-white/50 text-[13px] font-medium rounded-xl transition-colors duration-200",
+            "w-full justify-start text-espresso-light/70 hover:text-destructive hover:bg-destructive/8 text-[13px] font-medium rounded-xl transition-colors duration-200",
             collapsed && "justify-center px-2"
           )}
           onClick={handleLogout}
