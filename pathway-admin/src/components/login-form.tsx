@@ -295,6 +295,15 @@ export function LoginForm({
                       -webkit-text-fill-color: rgba(255,248,238,0.92) !important;
                       caret-color: rgba(192,120,56,0.9);
                     }
+                    .eye-toggle-btn {
+                      color: rgba(160,120,70,0.60);
+                      cursor: pointer;
+                      background: transparent;
+                      border: none;
+                    }
+                    .eye-toggle-btn:hover {
+                      color: rgba(212,149,106,0.90);
+                    }
                   `}</style>
                 </div>
               </div>
@@ -310,7 +319,7 @@ export function LoginForm({
                 </label>
                 <div className="relative group">
                   <Lock
-                    className="absolute left-4 top-1/2 -translate-y-1/2 h-[15px] w-[15px] transition-colors duration-200 pointer-events-none"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 h-[15px] w-[15px] transition-colors duration-200 pointer-events-none z-0"
                     style={{ color: "rgba(160,120,70,0.60)" }}
                   />
                   <input
@@ -333,11 +342,8 @@ export function LoginForm({
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-all duration-150"
-                    style={{ color: "rgba(160,120,70,0.55)" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(212,149,106,0.85)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(160,120,70,0.55)")}
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 z-10 p-1.5 rounded-lg transition-colors duration-150 eye-toggle-btn"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword
