@@ -30,6 +30,19 @@ function mapDbLeadToLead(row: any): Lead {
   const firstName = nameParts[0] || "Prospective";
   const lastName = nameParts.slice(1).join(" ") || "Student";
 
+  // Parse structured notes/metadata if available
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let meta: Record<string, any> = {};
+  if (row.notes) {
+    try {
+      if (typeof row.notes === "string" && row.notes.trim().startsWith("{")) {
+        meta = JSON.parse(row.notes);
+      }
+    } catch (e) {
+      // not JSON
+    }
+  }
+
   // Normalize source for UI badge / filter
   let sourceUI: Lead["leadSource"] = "Website";
   const rawSource = (row.lead_source || "").toLowerCase();
@@ -70,10 +83,17 @@ function mapDbLeadToLead(row: any): Lead {
     name: row.full_name || `${firstName} ${lastName}`,
     email: row.email || "",
     phone: row.phone || "",
+    city: row.city || meta.city || "",
+    country: row.country || "India",
     preferredDestination: destination,
-    course: row.course || "Higher Education",
-    intake: row.intake || "Upcoming 2026",
-    qualification: row.qualification || "Graduate",
+    course: row.course || meta.course || "Higher Education",
+    intake: row.intake || meta.intake || "Upcoming Intake",
+    qualification: row.qualification || meta.qualification || "Graduate",
+    institution: meta.institution || "",
+    gpaOrScore: row.grade || meta.grade || "",
+    englishTest: meta.english_test || "",
+    studyLevel: meta.study_level || "",
+    budget: meta.budget || "",
     status: statusUI,
     priority: "High",
     leadSource: sourceUI,
@@ -83,7 +103,7 @@ function mapDbLeadToLead(row: any): Lead {
     nextFollowUp: row.next_followup_at ? new Date(row.next_followup_at).toISOString().split("T")[0] : "To be scheduled",
     notesCount: row.message ? 1 : 0,
     message: row.message || "",
-    notes: row.message || "Submitted via website consultation form",
+    notes: row.notes || row.message || "Submitted via website consultation form",
   };
 }
 

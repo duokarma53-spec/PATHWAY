@@ -40,6 +40,19 @@ function mapDbLeadToLead(row: any): Lead {
   const firstName = nameParts[0] || "Prospective";
   const lastName = nameParts.slice(1).join(" ") || "Student";
 
+  // Parse structured notes/metadata if available
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let meta: Record<string, any> = {};
+  if (row.notes) {
+    try {
+      if (typeof row.notes === "string" && row.notes.trim().startsWith("{")) {
+        meta = JSON.parse(row.notes);
+      }
+    } catch (e) {
+      // not JSON
+    }
+  }
+
   let sourceUI: Lead["leadSource"] = "Website";
   const rawSource = (row.lead_source || "").toLowerCase();
   if (rawSource.includes("whatsapp")) sourceUI = "WhatsApp";
@@ -68,7 +81,7 @@ function mapDbLeadToLead(row: any): Lead {
     "New Zealand": "New Zealand",
     "Dubai/UAE": "Dubai / UAE",
   };
-  const destination = destMap[row.destination] || row.destination || "United Kingdom";
+  const destination = destMap[row.destination] || row.destination || "Not specified";
 
   return {
     id: row.id || `lead-live-${row.phone || "demo"}`,
@@ -76,12 +89,21 @@ function mapDbLeadToLead(row: any): Lead {
     firstName,
     lastName,
     name: row.full_name || `${firstName} ${lastName}`,
-    email: row.email || "",
-    phone: row.phone || "",
+    email: row.email || "Not specified",
+    phone: row.phone || "Not specified",
+    dob: meta.dob || row.dob || "",
+    city: row.city || meta.city || "",
+    country: row.country || "India",
     preferredDestination: destination,
-    course: row.course || "Higher Education",
-    intake: row.intake || "Upcoming 2026",
-    qualification: row.qualification || "Graduate",
+    course: row.course || meta.course || "General Counselling",
+    intake: row.intake || meta.intake || "Upcoming Intake",
+    qualification: row.qualification || meta.qualification || "Not specified",
+    institution: meta.institution || "",
+    gpaOrScore: row.grade || meta.grade || "",
+    englishTest: meta.english_test || "",
+    englishScore: meta.english_score || "",
+    studyLevel: meta.study_level || "",
+    budget: meta.budget || "",
     status: statusUI,
     priority: "High",
     leadSource: sourceUI,
@@ -91,7 +113,7 @@ function mapDbLeadToLead(row: any): Lead {
     nextFollowUp: row.next_followup_at ? new Date(row.next_followup_at).toISOString().split("T")[0] : "To be scheduled",
     notesCount: row.message ? 1 : 0,
     message: row.message || "",
-    notes: row.message || "Submitted via website consultation form",
+    notes: row.notes || row.message || "",
   };
 }
 
@@ -101,12 +123,12 @@ const FALLBACK_EMPTY_LEAD: Lead = {
   firstName: "Lead",
   lastName: "Profile",
   name: "Lead Profile",
-  email: "",
-  phone: "",
+  email: "Not specified",
+  phone: "Not specified",
   preferredDestination: "Not selected",
   course: "General Counseling",
   intake: "Upcoming",
-  qualification: "Undergraduate",
+  qualification: "Not specified",
   leadSource: "Website",
   assignedCounsellor: "Owner",
   status: "New",
@@ -421,11 +443,11 @@ export function LeadDetailClient({ leadId }: { leadId: string }) {
               </div>
               <div>
                 <p className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Date of Birth</p>
-                <p className="font-medium text-foreground mt-0.5">{lead.dob || "May 14, 2003"}</p>
+                <p className="font-medium text-foreground mt-0.5">{lead.dob || "Not specified"}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs uppercase tracking-wider font-medium">City</p>
-                <p className="font-medium text-foreground mt-0.5">{lead.city || "Mumbai"}</p>
+                <p className="font-medium text-foreground mt-0.5">{lead.city || "Not specified"}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Country of Origin</p>
@@ -444,27 +466,27 @@ export function LeadDetailClient({ leadId }: { leadId: string }) {
             <CardContent className="p-5 grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs md:text-sm">
               <div>
                 <p className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Highest Qualification</p>
-                <p className="font-medium text-foreground mt-0.5">{lead.qualification}</p>
+                <p className="font-medium text-foreground mt-0.5">{lead.qualification || "Not specified"}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Institution</p>
-                <p className="font-medium text-foreground mt-0.5">{lead.institution || "Recognized State University"}</p>
+                <p className="font-medium text-foreground mt-0.5">{lead.institution || "To be discussed"}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs uppercase tracking-wider font-medium">GPA / Percentage</p>
-                <p className="font-medium text-emerald-400 font-semibold mt-0.5">{lead.gpaOrScore || "8.4 CGPA"}</p>
+                <p className="font-medium text-emerald-400 font-semibold mt-0.5">{lead.gpaOrScore || "Pending review"}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs uppercase tracking-wider font-medium">English Proficiency Test</p>
-                <p className="font-medium text-foreground mt-0.5">{lead.englishTest || "IELTS Academic"}</p>
+                <p className="font-medium text-foreground mt-0.5">{lead.englishTest || "Not yet taken / Pending"}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Test Score</p>
-                <p className="font-medium text-primary font-semibold mt-0.5">{lead.englishScore || "7.5 Overall"}</p>
+                <p className="font-medium text-primary font-semibold mt-0.5">{lead.englishScore || "—"}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Study Level</p>
-                <p className="font-medium text-foreground mt-0.5">{lead.studyLevel || "Postgraduate (Masters)"}</p>
+                <p className="font-medium text-foreground mt-0.5">{lead.studyLevel || "Higher Education"}</p>
               </div>
             </CardContent>
           </Card>
@@ -479,19 +501,19 @@ export function LeadDetailClient({ leadId }: { leadId: string }) {
             <CardContent className="p-5 grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs md:text-sm">
               <div>
                 <p className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Destination</p>
-                <p className="font-medium text-foreground mt-0.5">{lead.preferredDestination}</p>
+                <p className="font-medium text-foreground mt-0.5">{lead.preferredDestination || "Not specified"}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Program / Major</p>
-                <p className="font-medium text-foreground mt-0.5">{lead.course}</p>
+                <p className="font-medium text-foreground mt-0.5">{lead.course || "General Counselling"}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Target Intake</p>
-                <p className="font-medium text-primary font-semibold mt-0.5">{lead.intake}</p>
+                <p className="font-medium text-primary font-semibold mt-0.5">{lead.intake || "Upcoming intake"}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Annual Budget</p>
-                <p className="font-medium text-foreground mt-0.5">{lead.budget || "£25,000 - £32,000/yr"}</p>
+                <p className="font-medium text-foreground mt-0.5">{lead.budget || "To be discussed"}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs uppercase tracking-wider font-medium">Lead Source</p>
