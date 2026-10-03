@@ -24,7 +24,10 @@ export const metadata: Metadata = {
   title: "Pathway Education Consultancy | Dahod",
   description: "Your Future Deserves A Better Path. Expert guidance for admissions, medical and engineering counselling, overseas education, and visa assistance in Dahod, Gujarat.",
   icons: {
-    icon: "/images/logo.png",
+    icon: [
+      { url: "/images/logo.png", type: "image/png" },
+    ],
+    shortcut: "/images/logo.png",
     apple: "/images/logo.png",
   },
 };
