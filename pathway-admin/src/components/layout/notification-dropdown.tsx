@@ -68,6 +68,14 @@ export function NotificationDropdown() {
   }, [])
 
   React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = JSON.parse(localStorage.getItem("pathway_read_notifs") || "[]")
+        if (Array.isArray(saved) && saved.length > 0) {
+          setReadIds(new Set(saved))
+        }
+      } catch {}
+    }
     const timer = setInterval(() => setTick(t => t + 1), 60000)
     return () => clearInterval(timer)
   }, [])
@@ -150,11 +158,25 @@ export function NotificationDropdown() {
   const unreadCount = allNotifications.filter(n => !n.read).length
 
   const markAllRead = () => {
-    setReadIds(new Set(liveNotifs.map(n => n.id)))
+    const allIds = liveNotifs.map(n => n.id)
+    setReadIds(new Set(allIds))
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("pathway_read_notifs", JSON.stringify(allIds))
+      } catch {}
+    }
   }
 
   const markItemRead = (id: string) => {
-    setReadIds(prev => new Set([...prev, id]))
+    setReadIds(prev => {
+      const next = new Set([...prev, id])
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("pathway_read_notifs", JSON.stringify(Array.from(next)))
+        } catch {}
+      }
+      return next
+    })
   }
 
   const getIcon = (type: LiveNotification["type"]) => {

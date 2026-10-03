@@ -4,18 +4,18 @@ import { useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { showLocalNativeNotification, requestPushPermission } from "@/lib/notifications/push-service";
+import { showLocalNativeNotification } from "@/lib/notifications/push-service";
 
-// Play a pleasant 2-tone luxury chime using Web Audio API
+// Play a pleasant 2-tone chime using Web Audio API
 function playChime() {
   try {
-    const AudioContext = window.AudioContext || (window as unknown as { webkitAudioContext: typeof window.AudioContext }).webkitAudioContext;
+    const AudioContext =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof window.AudioContext }).webkitAudioContext;
     if (!AudioContext) return;
     const ctx = new AudioContext();
-
     const now = ctx.currentTime;
-    
-    // First tone (E5 - 659.25 Hz)
+
     const osc1 = ctx.createOscillator();
     const gain1 = ctx.createGain();
     osc1.type = "sine";
@@ -27,7 +27,6 @@ function playChime() {
     osc1.start(now);
     osc1.stop(now + 0.5);
 
-    // Second tone (A5 - 880 Hz)
     const osc2 = ctx.createOscillator();
     const gain2 = ctx.createGain();
     osc2.type = "sine";
@@ -39,55 +38,65 @@ function playChime() {
     osc2.start(now + 0.15);
     osc2.stop(now + 0.7);
   } catch (e) {
-    // Audio autoplay restrictions might silence chime if no interaction yet
+    // Quiet audio failure if autoplay not yet allowed
   }
 }
 
+// Global in-memory set to prevent duplicate popups across page transitions
+const globalNotifiedSet = new Set<string>();
+
 export function LeadNotificationListener() {
   const router = useRouter();
-  const seenIds = useRef<Set<string>>(new Set());
-
-  // Automatically request push permission if installed as standalone PWA
-  useEffect(() => {
-    if (typeof window !== "undefined" && "Notification" in window) {
-      if (Notification.permission === "granted") {
-        requestPushPermission();
-      }
-    }
-  }, []);
+  const isInitialized = useRef(false);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const notifyNewLead = (lead: any) => {
-    const leadIdentifier = lead.id || `${lead.full_name}-${lead.phone}`;
-    if (seenIds.current.has(leadIdentifier)) return;
-    seenIds.current.add(leadIdentifier);
+    if (!lead) return;
+    const leadId = lead.id ? String(lead.id) : `${lead.full_name}-${lead.phone}`;
+
+    // Never notify if already seen in memory or session storage
+    if (globalNotifiedSet.has(leadId)) return;
+
+    if (typeof window !== "undefined") {
+      try {
+        const stored = JSON.parse(sessionStorage.getItem("pathway_notified_leads") || "[]");
+        if (stored.includes(leadId)) {
+          globalNotifiedSet.add(leadId);
+          return;
+        }
+        stored.push(leadId);
+        sessionStorage.setItem("pathway_notified_leads", JSON.stringify(stored));
+      } catch {}
+    }
+
+    globalNotifiedSet.add(leadId);
 
     const studentName = lead.full_name || "New Student";
     const destination = lead.destination || "Study Abroad";
-    const course = lead.course || "Degree Consultation";
+    const course = lead.course || "Higher Education";
 
-    // 1. Play subtle audible chime
+    // 1. Play chime
     playChime();
 
-    // 2. Show rich Sonner notification in-app
+    // 2. In-app toast banner
     toast.success("🔔 New Website Inquiry Received!", {
       description: `${studentName} interested in ${destination} (${course})`,
       action: {
         label: "Open Inquiries",
         onClick: () => router.push("/inquiries"),
       },
-      duration: 8000,
+      duration: 7000,
     });
 
-    // 3. Trigger native phone notification (appears on phone lockscreen / status bar)
+    // 3. Native phone notification
     showLocalNativeNotification({
       title: `🔔 New Inquiry: ${studentName}`,
       body: `Interested in ${destination} (${course}). Tap to open and reply.`,
-      tag: `lead-${lead.id || Date.now()}`,
+      tag: `lead-${leadId}`,
       url: "/inquiries",
     });
 
-    // 4. Notify open components to auto-refresh table state
+    // 4. Notify open inquiry tables to refresh
     if (typeof window !== "undefined") {
       window.dispatchEvent(new CustomEvent("pathway_new_lead", { detail: lead }));
     }
@@ -96,7 +105,26 @@ export function LeadNotificationListener() {
   useEffect(() => {
     const supabase = createClient();
 
-    // 1. Supabase Postgres Realtime Subscription
+    // On initial mount, fetch all existing leads and mark them as already seen
+    // This ensures NO notifications pop up for past historical leads
+    if (!isInitialized.current) {
+      isInitialized.current = true;
+      supabase
+        .from("leads")
+        .select("id, full_name, phone")
+        .then(({ data }) => {
+          if (data) {
+            data.forEach((l) => {
+              const id = l.id ? String(l.id) : `${l.full_name}-${l.phone}`;
+              globalNotifiedSet.add(id);
+            });
+          }
+        })
+        .catch(() => {});
+    }
+
+    // 1. Real-time Supabase postgres INSERT channel
+    // Fires ONLY when a REAL new lead is inserted into the database
     const channel = supabase
       .channel("leads_realtime_stream")
       .on(
@@ -110,11 +138,9 @@ export function LeadNotificationListener() {
           notifyNewLead(payload.new);
         }
       )
-      .subscribe((status) => {
-        console.debug("Supabase realtime subscription status:", status);
-      });
+      .subscribe();
 
-    // 2. Cross-tab Broadcast Channel (instant local fallback)
+    // 2. BroadcastChannel for same-browser instant tab sync
     let bc: BroadcastChannel | null = null;
     try {
       if (typeof window !== "undefined" && "BroadcastChannel" in window) {
@@ -125,42 +151,11 @@ export function LeadNotificationListener() {
           }
         };
       }
-    } catch (e) {
-      // Ignore broadcast channel errors
-    }
-
-    // 3. Periodic Background Lead Sync (every 10 seconds)
-    const pollInterval = setInterval(async () => {
-      try {
-        const { data, error } = await supabase
-          .from("leads")
-          .select("*")
-          .order("created_at", { ascending: false })
-          .limit(5);
-
-        if (!error && data && data.length > 0) {
-          // If first run, populate seenIds
-          if (seenIds.current.size === 0) {
-            data.forEach((l) => seenIds.current.add(l.id || `${l.full_name}-${l.phone}`));
-          } else {
-            // Check for new leads
-            data.forEach((l) => {
-              const id = l.id || `${l.full_name}-${l.phone}`;
-              if (!seenIds.current.has(id)) {
-                notifyNewLead(l);
-              }
-            });
-          }
-        }
-      } catch (err) {
-        // quiet error
-      }
-    }, 8000);
+    } catch {}
 
     return () => {
       supabase.removeChannel(channel);
       if (bc) bc.close();
-      clearInterval(pollInterval);
     };
   }, []);
 
