@@ -1,6 +1,7 @@
 // Pathway Admin CRM Service Worker
-// Cache Version bumped to force instant purge of all stale dummy data
-const SW_VERSION = 'v2026-10-03-pwa-install-fix';
+// Cache Version bumped to force instant purge — sidebar layout fix
+const SW_VERSION = 'v2026-10-03-sidebar-layout-fix';
+
 const CACHE_NAME = `pathway-admin-${SW_VERSION}`;
 
 // DO NOT cache '/' (HTML). Keeping HTML un-cached guarantees fresh data on every app open.

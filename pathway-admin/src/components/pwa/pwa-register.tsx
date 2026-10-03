@@ -32,7 +32,7 @@ export function PwaRegister() {
       if ("caches" in window) {
         caches.keys().then((keys) => {
           keys.forEach((key) => {
-            if (!key.includes("v2026-10-03-pwa-install-fix")) caches.delete(key);
+            if (!key.includes("v2026-10-03-sidebar-layout-fix")) caches.delete(key);
           });
         });
       }

@@ -62,7 +62,7 @@ function SecurityReminderBanner({ onLogout }: { onLogout: () => void }) {
   return (
     <div
       className={cn(
-        "fixed bottom-[72px] left-1/2 -translate-x-1/2 z-[200]",
+        "fixed bottom-20 left-1/2 -translate-x-1/2 z-[200]",
         "w-[calc(100vw-32px)] max-w-sm",
         "md:bottom-6 md:left-auto md:right-6 md:-translate-x-0",
         "rounded-2xl bg-amber-50 border border-amber-300",
@@ -373,10 +373,10 @@ export function Sidebar() {
         />
       )}
 
-      {/* ── Mobile Drawer ───────────────────────────── */}
+      {/* ── Mobile Drawer — stops above the bottom nav ── */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-[288px] flex flex-col glass-sidebar",
+          "fixed top-0 bottom-16 left-0 z-50 w-[288px] flex flex-col glass-sidebar",
           "transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
           "md:hidden shadow-glass-lg",
           isOpen ? "translate-x-0" : "-translate-x-full"
