@@ -25,9 +25,9 @@ export function BrandLogo({ size = "sm", className, withGlow = true }: BrandLogo
   return (
     <div
       className={cn(
-        "relative rounded-full flex items-center justify-center shrink-0 select-none bg-white p-0.5 border border-[#D4AF37]/60 overflow-hidden transition-all duration-300",
+        "relative rounded-full flex items-center justify-center shrink-0 select-none bg-white p-0.5 border border-[#E0D8CE] overflow-hidden transition-all duration-300",
         sizeMap[size],
-        withGlow && "shadow-[0_4px_16px_rgba(212,175,55,0.35)]",
+        withGlow && "shadow-[0_2px_12px_rgba(80,60,40,0.10)]",
         className
       )}
     >
