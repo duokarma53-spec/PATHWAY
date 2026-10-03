@@ -113,8 +113,12 @@ export function SettingsClientView() {
 
         {/* Live Profile Badge */}
         <div className="flex items-center gap-3 p-2 px-3 rounded-2xl bg-card border border-border/70 shadow-sm">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[#E6B85C] via-[#C9944A] to-[#8C5D23] border border-[#FBE6B5]/80 flex items-center justify-center text-white font-serif font-bold text-sm shadow-sm shrink-0">
-            {initials}
+          <div className="h-11 w-11 rounded-full bg-white border border-[#D4AF37]/70 p-0.5 shadow-sm flex items-center justify-center shrink-0 overflow-hidden">
+            <img
+              src="/images/logo.png"
+              alt={profile.name}
+              className="w-full h-full object-contain rounded-full"
+            />
           </div>
           <div className="flex flex-col min-w-0">
             <span className="text-xs font-bold text-foreground truncate max-w-[160px]">

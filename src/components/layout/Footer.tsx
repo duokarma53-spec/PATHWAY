@@ -3,19 +3,29 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowUpRight, ArrowRight, Mail, Phone, MapPin, MessageCircle, ArrowUp } from "lucide-react";
+import { InstagramIcon } from "@/components/ui/InstagramIcon";
 
-// Fancy Typography Logo Component
+// Official Circular Logo + Typography Component
 const BrandLogo = () => (
-  <div className="flex flex-col group cursor-pointer w-fit">
-    <div className="flex items-center gap-1">
-      <span className="font-serif text-3xl md:text-5xl font-bold tracking-tight text-white group-hover:text-gold transition-colors duration-500">
-        PATHWAY
-      </span>
-      <span className="w-2 h-2 rounded-full bg-gold mt-2 md:mt-4 group-hover:scale-150 transition-transform duration-500" />
+  <div className="flex items-center gap-3.5 group cursor-pointer w-fit">
+    <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white p-0.5 border border-gold/60 shadow-lg shadow-black/20 overflow-hidden shrink-0 group-hover:scale-105 transition-transform duration-300">
+      <img
+        src="/images/logo.png"
+        alt="Pathway Education Consultancy"
+        className="w-full h-full object-contain rounded-full"
+      />
     </div>
-    <span className="text-[10px] md:text-xs font-sans text-sage/70 font-medium tracking-[0.3em] uppercase mt-1">
-      Education Consultancy
-    </span>
+    <div className="flex flex-col">
+      <div className="flex items-center gap-1">
+        <span className="font-serif text-2xl md:text-4xl font-bold tracking-tight text-white group-hover:text-gold transition-colors duration-500">
+          PATHWAY
+        </span>
+        <span className="w-2 h-2 rounded-full bg-gold mt-1 md:mt-2 group-hover:scale-150 transition-transform duration-500" />
+      </div>
+      <span className="text-[10px] md:text-xs font-sans text-sage/80 font-medium tracking-[0.25em] uppercase">
+        Education Consultancy
+      </span>
+    </div>
   </div>
 );
 
@@ -165,6 +175,22 @@ export function Footer() {
                   </div>
                 </a>
               </li>
+              <li className="pt-1">
+                <a
+                  href="https://www.instagram.com/pathwayeduconsultancy?stkn=YnY3M2R0MzFwNzk="
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-start gap-4 hover:text-white transition-colors"
+                >
+                  <div className="w-8 h-8 rounded-full bg-pink-500/10 border border-pink-500/30 flex items-center justify-center shrink-0 group-hover:border-pink-500 group-hover:bg-pink-500/20 transition-colors">
+                    <InstagramIcon size={13} className="text-pink-400 group-hover:text-pink-300" />
+                  </div>
+                  <div>
+                    <span className="text-white/40 block text-xs mb-1 uppercase tracking-widest">Official Instagram</span>
+                    <span className="text-base font-serif group-hover:text-gold transition-colors">@pathwayeduconsultancy</span>
+                  </div>
+                </a>
+              </li>
               <li className="pt-2">
                 <a href="https://maps.google.com/?q=1st+Floor,+Yusuf+Corner,+Godi+Road,+Dahod+–+389151,+Gujarat,+India" target="_blank" rel="noopener noreferrer" className="group flex items-start gap-4 hover:text-white transition-colors">
                   <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 group-hover:border-gold/50 group-hover:bg-gold/10 transition-colors">
@@ -193,6 +219,16 @@ export function Footer() {
               <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
               <span>·</span>
               <Link href="#" className="hover:text-white transition-colors">Terms & Conditions</Link>
+              <span>·</span>
+              <a
+                href="https://www.instagram.com/pathwayeduconsultancy?stkn=YnY3M2R0MzFwNzk="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-pink-400 text-ivory/60 transition-colors flex items-center gap-1.5"
+              >
+                <InstagramIcon size={11} className="text-pink-400" />
+                <span>@pathwayeduconsultancy</span>
+              </a>
             </div>
           </div>
           

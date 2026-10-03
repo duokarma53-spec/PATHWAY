@@ -23,6 +23,10 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   title: "Pathway Education Consultancy | Dahod",
   description: "Your Future Deserves A Better Path. Expert guidance for admissions, medical and engineering counselling, overseas education, and visa assistance in Dahod, Gujarat.",
+  icons: {
+    icon: "/images/logo.png",
+    apple: "/images/logo.png",
+  },
 };
 
 export default function RootLayout({

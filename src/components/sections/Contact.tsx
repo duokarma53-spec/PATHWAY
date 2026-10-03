@@ -7,6 +7,7 @@ import {
   Phone, MessageCircle, MapPin, Clock, Loader2,
   Sparkles, GraduationCap, Globe, BookOpen, ShieldCheck, Check
 } from "lucide-react";
+import { InstagramIcon } from "@/components/ui/InstagramIcon";
 import { cn } from "@/lib/utils";
 import { createClient } from "@supabase/supabase-js";
 
@@ -358,6 +359,21 @@ export function Contact() {
                 <div>
                   <p className="text-[10px] uppercase tracking-wider font-bold text-navy/50">WhatsApp Official</p>
                   <p className="text-navy font-bold text-sm tracking-wide">+91 94091 61562</p>
+                </div>
+              </a>
+
+              <a
+                href="https://www.instagram.com/pathwayeduconsultancy?stkn=YnY3M2R0MzFwNzk="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3.5 p-4 rounded-2xl bg-white/80 border border-navy/10 hover:border-pink-500/50 hover:shadow-md transition-all group"
+              >
+                <div className="w-10 h-10 rounded-xl bg-pink-500/15 flex items-center justify-center text-pink-600 group-hover:scale-110 transition-transform shrink-0">
+                  <InstagramIcon size={18} />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] uppercase tracking-wider font-bold text-navy/50">Instagram Official</p>
+                  <p className="text-navy font-bold text-sm tracking-wide truncate group-hover:text-pink-600 transition-colors">@pathwayeduconsultancy</p>
                 </div>
               </a>
 

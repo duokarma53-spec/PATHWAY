@@ -9,13 +9,14 @@ import { NotificationDropdown } from "./notification-dropdown"
 import { CRMQuickActions } from "../actions/crm-quick-actions"
 import { DownloadAppButton } from "../pwa/install-prompt"
 import { BrandLogo } from "../ui/brand-logo"
+import { InstagramIcon } from "../ui/instagram-icon"
 import Link from "next/link"
 import { useAdminProfile } from "@/lib/profile/use-admin-profile"
 
 export function Topbar() {
   const { setIsOpen } = useSidebar()
   const [searchOpen, setSearchOpen] = React.useState(false)
-  const { profile, initials } = useAdminProfile()
+  const { profile } = useAdminProfile()
 
   return (
     <>
@@ -62,6 +63,18 @@ export function Topbar() {
         <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
           <DownloadAppButton />
 
+          {/* Direct Instagram Quick Access Button */}
+          <a
+            href="https://www.instagram.com/pathwayeduconsultancy?stkn=YnY3M2R0MzFwNzk="
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative inline-flex items-center justify-center h-9 w-9 rounded-xl border border-pink-500/25 bg-gradient-to-tr from-amber-500/10 via-rose-500/10 to-purple-600/10 text-pink-600 hover:text-white hover:bg-gradient-to-tr hover:from-amber-500 hover:via-rose-500 hover:to-purple-600 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-105 group"
+            title="Open Official Instagram (@pathwayeduconsultancy)"
+            aria-label="Official Instagram"
+          >
+            <InstagramIcon className="h-4 w-4 transition-transform group-hover:scale-110" />
+          </a>
+
           {/* Quick Create visible on desktop/tablets; hidden on mobile to prevent header overlap */}
           <div className="hidden md:block">
             <CRMQuickActions />
@@ -71,7 +84,7 @@ export function Topbar() {
 
           <NotificationDropdown />
 
-          {/* Profile pill linking to settings */}
+          {/* Profile pill linking to settings - Features Official Circular Logo */}
           <Link
             href="/settings"
             className="flex items-center gap-2.5 pl-1.5 cursor-pointer group select-none"
@@ -85,11 +98,12 @@ export function Topbar() {
                 {profile.role}
               </span>
             </div>
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-[#E6B85C] via-[#C9944A] to-[#8C5D23]
-              border border-[#FBE6B5]/80 flex items-center justify-center
-              text-white font-serif font-bold text-[12px] shadow-warm
-              group-hover:scale-105 group-hover:shadow-warm transition-all duration-200">
-              {initials}
+            <div className="h-9 w-9 rounded-full bg-white border border-[#D4AF37]/70 p-0.5 shadow-sm group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(212,175,55,0.45)] transition-all duration-200 overflow-hidden flex items-center justify-center shrink-0">
+              <img
+                src="/images/logo.png"
+                alt="Pathway Education"
+                className="w-full h-full object-contain rounded-full"
+              />
             </div>
           </Link>
         </div>

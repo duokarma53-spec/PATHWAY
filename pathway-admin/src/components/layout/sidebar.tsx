@@ -7,7 +7,8 @@ import {
   LayoutDashboard, Users, GraduationCap, FileText, Settings,
   MessageSquare, Compass, CheckSquare, FolderOpen, Activity, Calendar,
   CreditCard, BarChart3, TrendingUp, Inbox, Layers, Star,
-  Landmark, UserCheck, X, ChevronLeft, ChevronRight, LogOut
+  Landmark, UserCheck, X, ChevronLeft, ChevronRight, LogOut,
+  ExternalLink
 } from "lucide-react"
 import { useState } from "react"
 import { Button } from "../ui/button"
@@ -16,6 +17,7 @@ import { useRouter } from "next/navigation"
 import { useSidebar } from "@/contexts/sidebar-context"
 import { DownloadAppButton } from "../pwa/install-prompt"
 import { BrandLogo } from "../ui/brand-logo"
+import { InstagramIcon } from "../ui/instagram-icon"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type NavItem = { name: string; href: string; icon: any; badge?: string | number }
@@ -154,7 +156,28 @@ function NavContent({ collapsed, onNavClick }: { collapsed: boolean; onNavClick?
       </div>
 
       {/* Footer */}
-      <div className="border-t border-linen-dark/50 p-3 space-y-1">
+      <div className="border-t border-linen-dark/50 p-3 space-y-1.5">
+        {/* Instagram Direct Link */}
+        <a
+          href="https://www.instagram.com/pathwayeduconsultancy?stkn=YnY3M2R0MzFwNzk="
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn(
+            "flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-[12.5px] font-medium text-pink-700 bg-pink-500/10 hover:bg-pink-500/15 border border-pink-500/20 transition-all duration-200 group shadow-2xs",
+            collapsed && "justify-center px-0"
+          )}
+          title="Official Instagram (@pathwayeduconsultancy)"
+        >
+          <InstagramIcon className="h-4 w-4 shrink-0 text-pink-600 group-hover:scale-110 transition-transform" />
+          {!collapsed && (
+            <div className="flex flex-col min-w-0 flex-1 leading-tight text-left">
+              <span className="font-semibold text-foreground text-[12px] truncate">Instagram</span>
+              <span className="text-[9.5px] text-pink-600/80 truncate">@pathwayeduconsultancy</span>
+            </div>
+          )}
+          {!collapsed && <ExternalLink className="h-3 w-3 text-pink-500/60 shrink-0" />}
+        </a>
+
         {!collapsed && <DownloadAppButton variant="sidebar" />}
         <Button
           variant="ghost"

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useMagneticHover } from "@/hooks/useMagneticHover";
 import { cn } from "@/lib/utils";
 import { Menu, X, ArrowUpRight, ArrowRight, Phone } from "lucide-react";
+import { InstagramIcon } from "@/components/ui/InstagramIcon";
 
 // --- Types ---
 type NavItem = {
@@ -317,9 +318,9 @@ export function Navbar() {
           {/* Brand */}
           <Link href="/" className="flex items-center gap-3 group shrink-0">
             <img
-              src="/images/logo.jpeg"
+              src="/images/logo.png"
               alt="Pathway Education Consultancy"
-              className="h-11 lg:h-14 w-auto object-contain drop-shadow-sm"
+              className="h-11 lg:h-14 w-auto object-contain drop-shadow-sm rounded-full"
             />
           </Link>
 
@@ -353,6 +354,18 @@ export function Navbar() {
 
           {/* CTA */}
           <div className="hidden lg:flex items-center gap-3 shrink-0">
+            {/* Instagram quick-link */}
+            <a
+              href="https://www.instagram.com/pathwayeduconsultancy?stkn=YnY3M2R0MzFwNzk="
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-pink-500/25 bg-pink-500/10 text-pink-600 hover:bg-pink-600 hover:text-white transition-all duration-200 group shadow-2xs"
+              title="Official Instagram (@pathwayeduconsultancy)"
+              aria-label="Pathway Instagram"
+            >
+              <InstagramIcon size={17} className="group-hover:scale-110 transition-transform" />
+            </a>
+
             {/* Phone quick-link */}
             <a
               href="tel:+917506284722"
@@ -399,7 +412,7 @@ export function Navbar() {
           >
             {/* Mobile Menu Header */}
             <div className="px-5 py-5 sm:px-6 sm:py-8 flex justify-between items-center border-b border-navy/5">
-              <img src="/images/logo.jpeg" alt="Pathway Education Consultancy" className="h-10 w-auto object-contain" />
+              <img src="/images/logo.png" alt="Pathway Education Consultancy" className="h-10 w-auto object-contain rounded-full" />
               <button
                 className="w-10 h-10 flex items-center justify-center text-navy bg-navy/5 rounded-full"
                 onClick={() => {
@@ -510,9 +523,14 @@ export function Navbar() {
                 Start Your Journey <ArrowUpRight size={20} className="text-gold" />
               </Link>
               <div className="flex justify-between items-center px-4">
-                <a href="tel:+917506284722" className="text-navy font-medium font-sans">+91 75062 84722</a>
+                <a href="tel:+917506284722" className="text-navy font-medium font-sans text-xs sm:text-sm">+91 75062 84722</a>
                 <span className="w-1.5 h-1.5 bg-gold rounded-full" />
-                <a href="https://wa.me/917506284722" className="text-sage font-medium font-sans uppercase tracking-wider text-xs">WhatsApp</a>
+                <a href="https://wa.me/917506284722" target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-semibold font-sans uppercase tracking-wider text-xs">WhatsApp</a>
+                <span className="w-1.5 h-1.5 bg-gold rounded-full" />
+                <a href="https://www.instagram.com/pathwayeduconsultancy?stkn=YnY3M2R0MzFwNzk=" target="_blank" rel="noopener noreferrer" className="text-pink-600 font-semibold font-sans uppercase tracking-wider text-xs flex items-center gap-1">
+                  <InstagramIcon size={13} />
+                  <span>Instagram</span>
+                </a>
               </div>
             </div>
 
