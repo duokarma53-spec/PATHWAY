@@ -12,6 +12,7 @@ import {
   INITIAL_TASKS,
   INITIAL_APPOINTMENTS
 } from "@/lib/mock-data"
+import { createClient } from "@/lib/supabase/client"
 
 interface GlobalSearchDialogProps {
   open: boolean
@@ -20,7 +21,26 @@ interface GlobalSearchDialogProps {
 
 export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogProps) {
   const [query, setQuery] = React.useState("")
+  const [liveLeads, setLiveLeads] = React.useState<{ id: string; name: string; email: string; course: string; leadCode: string }[]>([])
   const router = useRouter()
+
+  React.useEffect(() => {
+    if (!open) return
+    const supabase = createClient()
+    supabase.from("leads").select("id, full_name, email, course, destination").then(({ data }) => {
+      if (data) {
+        setLiveLeads(
+          data.map((r) => ({
+            id: r.id,
+            name: r.full_name || "Prospective Student",
+            email: r.email || "",
+            course: r.course || r.destination || "Higher Education",
+            leadCode: `LD-${r.id ? r.id.replace(/-/g, "").substring(0, 4).toUpperCase() : "0000"}`,
+          }))
+        )
+      }
+    })
+  }, [open])
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -36,7 +56,7 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
   const cleanQuery = query.toLowerCase().trim()
 
   const matchedLeads = cleanQuery
-    ? INITIAL_LEADS.filter(l =>
+    ? liveLeads.filter(l =>
         l.name.toLowerCase().includes(cleanQuery) ||
         l.email.toLowerCase().includes(cleanQuery) ||
         l.course.toLowerCase().includes(cleanQuery) ||

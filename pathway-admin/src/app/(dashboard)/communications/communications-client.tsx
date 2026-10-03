@@ -17,28 +17,77 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { INITIAL_LEADS, INITIAL_COMM_TEMPLATES } from "@/lib/mock-data"
+import { INITIAL_COMM_TEMPLATES, Lead } from "@/lib/mock-data"
 import { toast } from "sonner"
+import { createClient } from "@/lib/supabase/client"
 
-const DEFAULT_RECIPIENT = {
+const DEFAULT_RECIPIENT: Lead = {
   id: "",
   name: "Prospective Student",
+  firstName: "Prospective",
+  lastName: "Student",
   avatar: "PS",
   leadCode: "LD-0000",
   course: "Higher Education",
   preferredDestination: "Target Country",
   intake: "Upcoming Intake",
+  qualification: "Graduate",
+  leadSource: "Website",
   assignedCounsellor: "Owner",
+  status: "New",
+  priority: "High",
+  createdDate: new Date().toISOString().split("T")[0],
+  lastContacted: "Not yet",
+  nextFollowUp: "To be scheduled",
+  notesCount: 0,
   phone: "+91",
   email: "student@example.com"
 };
 
 export function CommunicationsClientView() {
-  const [selectedLead, setSelectedLead] = React.useState(INITIAL_LEADS[0] || DEFAULT_RECIPIENT)
+  const [leadsList, setLeadsList] = React.useState<Lead[]>([])
+  const [selectedLead, setSelectedLead] = React.useState<Lead>(DEFAULT_RECIPIENT)
   const [activeTab, setActiveTab] = React.useState<"templates" | "history">("templates")
   const [copiedId, setCopiedId] = React.useState<string | null>(null)
   const [composedMessage, setComposedMessage] = React.useState("")
   const [selectedChannel, setSelectedChannel] = React.useState<"whatsapp" | "email">("whatsapp")
+
+  React.useEffect(() => {
+    const supabase = createClient()
+    async function loadRealLeads() {
+      const { data } = await supabase.from("leads").select("*").order("created_at", { ascending: false })
+      if (data && data.length > 0) {
+        const mapped: Lead[] = data.map((r) => {
+          const codeNum = r.id ? r.id.replace(/-/g, "").substring(0, 4).toUpperCase() : "1001";
+          const nameParts = (r.full_name || "Prospective Student").trim().split(" ");
+          return {
+            id: r.id,
+            leadCode: `LD-${codeNum}`,
+            firstName: nameParts[0] || "Prospective",
+            lastName: nameParts.slice(1).join(" ") || "Student",
+            name: r.full_name || "Prospective Student",
+            email: r.email || "",
+            phone: r.phone || "",
+            preferredDestination: r.destination || "United Kingdom",
+            course: r.course || r.qualification || "Higher Education",
+            intake: r.intake || "Upcoming",
+            qualification: r.qualification || "Graduate",
+            status: "New",
+            priority: "High",
+            leadSource: "Website",
+            assignedCounsellor: "Owner",
+            createdDate: r.created_at ? new Date(r.created_at).toISOString().split("T")[0] : "",
+            lastContacted: "Pending",
+            nextFollowUp: "Pending",
+            notesCount: 0,
+          }
+        })
+        setLeadsList(mapped)
+        setSelectedLead(mapped[0])
+      }
+    }
+    loadRealLeads()
+  }, [])
 
   const handleApplyTemplate = (tpl: typeof INITIAL_COMM_TEMPLATES[0]) => {
     let replaced = tpl.body
@@ -95,12 +144,12 @@ export function CommunicationsClientView() {
             <CardDescription className="text-xs">Choose a lead or student to personalize outreach.</CardDescription>
           </CardHeader>
           <CardContent className="p-3 space-y-2 max-h-[600px] overflow-y-auto custom-scrollbar">
-            {INITIAL_LEADS.length === 0 ? (
+            {leadsList.length === 0 ? (
               <p className="text-xs text-muted-foreground p-4 text-center">
                 No leads found. Incoming inquiries will appear here for one-click messaging.
               </p>
             ) : (
-              INITIAL_LEADS.map((lead) => (
+              leadsList.map((lead) => (
                 <button
                   key={lead.id}
                   onClick={() => setSelectedLead(lead)}

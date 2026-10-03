@@ -1,9 +1,6 @@
 import { LeadDetailClient } from "./lead-detail-client"
-import { INITIAL_LEADS } from "@/lib/mock-data"
 
-export function generateStaticParams() {
-  return INITIAL_LEADS.map((l) => ({ id: l.id }))
-}
+export const dynamic = "force-dynamic"
 
 export const metadata = {
   title: "Lead Profile | Pathway CRM",

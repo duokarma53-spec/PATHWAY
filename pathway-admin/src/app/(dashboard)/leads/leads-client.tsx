@@ -94,7 +94,7 @@ function mapDbLeadToLead(row: any): Lead {
 }
 
 export function LeadsClientView() {
-  const [leads, setLeads] = React.useState<Lead[]>(INITIAL_LEADS)
+  const [leads, setLeads] = React.useState<Lead[]>([])
   const [search, setSearch] = React.useState("")
   const [statusFilter, setStatusFilter] = React.useState("ALL")
   const [priorityFilter, setPriorityFilter] = React.useState("ALL")
