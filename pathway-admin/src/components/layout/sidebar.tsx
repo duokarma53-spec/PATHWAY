@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 import {
   LayoutDashboard, Users, GraduationCap, FileText, Settings,
   MessageSquare, Compass, CheckSquare, FolderOpen, Activity, Calendar,
-  CreditCard, BarChart3, TrendingUp, Inbox, Layers, Star,
+  CreditCard, BarChart3, TrendingUp, Inbox,
   Landmark, UserCheck, X, ChevronLeft, ChevronRight, LogOut,
   ExternalLink
 } from "lucide-react"
@@ -50,9 +50,7 @@ const navigationGroups: NavGroup[] = [
   {
     label: "Website",
     items: [
-      { name: 'Inquiries',    href: '/inquiries',    icon: Inbox },
-      { name: 'Content',      href: '/content',      icon: Layers },
-      { name: 'Testimonials', href: '/testimonials', icon: Star },
+      { name: 'Inquiries', href: '/inquiries', icon: Inbox },
     ]
   },
   {

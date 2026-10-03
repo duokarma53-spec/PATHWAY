@@ -26,8 +26,31 @@ import Link from "next/link"
 import { toast } from "sonner"
 import { CRMQuickActions } from "@/components/actions/crm-quick-actions"
 
+const DELETED_STUDENTS_KEY = "pathway_deleted_students"
+
+function getDeletedStudentIds(): Set<string> {
+  try {
+    const raw = localStorage.getItem(DELETED_STUDENTS_KEY)
+    if (raw) return new Set(JSON.parse(raw) as string[])
+  } catch {}
+  return new Set()
+}
+
+function persistDeletedStudentId(id: string) {
+  try {
+    const existing = getDeletedStudentIds()
+    existing.add(id)
+    localStorage.setItem(DELETED_STUDENTS_KEY, JSON.stringify(Array.from(existing)))
+  } catch {}
+}
+
 export function StudentsClientView() {
-  const [students, setStudents] = React.useState<Student[]>(INITIAL_STUDENTS)
+  const [students, setStudents] = React.useState<Student[]>(() => {
+    // Filter out previously deleted students from the initial mock set
+    if (typeof window === "undefined") return INITIAL_STUDENTS
+    const deleted = getDeletedStudentIds()
+    return INITIAL_STUDENTS.filter((s) => !deleted.has(s.id))
+  })
   const [search, setSearch] = React.useState("")
   const [statusFilter, setStatusFilter] = React.useState("ALL")
   const [destFilter, setDestFilter] = React.useState("ALL")
@@ -83,6 +106,7 @@ export function StudentsClientView() {
       return;
     }
     setStudents((prev) => prev.filter((s) => s.id !== id));
+    persistDeletedStudentId(id);  // Persist deletion so it survives refresh
     toast.success(`Student "${name}" deleted`);
   };
 

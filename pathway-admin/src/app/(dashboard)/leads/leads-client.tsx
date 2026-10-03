@@ -138,22 +138,24 @@ export function LeadsClientView() {
         if (!error && data !== null) {
           const live = data.map(mapDbLeadToLead);
           setLeads(live);
+          // Supabase returned data — skip localStorage fallback to avoid stale data
+          return;
         }
       } catch (err) {
         console.debug("Error fetching live leads:", err);
       }
+
+      // Only use localStorage as a true fallback when Supabase returns nothing
+      try {
+        const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
+        if (local.length > 0) {
+          const localMapped = local.map(mapDbLeadToLead);
+          setLeads(localMapped);
+        }
+      } catch (e) {}
     }
 
     fetchLiveLeads();
-
-    // Check localStorage fallback
-    try {
-      const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
-      if (local.length > 0) {
-        const localMapped = local.map(mapDbLeadToLead);
-        setLeads((prev) => [...localMapped, ...prev]);
-      }
-    } catch (e) {}
 
     // Listen to real-time custom event
     const handleNewLeadEvent = (e: Event) => {
@@ -237,18 +239,26 @@ export function LeadsClientView() {
     if (!window.confirm(`Are you sure you want to delete lead "${name}"?`)) {
       return;
     }
+    // Optimistically remove from UI immediately
+    setLeads((prev) => prev.filter((l) => l.id !== id));
+    setSelectedLeads((prev) => prev.filter((selId) => selId !== id));
+
+    // Always clean localStorage first (remove stale entry regardless of DB result)
+    try {
+      const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const filtered = local.filter((l: any) => l.id !== id);
+      localStorage.setItem("pathway_local_leads", JSON.stringify(filtered));
+    } catch (e) {}
+
     try {
       const supabase = createClient();
-      await supabase.from("leads").delete().eq("id", id);
-      try {
-        const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const filtered = local.filter((l: any) => l.id !== id);
-        localStorage.setItem("pathway_local_leads", JSON.stringify(filtered));
-      } catch (e) {}
-
-      setLeads((prev) => prev.filter((l) => l.id !== id));
-      setSelectedLeads((prev) => prev.filter((selId) => selId !== id));
+      const { error } = await supabase.from("leads").delete().eq("id", id);
+      if (error) {
+        console.error("Supabase delete error:", error);
+        toast.error(`Failed to delete lead "${name}" from database: ${error.message}`);
+        return;
+      }
       toast.success(`Lead "${name}" deleted`);
     } catch (err) {
       console.error(err);
@@ -261,20 +271,30 @@ export function LeadsClientView() {
     if (!window.confirm(`Are you sure you want to delete ${selectedLeads.length} selected leads?`)) {
       return;
     }
+    const toDelete = [...selectedLeads];
+
+    // Optimistically remove from UI
+    setLeads((prev) => prev.filter((l) => !toDelete.includes(l.id)));
+    setSelectedLeads([]);
+
+    // Clean localStorage for all deleted IDs first
+    try {
+      const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
+      const selSet = new Set(toDelete);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const filtered = local.filter((l: any) => !selSet.has(l.id));
+      localStorage.setItem("pathway_local_leads", JSON.stringify(filtered));
+    } catch (e) {}
+
     try {
       const supabase = createClient();
-      await supabase.from("leads").delete().in("id", selectedLeads);
-      try {
-        const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
-        const selSet = new Set(selectedLeads);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const filtered = local.filter((l: any) => !selSet.has(l.id));
-        localStorage.setItem("pathway_local_leads", JSON.stringify(filtered));
-      } catch (e) {}
-
-      setLeads((prev) => prev.filter((l) => !selectedLeads.includes(l.id)));
-      toast.success(`Deleted ${selectedLeads.length} leads`);
-      setSelectedLeads([]);
+      const { error } = await supabase.from("leads").delete().in("id", toDelete);
+      if (error) {
+        console.error("Supabase bulk delete error:", error);
+        toast.error(`Failed to delete leads from database: ${error.message}`);
+        return;
+      }
+      toast.success(`Deleted ${toDelete.length} leads`);
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete leads");

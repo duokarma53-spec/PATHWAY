@@ -265,16 +265,23 @@ export function LeadDetailClient({ leadId }: { leadId: string }) {
     if (!window.confirm(`Are you sure you want to permanently delete lead "${lead.name}"?`)) {
       return
     }
+
+    // Always clean localStorage first to prevent stale data from re-appearing
+    try {
+      const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const filtered = local.filter((l: any) => l.id !== lead.id)
+      localStorage.setItem("pathway_local_leads", JSON.stringify(filtered))
+    } catch (e) {}
+
     try {
       const supabase = createClient()
-      await supabase.from("leads").delete().eq("id", lead.id)
-      try {
-        const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]")
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const filtered = local.filter((l: any) => l.id !== lead.id)
-        localStorage.setItem("pathway_local_leads", JSON.stringify(filtered))
-      } catch (e) {}
-
+      const { error } = await supabase.from("leads").delete().eq("id", lead.id)
+      if (error) {
+        console.error("Supabase delete error:", error)
+        toast.error(`Failed to delete lead: ${error.message}`)
+        return
+      }
       toast.success(`Lead "${lead.name}" deleted`)
       router.push("/leads")
     } catch (err) {

@@ -33,8 +33,30 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 
+const DELETED_DOCS_KEY = "pathway_deleted_documents"
+
+function getDeletedDocIds(): Set<string> {
+  try {
+    const raw = localStorage.getItem(DELETED_DOCS_KEY)
+    if (raw) return new Set(JSON.parse(raw) as string[])
+  } catch {}
+  return new Set()
+}
+
+function persistDeletedDocId(id: string) {
+  try {
+    const existing = getDeletedDocIds()
+    existing.add(id)
+    localStorage.setItem(DELETED_DOCS_KEY, JSON.stringify(Array.from(existing)))
+  } catch {}
+}
+
 export function DocumentsClientView() {
-  const [documents, setDocuments] = React.useState<StudentDocument[]>(INITIAL_DOCUMENTS)
+  const [documents, setDocuments] = React.useState<StudentDocument[]>(() => {
+    if (typeof window === "undefined") return INITIAL_DOCUMENTS
+    const deleted = getDeletedDocIds()
+    return INITIAL_DOCUMENTS.filter((d) => !deleted.has(d.id))
+  })
   const [search, setSearch] = React.useState("")
   const [categoryFilter, setCategoryFilter] = React.useState("ALL")
   const [statusFilter, setStatusFilter] = React.useState("ALL")
@@ -91,6 +113,7 @@ export function DocumentsClientView() {
       return
     }
     setDocuments((prev) => prev.filter((d) => d.id !== id))
+    persistDeletedDocId(id);  // Persist so it survives refresh
     toast.success(`Document "${name}" deleted`)
   }
 

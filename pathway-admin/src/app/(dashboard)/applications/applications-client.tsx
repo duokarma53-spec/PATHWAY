@@ -28,6 +28,24 @@ import { INITIAL_APPLICATIONS, Application } from "@/lib/mock-data"
 import { toast } from "sonner"
 import { CRMQuickActions } from "@/components/actions/crm-quick-actions"
 
+const DELETED_APPS_KEY = "pathway_deleted_applications"
+
+function getDeletedAppIds(): Set<string> {
+  try {
+    const raw = localStorage.getItem(DELETED_APPS_KEY)
+    if (raw) return new Set(JSON.parse(raw) as string[])
+  } catch {}
+  return new Set()
+}
+
+function persistDeletedAppId(id: string) {
+  try {
+    const existing = getDeletedAppIds()
+    existing.add(id)
+    localStorage.setItem(DELETED_APPS_KEY, JSON.stringify(Array.from(existing)))
+  } catch {}
+}
+
 const PIPELINE_COLUMNS: ApplicationStatus[] = [
   "Shortlisted",
   "Documents Pending",
@@ -43,7 +61,11 @@ const PIPELINE_COLUMNS: ApplicationStatus[] = [
 ]
 
 export function ApplicationsClientView() {
-  const [applications, setApplications] = React.useState<Application[]>(INITIAL_APPLICATIONS)
+  const [applications, setApplications] = React.useState<Application[]>(() => {
+    if (typeof window === "undefined") return INITIAL_APPLICATIONS
+    const deleted = getDeletedAppIds()
+    return INITIAL_APPLICATIONS.filter((a) => !deleted.has(a.id))
+  })
   const [viewMode, setViewMode] = React.useState<"kanban" | "table">("kanban")
   const [search, setSearch] = React.useState("")
   const [countryFilter, setCountryFilter] = React.useState("ALL")
@@ -116,6 +138,7 @@ export function ApplicationsClientView() {
       return;
     }
     setApplications((prev) => prev.filter((a) => a.id !== id));
+    persistDeletedAppId(id);  // Persist so it survives refresh
     toast.success(`Application "${code}" deleted`);
   };
 
