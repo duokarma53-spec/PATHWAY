@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowUpRight, Lock, CheckCircle2, ChevronDown,
   Phone, MessageCircle, MapPin, Clock, Loader2,
-  Sparkles, GraduationCap, Globe, BookOpen, ShieldCheck, Check
+  GraduationCap, Globe, BookOpen, ShieldCheck, Check
 } from "lucide-react";
 import { InstagramIcon } from "@/components/ui/InstagramIcon";
 import { cn } from "@/lib/utils";
@@ -300,13 +300,13 @@ export function Contact() {
       </div>
 
       <div className="container mx-auto px-4 md:px-8 max-w-[1280px] relative z-10">
-        <div className="flex flex-col lg:flex-row gap-10 lg:gap-14 items-start">
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
           
           {/* ── Left Column: Value Proposition & Direct Contact ── */}
-          <div className="w-full lg:w-[38%] space-y-6">
+          <div className="w-full lg:w-[34%] space-y-6">
             <div className="space-y-3">
               <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-widest text-[#C8A96B] bg-[#C8A96B]/15 px-3.5 py-1.5 rounded-full border border-[#C8A96B]/30">
-                <Sparkles size={13} className="text-[#C8A96B]" /> Complimentary Consultation
+                <GraduationCap size={13} className="text-[#C8A96B]" /> Complimentary Consultation
               </span>
               <h2 className="font-serif text-3xl md:text-5xl text-navy font-bold leading-tight">
                 Your future abroad starts with one conversation.
@@ -400,8 +400,8 @@ export function Contact() {
           </div>
 
           {/* ── Right Column: Ergonomic Multi-Step Form ── */}
-          <div className="w-full lg:w-[62%]">
-            <div className="bg-white/95 backdrop-blur-2xl rounded-3xl border border-navy/10 shadow-[0_20px_60px_-15px_rgba(11,31,51,0.09)] p-6 sm:p-10 md:p-12 relative">
+          <div className="w-full lg:w-[66%]">
+            <div className="bg-white/95 backdrop-blur-2xl rounded-3xl border border-navy/10 shadow-[0_20px_60px_-15px_rgba(11,31,51,0.09)] p-6 sm:p-10 md:p-14 relative">
 
               <AnimatePresence mode="wait">
                 {!isSubmitted ? (
@@ -525,7 +525,7 @@ export function Contact() {
                                 required
                                 value={formData.full_name}
                                 onChange={handleInputChange}
-                                placeholder="e.g. Moiz Dheela"
+                                placeholder="e.g. Priya Sharma"
                                 className="w-full h-12 px-4 rounded-xl border border-navy/20 bg-white font-sans text-sm text-navy placeholder:text-navy/35 focus:outline-none focus:border-[#C8A96B] focus:ring-2 focus:ring-[#C8A96B]/30 transition-all"
                               />
                             </FormField>
@@ -867,7 +867,87 @@ export function Contact() {
 
                     <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
                       <a
-                        href={`https://wa.me/917506284722?text=Hi%2C%20I%20am%20${encodeURIComponent(formData.full_name)}%20from%20${encodeURIComponent(formData.city)}.%20I%20just%20submitted%20my%20profile%20for%20${encodeURIComponent(formData.destination)}%20(${encodeURIComponent(formData.intake)}).`}
+                        href={(() => {
+                          const now = new Date();
+                          const dateStr = now.toLocaleString("en-IN", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                          });
+                          const qualLabel = {
+                            "12th": "12th Standard (HSC/CBSE/ISC)",
+                            bachelors: "Bachelor's Degree",
+                            diploma: "Diploma / Polytechnic",
+                            masters: "Master's Degree",
+                            "10th": "10th Standard",
+                            other: "Other / Working Professional",
+                          }[formData.qualification] || formData.qualification;
+                          const destLabel = {
+                            UK: "United Kingdom 🇬🇧",
+                            Canada: "Canada 🇨🇦",
+                            Australia: "Australia 🇦🇺",
+                            USA: "United States 🇺🇸",
+                            Germany: "Germany 🇩🇪",
+                            Ireland: "Ireland 🇮🇪",
+                            "New Zealand": "New Zealand 🇳🇿",
+                            "Dubai/UAE": "Dubai / UAE 🇦🇪",
+                            "Not decided": "Not decided (needs guidance)",
+                          }[formData.destination] || formData.destination;
+                          const levelLabel = {
+                            masters: "Master's (PG)",
+                            bachelors: "Bachelor's (UG)",
+                            pg_diploma: "PG Diploma / Co-op",
+                            phd: "Doctorate / PhD",
+                          }[formData.study_level] || formData.study_level;
+                          const budgetLabel = {
+                            under_15L: "Under ₹15 Lakhs/yr",
+                            "15L_25L": "₹15–25 Lakhs/yr",
+                            "25L_40L": "₹25–40 Lakhs/yr",
+                            above_40L: "₹40 Lakhs+/yr",
+                            scholarship: "Needs 100% Scholarship",
+                          }[formData.budget] || formData.budget;
+                          const engLabel = {
+                            taken: "Already taken IELTS/PTE/TOEFL",
+                            preparing: "Preparing / Booked",
+                            need_coaching: "Needs coaching",
+                            waiver_desired: "Seeking waiver (MOI)",
+                          }[formData.english_test] || formData.english_test;
+                          const msg = [
+                            `📋 *NEW INQUIRY — Pathway Education Consultancy*`,
+                            `🕐 Submitted: ${dateStr}`,
+                            ``,
+                            `👤 *Student Details*`,
+                            `• Name: ${formData.full_name}`,
+                            `• Phone: +91 ${formData.phone}`,
+                            formData.email ? `• Email: ${formData.email}` : null,
+                            `• City: ${formData.city}`,
+                            ``,
+                            `🎓 *Academic Background*`,
+                            `• Qualification: ${qualLabel}`,
+                            formData.grade ? `• Percentage / CGPA: ${formData.grade}` : null,
+                            formData.institution ? `• Institution: ${formData.institution}` : null,
+                            ``,
+                            `✈️ *Study Abroad Preferences*`,
+                            `• Destination: ${destLabel}`,
+                            `• Study Level: ${levelLabel}`,
+                            formData.course ? `• Course Interest: ${formData.course}` : null,
+                            `• Intake: ${formData.intake}`,
+                            `• Budget: ${budgetLabel}`,
+                            `• English Test: ${engLabel}`,
+                            ``,
+                            `📣 *Source*: ${formData.source}`,
+                            formData.message ? `\n💬 *Message*: "${formData.message}"` : null,
+                            ``,
+                            `---`,
+                            `_This inquiry was submitted via the Pathway website contact form._`,
+                          ]
+                            .filter(Boolean)
+                            .join("\n");
+                          return `https://wa.me/917506284722?text=${encodeURIComponent(msg)}`;
+                        })()}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex-1 h-12 rounded-xl bg-[#25D366] text-white font-bold text-xs flex items-center justify-center gap-2 hover:bg-[#1EBE5D] shadow-md transition-all"

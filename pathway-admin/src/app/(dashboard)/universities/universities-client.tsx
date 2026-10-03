@@ -13,7 +13,6 @@ import {
   BookOpen,
   DollarSign,
   GraduationCap,
-  Sparkles,
   Trash2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -168,8 +167,10 @@ export function UniversitiesClientView() {
               {/* Header: Logo, Name, Ranking */}
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary/25 to-primary/5 border border-primary/40 flex items-center justify-center font-bold text-sm text-primary shrink-0 shadow-sm">
-                    {uni.logo}
+                  <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/25 to-primary/5 border border-primary/40 flex items-center justify-center shrink-0 shadow-sm overflow-hidden p-1">
+                    <span className="text-[9px] font-black text-primary text-center leading-tight break-all w-full text-wrap">
+                      {uni.logo}
+                    </span>
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-foreground leading-snug">{uni.name}</h3>
@@ -224,7 +225,7 @@ export function UniversitiesClientView() {
               {/* Scholarships note */}
               {uni.scholarships && (
                 <div className="p-3 rounded-xl bg-primary/10 border border-primary/20 text-xs flex items-start gap-2 text-primary">
-                  <Sparkles className="h-4 w-4 shrink-0 mt-0.5" />
+                  <Award className="h-4 w-4 shrink-0 mt-0.5" />
                   <div>
                     <span className="font-semibold">Scholarship Highlight: </span>
                     <span>{uni.scholarships}</span>

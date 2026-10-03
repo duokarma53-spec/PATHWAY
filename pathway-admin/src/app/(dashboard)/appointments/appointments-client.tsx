@@ -8,19 +8,14 @@ import {
   Phone,
   Building2,
   Plus,
-  ChevronLeft,
-  ChevronRight,
   User,
-  Filter,
-  CheckCircle2,
-  XCircle,
-  AlertCircle,
-  Trash2
+  Trash2,
+  Loader2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { StatusBadge } from "@/components/ui/status-badge"
-import { INITIAL_APPOINTMENTS, Appointment } from "@/lib/mock-data"
+import { Appointment } from "@/lib/mock-data"
 import { toast } from "sonner"
 import {
   Dialog,
@@ -33,13 +28,44 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
+const STORAGE_KEY = "pathway_appointments"
+
+function loadAppointments(): Appointment[] {
+  if (typeof window === "undefined") return []
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (raw) return JSON.parse(raw) as Appointment[]
+  } catch {}
+  return []
+}
+
+function saveAppointments(apts: Appointment[]) {
+  if (typeof window === "undefined") return
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(apts))
+  } catch {}
+}
+
 export function AppointmentsClientView() {
-  const [appointments, setAppointments] = React.useState<Appointment[]>(INITIAL_APPOINTMENTS)
+  const [appointments, setAppointments] = React.useState<Appointment[]>([])
+  const [hydrated, setHydrated] = React.useState(false)
   const [viewMode, setViewMode] = React.useState<"month" | "week" | "day" | "list">("list")
-  const [selectedDate, setSelectedDate] = React.useState(new Date())
   const [typeFilter, setTypeFilter] = React.useState("ALL")
   const [showAddModal, setShowAddModal] = React.useState(false)
   const [newApt, setNewApt] = React.useState<Partial<Appointment>>({})
+
+  // Load from localStorage on mount
+  React.useEffect(() => {
+    const stored = loadAppointments()
+    setAppointments(stored)
+    setHydrated(true)
+  }, [])
+
+  // Save to localStorage whenever appointments change (after hydration)
+  React.useEffect(() => {
+    if (!hydrated) return
+    saveAppointments(appointments)
+  }, [appointments, hydrated])
 
   const filteredAppts = React.useMemo(() => {
     return appointments.filter((apt) => {
@@ -54,32 +80,48 @@ export function AppointmentsClientView() {
     toast.success(`Appointment status updated to ${newStatus}`)
   }
 
-  const handleDeleteAppointment = (id: string, title: string) => {
-    if (!window.confirm(`Are you sure you want to delete appointment "${title}"?`)) {
-      return
-    }
+  const handleDeleteAppointment = (id: string, name: string) => {
+    if (!window.confirm(`Are you sure you want to delete this appointment for "${name}"?`)) return
     setAppointments((prev) => prev.filter((a) => a.id !== id))
-    toast.success(`Appointment "${title}" deleted`)
+    toast.success(`Appointment deleted`)
   }
 
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!newApt.studentName) return
+
+    // Validate date format dd/mm/yyyy or yyyy-mm-dd
+    const dateRaw = newApt.date || ""
+    const timeRaw = newApt.time || ""
+
+    if (!dateRaw || !timeRaw) {
+      toast.error("Please enter both date and time")
+      return
+    }
+
     const apt: Appointment = {
       id: "apt-" + Date.now(),
       studentName: newApt.studentName,
-      counsellor: newApt.counsellor || "Rohan Varma",
-      date: newApt.date || new Date().toISOString().slice(0, 10),
-      time: newApt.time || "11:00",
+      counsellor: newApt.counsellor || "Owner",
+      date: dateRaw,
+      time: timeRaw,
       type: (newApt.type as any) || "Initial counselling",
       status: "Scheduled",
       mode: (newApt.mode as any) || "Office In-Person",
-      notes: newApt.notes || "Booked by counsellor."
+      notes: newApt.notes || "",
     }
-    setAppointments([apt, ...appointments])
+    setAppointments((prev) => [apt, ...prev])
     setShowAddModal(false)
     setNewApt({})
-    toast.success("Appointment scheduled on calendar")
+    toast.success(`Appointment booked for ${apt.studentName} on ${apt.date} at ${apt.time}`)
+  }
+
+  if (!hydrated) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <Loader2 className="h-6 w-6 animate-spin text-primary/40" />
+      </div>
+    )
   }
 
   return (
@@ -89,7 +131,7 @@ export function AppointmentsClientView() {
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-              Appointments & Counselling Schedule
+              Appointments &amp; Counselling Schedule
             </h1>
             <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-xs font-bold border border-amber-500/30">
               {appointments.length} Sessions
@@ -127,7 +169,7 @@ export function AppointmentsClientView() {
         </div>
       </div>
 
-      {/* Filter and stats row */}
+      {/* Filter row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <select
@@ -158,7 +200,29 @@ export function AppointmentsClientView() {
         </div>
       </div>
 
-      {/* Appointments List / Calendar Grid */}
+      {/* Empty state */}
+      {filteredAppts.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-muted/40 flex items-center justify-center">
+            <CalendarIcon className="h-6 w-6 text-muted-foreground/40" />
+          </div>
+          <div>
+            <p className="font-semibold text-foreground text-sm">No appointments yet</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Click &ldquo;Book Session&rdquo; to schedule your first counselling appointment.
+            </p>
+          </div>
+          <Button
+            onClick={() => setShowAddModal(true)}
+            size="sm"
+            className="bg-primary text-primary-foreground rounded-xl text-xs"
+          >
+            <Plus className="h-3.5 w-3.5 mr-1" /> Book Session
+          </Button>
+        </div>
+      )}
+
+      {/* Appointments Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredAppts.map((apt) => {
           const isDone = apt.status === "Completed"
@@ -236,7 +300,7 @@ export function AppointmentsClientView() {
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={() => handleDeleteAppointment(apt.id, apt.title)}
+                    onClick={() => handleDeleteAppointment(apt.id, apt.studentName)}
                     className="h-7 w-7 p-0 text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
                     title="Delete Appointment"
                   >
@@ -262,44 +326,54 @@ export function AppointmentsClientView() {
               </DialogDescription>
             </DialogHeader>
 
-            <div className="grid gap-3 py-4 text-xs">
+            <div className="grid gap-4 py-4 text-xs">
               <div className="space-y-1.5">
-                <Label htmlFor="aStudent" className="text-xs">Student / Lead Name *</Label>
+                <Label htmlFor="aStudent" className="text-xs font-semibold">Student / Lead Name *</Label>
                 <Input
                   id="aStudent"
                   required
                   placeholder="e.g. Aarav Mehta"
+                  value={newApt.studentName || ""}
                   onChange={(e) => setNewApt({ ...newApt, studentName: e.target.value })}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label htmlFor="aDate" className="text-xs">Date *</Label>
+                  <Label htmlFor="aDate" className="text-xs font-semibold">Date *</Label>
                   <Input
                     id="aDate"
-                    type="date"
+                    type="text"
                     required
+                    placeholder="e.g. 05 Oct 2026"
+                    value={newApt.date || ""}
                     onChange={(e) => setNewApt({ ...newApt, date: e.target.value })}
+                    className="font-mono"
                   />
+                  <p className="text-[10px] text-muted-foreground">e.g. 05 Oct 2026 or 2026-10-05</p>
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="aTime" className="text-xs">Time *</Label>
+                  <Label htmlFor="aTime" className="text-xs font-semibold">Time *</Label>
                   <Input
                     id="aTime"
-                    type="time"
+                    type="text"
                     required
+                    placeholder="e.g. 11:30 AM"
+                    value={newApt.time || ""}
                     onChange={(e) => setNewApt({ ...newApt, time: e.target.value })}
+                    className="font-mono"
                   />
+                  <p className="text-[10px] text-muted-foreground">e.g. 11:30 AM or 14:00</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label htmlFor="aType" className="text-xs">Meeting Type</Label>
+                  <Label htmlFor="aType" className="text-xs font-semibold">Meeting Type</Label>
                   <select
                     id="aType"
                     className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-xs"
+                    value={newApt.type || "Initial counselling"}
                     onChange={(e) => setNewApt({ ...newApt, type: e.target.value as any })}
                   >
                     <option value="Initial counselling">Initial counselling</option>
@@ -311,10 +385,11 @@ export function AppointmentsClientView() {
                   </select>
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="aMode" className="text-xs">Format / Mode</Label>
+                  <Label htmlFor="aMode" className="text-xs font-semibold">Format / Mode</Label>
                   <select
                     id="aMode"
                     className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-xs"
+                    value={newApt.mode || "Office In-Person"}
                     onChange={(e) => setNewApt({ ...newApt, mode: e.target.value as any })}
                   >
                     <option value="Office In-Person">Office In-Person</option>
@@ -325,10 +400,21 @@ export function AppointmentsClientView() {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="aNotes" className="text-xs">Agenda / Discussion Notes</Label>
+                <Label htmlFor="aCounsellor" className="text-xs font-semibold">Assigned Counsellor</Label>
+                <Input
+                  id="aCounsellor"
+                  placeholder="e.g. Owner"
+                  value={newApt.counsellor || ""}
+                  onChange={(e) => setNewApt({ ...newApt, counsellor: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="aNotes" className="text-xs font-semibold">Agenda / Discussion Notes</Label>
                 <Input
                   id="aNotes"
                   placeholder="e.g. Review UK scholarship eligibility"
+                  value={newApt.notes || ""}
                   onChange={(e) => setNewApt({ ...newApt, notes: e.target.value })}
                 />
               </div>

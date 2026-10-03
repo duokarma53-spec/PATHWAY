@@ -23,13 +23,18 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "default",
     title: "Pathway CRM",
+    startupImage: "/images/logo.png",
   },
   formatDetection: {
     telephone: false,
   },
   icons: {
-    icon: "/images/logo.png",
-    apple: "/images/logo.png",
+    icon: [
+      { url: "/images/logo.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [
+      { url: "/images/logo.png", type: "image/png", sizes: "512x512" },
+    ],
   },
 };
 

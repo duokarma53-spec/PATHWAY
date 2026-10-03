@@ -216,19 +216,15 @@ export function LeadDetailClient({ leadId }: { leadId: string }) {
     ]
   )
 
-  // Notes
-  const [notes, setNotes] = React.useState(
-    lead.notes || [
-      {
-        id: "note-1",
-        author: lead.assignedCounsellor,
-        role: "Counsellor",
-        content: "Student has high academic standing. Interested in university scholarship options. Follow up with course brochure.",
-        timestamp: "Yesterday, 3:15 PM",
-        isPinned: true
-      }
-    ]
-  )
+  // Notes — start empty; only real data from Supabase or user input
+  const [notes, setNotes] = React.useState<{
+    id: string;
+    author: string;
+    role: string;
+    content: string;
+    timestamp: string;
+    isPinned: boolean;
+  }[]>([])
   const [newNote, setNewNote] = React.useState("")
   const [newTimelineTitle, setNewTimelineTitle] = React.useState("")
   const [showAddTimelineModal, setShowAddTimelineModal] = React.useState(false)
@@ -292,6 +288,12 @@ export function LeadDetailClient({ leadId }: { leadId: string }) {
     setNotes((prev) =>
       prev.map((n) => (n.id === noteId ? { ...n, isPinned: !n.isPinned } : n))
     )
+  }
+
+  // Delete Note
+  const handleDeleteNote = (noteId: string) => {
+    setNotes((prev) => prev.filter((n) => n.id !== noteId))
+    toast.success("Note deleted")
   }
 
   // Add Timeline Event
@@ -684,13 +686,22 @@ export function LeadDetailClient({ leadId }: { leadId: string }) {
                           <span>{note.author}</span>
                           <span className="text-[10px] text-muted-foreground font-normal">({note.role})</span>
                         </div>
-                        <button
-                          onClick={() => handleTogglePin(note.id)}
-                          className={`p-1 rounded hover:bg-muted ${note.isPinned ? "text-primary" : "text-muted-foreground"}`}
-                          title={note.isPinned ? "Unpin note" : "Pin note to top"}
-                        >
-                          <Pin className="h-3.5 w-3.5" />
-                        </button>
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => handleTogglePin(note.id)}
+                            className={`p-1 rounded hover:bg-muted ${note.isPinned ? "text-primary" : "text-muted-foreground"}`}
+                            title={note.isPinned ? "Unpin note" : "Pin note to top"}
+                          >
+                            <Pin className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteNote(note.id)}
+                            className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                            title="Delete note"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
                       </div>
                       <p className="text-foreground/90 leading-relaxed whitespace-pre-wrap">{note.content}</p>
                       <div className="text-[10px] text-muted-foreground/70">{note.timestamp}</div>
