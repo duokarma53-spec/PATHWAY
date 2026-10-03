@@ -1,6 +1,8 @@
 import { LoginForm } from "@/components/login-form";
 import { Suspense } from "react";
-import { Globe2, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
+import { WorldMapBackground } from "@/components/world-map-background";
+import { GlobalNetworkPill } from "@/components/global-network-pill";
 
 export const metadata = {
   title: "Sign In | Pathway Education CRM",
@@ -23,6 +25,9 @@ export default function LoginPage() {
         }}
       />
 
+      {/* ── Cartographic World Map & Geodesic Flight Paths ── */}
+      <WorldMapBackground />
+
       {/* ── Primary amber corona — top-right ── */}
       <div
         aria-hidden="true"
@@ -34,7 +39,7 @@ export default function LoginPage() {
           right: "-20vw",
           borderRadius: "50%",
           background:
-            "radial-gradient(circle at 40% 40%, rgba(220,140,60,0.28) 0%, rgba(192,120,56,0.14) 35%, rgba(180,100,40,0.05) 60%, transparent 75%)",
+            "radial-gradient(circle at 40% 40%, rgba(220,140,60,0.22) 0%, rgba(192,120,56,0.10) 35%, rgba(180,100,40,0.03) 60%, transparent 75%)",
           filter: "blur(30px)",
         }}
       />
@@ -50,7 +55,7 @@ export default function LoginPage() {
           left: "-15vw",
           borderRadius: "50%",
           background:
-            "radial-gradient(circle at 55% 55%, rgba(130,155,100,0.18) 0%, rgba(100,130,80,0.08) 45%, transparent 68%)",
+            "radial-gradient(circle at 55% 55%, rgba(130,155,100,0.14) 0%, rgba(100,130,80,0.06) 45%, transparent 68%)",
           filter: "blur(40px)",
         }}
       />
@@ -66,7 +71,7 @@ export default function LoginPage() {
           left: "18%",
           borderRadius: "50%",
           background:
-            "radial-gradient(circle, rgba(200,130,60,0.12) 0%, rgba(180,110,40,0.04) 50%, transparent 70%)",
+            "radial-gradient(circle, rgba(200,130,60,0.09) 0%, rgba(180,110,40,0.03) 50%, transparent 70%)",
           filter: "blur(55px)",
         }}
       />
@@ -121,19 +126,17 @@ export default function LoginPage() {
           TOP BAR
       ══════════════════════════════════════════════ */}
       <header
-        className="hidden lg:flex fixed top-0 left-0 right-0 z-20 items-center justify-between px-10 h-[44px]"
+        className="hidden lg:flex fixed top-0 left-0 right-0 z-20 items-center justify-between px-8 xl:px-10 h-[48px]"
         style={{
-          background: "rgba(8,6,4,0.55)",
+          background: "rgba(8,6,4,0.68)",
           backdropFilter: "blur(24px)",
           WebkitBackdropFilter: "blur(24px)",
           borderBottom: "1px solid rgba(192,120,56,0.14)",
           boxShadow: "0 1px 0 rgba(255,200,100,0.03)",
         }}
       >
-        <div className="flex items-center gap-2 text-[11.5px] text-[#6B5E50] font-medium tracking-wide">
-          <Globe2 className="h-3 w-3 text-[#4A4038] shrink-0" />
-          <span>UK · Canada · Australia · USA · Germany · Ireland</span>
-        </div>
+        <GlobalNetworkPill />
+
         <div className="flex items-center gap-1.5 text-[10.5px] font-semibold tracking-[0.18em] uppercase"
           style={{ color: "rgba(192,120,56,0.75)" }}
         >
