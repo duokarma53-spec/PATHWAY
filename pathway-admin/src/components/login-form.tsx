@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { login } from "@/app/login/actions";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { 
   Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, 
   AlertCircle, Loader2, Smartphone
