@@ -58,6 +58,20 @@ export function LeadTrendChart() {
     }
 
     loadMonthlyTrends()
+
+    // Supabase Realtime: update chart on any leads change
+    const channel = supabase
+      .channel("lead-trend-realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "leads" },
+        () => loadMonthlyTrends()
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [])
 
   if (!mounted) {
@@ -323,10 +337,19 @@ export function ConversionFunnel() {
 
     loadFunnelData()
 
-    // Listen to real-time lead events to update funnel live
-    const handleLeadEvent = () => loadFunnelData()
-    window.addEventListener("pathway_new_lead", handleLeadEvent)
-    return () => window.removeEventListener("pathway_new_lead", handleLeadEvent)
+    // Supabase Realtime: update funnel on any leads change (INSERT, UPDATE, DELETE)
+    const channel = supabase
+      .channel("conversion-funnel-realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "leads" },
+        () => loadFunnelData()
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [])
 
   return (

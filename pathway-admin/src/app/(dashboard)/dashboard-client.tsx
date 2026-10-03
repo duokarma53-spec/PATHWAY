@@ -89,10 +89,29 @@ export function DashboardClientView() {
 
     fetchDashboardData();
 
-    // Listen to real-time events to update dashboard instantly
-    const handleUpdate = () => fetchDashboardData();
-    window.addEventListener("pathway_new_lead", handleUpdate);
-    return () => window.removeEventListener("pathway_new_lead", handleUpdate);
+    // Supabase Realtime: re-fetch on any leads / students / applications change
+    const channel = supabase
+      .channel("dashboard-realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "leads" },
+        () => fetchDashboardData()
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "students" },
+        () => fetchDashboardData()
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "applications" },
+        () => fetchDashboardData()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const totalLeads = leads.length;
