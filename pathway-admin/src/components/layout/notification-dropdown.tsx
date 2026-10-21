@@ -197,24 +197,24 @@ export function NotificationDropdown() {
         variant="ghost"
         size="icon"
         onClick={() => setIsOpen(!isOpen)}
-        className="relative h-9 w-9 rounded-full hover:bg-muted/50 transition-colors"
+        className="relative h-9 w-9 rounded-xl border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.07] text-[#BDB0A4] hover:text-[#F8F5F1] hover:border-primary/40 transition-all"
         aria-label="View notifications"
       >
-        <Bell className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+        <Bell className="h-4 w-4" />
         {unreadCount > 0 && (
-          <span className="absolute top-1.5 right-1.5 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground shadow-sm animate-pulse">
+          <span className="absolute -top-1 -right-1 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-white shadow-sm shadow-primary/40 animate-pulse">
             {unreadCount}
           </span>
         )}
       </Button>
 
       {isOpen && (
-        <div className="fixed top-16 right-2 sm:absolute sm:top-full sm:right-0 sm:mt-2 w-[calc(100vw-1rem)] sm:w-96 max-w-[380px] rounded-2xl border border-border/70 bg-card/95 backdrop-blur-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in-0 zoom-in-95 duration-150">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-muted/20">
+        <div className="fixed top-16 right-2 sm:absolute sm:top-full sm:right-0 sm:mt-2 w-[calc(100vw-1rem)] sm:w-96 max-w-[380px] rounded-2xl border border-white/[0.08] bg-[#181411]/98 backdrop-blur-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in-0 zoom-in-95 duration-150">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.08] bg-white/[0.02]">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-foreground">Notifications</span>
+              <span className="text-sm font-semibold text-[#F8F5F1]">Notifications</span>
               {unreadCount > 0 && (
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/20 text-primary">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30">
                   {unreadCount} new
                 </span>
               )}
@@ -230,13 +230,13 @@ export function NotificationDropdown() {
           </div>
 
           {/* Mobile Phone Push Notification Action Bar */}
-          <div className="px-3.5 py-2.5 bg-primary/10 border-b border-border/40 flex items-center justify-between gap-2">
+          <div className="px-3.5 py-2.5 bg-primary/10 border-b border-white/[0.06] flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">
               <span className={cn(
                 "h-2 w-2 rounded-full shrink-0",
-                pushStatus === "granted" ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]" : "bg-amber-500 animate-pulse"
+                pushStatus === "granted" ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]" : "bg-primary animate-pulse"
               )} />
-              <span className="text-[11.5px] font-medium text-foreground truncate">
+              <span className="text-[11.5px] font-medium text-[#F8F5F1] truncate">
                 {pushStatus === "granted" ? "Phone Alerts Active" : "Get Phone Push Alerts"}
               </span>
             </div>
@@ -254,16 +254,16 @@ export function NotificationDropdown() {
               <button
                 type="button"
                 onClick={handleEnablePush}
-                className="shrink-0 text-[10.5px] font-semibold px-3 py-1 rounded-lg bg-primary text-primary-foreground shadow-sm hover:opacity-90 transition-opacity"
+                className="shrink-0 text-[10.5px] font-semibold px-3 py-1 rounded-lg bg-primary text-white shadow-sm hover:opacity-90 transition-opacity"
               >
                 Turn On
               </button>
             )}
           </div>
 
-          <div className="max-h-[380px] overflow-y-auto custom-scrollbar divide-y divide-border/30">
+          <div className="max-h-[380px] overflow-y-auto custom-scrollbar divide-y divide-white/[0.06]">
             {allNotifications.length === 0 ? (
-              <div className="py-8 text-center text-xs text-muted-foreground">
+              <div className="py-8 text-center text-xs text-[#897B70]">
                 No notifications right now
               </div>
             ) : (
@@ -276,35 +276,33 @@ export function NotificationDropdown() {
                     setIsOpen(false)
                   }}
                   className={cn(
-                    "flex items-start gap-3 p-3.5 transition-colors hover:bg-muted/30 text-left block",
+                    "flex items-start gap-3 p-3.5 transition-colors hover:bg-white/[0.04] text-left block",
                     !notif.read && "bg-primary/5"
                   )}
                 >
-                  <div className="p-2 rounded-xl bg-muted/60 shrink-0 mt-0.5">
+                  <div className="p-2 rounded-xl bg-white/[0.05] border border-white/[0.06] shrink-0 mt-0.5">
                     {getIcon(notif.type)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-1">
-                      <p className={cn("text-xs font-semibold truncate", !notif.read ? "text-foreground" : "text-muted-foreground")}>
+                      <p className={cn("text-xs font-semibold truncate", !notif.read ? "text-[#F8F5F1]" : "text-[#BDB0A4]")}>
                         {notif.title}
                       </p>
-                      <span className="text-[10px] text-muted-foreground/70 shrink-0 whitespace-nowrap">
+                      <span className="text-[10px] text-[#897B70] shrink-0 whitespace-nowrap">
                         {relativeTime(notif.createdAt)}
                       </span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed line-clamp-2">
+                    <p className="text-[11px] text-[#BDB0A4] mt-0.5 leading-relaxed line-clamp-2">
                       {notif.message}
                     </p>
                   </div>
                   {!notif.read && (
-                    <div className="h-2 w-2 rounded-full bg-primary shrink-0 self-center" />
+                    <div className="h-2 w-2 rounded-full bg-primary shrink-0 self-center shadow-[0_0_6px_rgba(255,107,0,0.6)]" />
                   )}
                 </Link>
               ))
             )}
           </div>
-
-        
         </div>
       )}
     </div>

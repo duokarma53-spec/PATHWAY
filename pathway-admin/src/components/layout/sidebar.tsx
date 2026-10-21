@@ -20,7 +20,7 @@ import { BrandLogo } from "../ui/brand-logo"
 import { InstagramIcon } from "../ui/instagram-icon"
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 5-Hour Security Session Reminder
+// 5-Hour Security Session Reminder (Dark Theme)
 // ─────────────────────────────────────────────────────────────────────────────
 const SESSION_DURATION_MS = 5 * 60 * 60 * 1000 // 5 hours
 export const SESSION_START_KEY = "pathway_session_start"
@@ -33,7 +33,6 @@ function SecurityReminderBanner({ onLogout }: { onLogout: () => void }) {
   useEffect(() => {
     if (typeof window === "undefined") return
 
-    // Stamp session start if not already recorded
     let start = parseInt(localStorage.getItem(SESSION_START_KEY) || "0", 10)
     if (!start || isNaN(start)) {
       start = Date.now()
@@ -44,12 +43,10 @@ function SecurityReminderBanner({ onLogout }: { onLogout: () => void }) {
     const remaining = SESSION_DURATION_MS - elapsed
 
     if (remaining <= 0) {
-      // Already past 5 hours — show immediately
       setVisible(true)
       return
     }
 
-    // Schedule the banner to appear after the remaining time
     timerRef.current = setTimeout(() => {
       setVisible(true)
     }, remaining)
@@ -65,18 +62,18 @@ function SecurityReminderBanner({ onLogout }: { onLogout: () => void }) {
         "fixed bottom-20 left-1/2 -translate-x-1/2 z-[200]",
         "w-[calc(100vw-32px)] max-w-sm",
         "md:bottom-6 md:left-auto md:right-6 md:-translate-x-0",
-        "rounded-2xl bg-amber-50 border border-amber-300",
-        "p-4 shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-400"
+        "rounded-2xl bg-[#1D1510]/95 border border-primary/35",
+        "p-4 shadow-2xl backdrop-blur-2xl animate-in fade-in slide-in-from-bottom-4 duration-400"
       )}
     >
       <div className="flex items-start gap-3 mb-3">
-        <div className="h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
-          <ShieldAlert className="h-4 w-4 text-amber-600" />
+        <div className="h-8 w-8 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
+          <ShieldAlert className="h-4 w-4 text-primary" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[13px] font-bold text-amber-900 leading-tight">Security Reminder</p>
-          <p className="text-[11.5px] text-amber-700 mt-0.5 leading-snug">
-            You&apos;ve been logged in for <strong>5 hours</strong>. For your account&apos;s security,
+          <p className="text-[13px] font-bold text-[#F8F5F1] leading-tight">Security Reminder</p>
+          <p className="text-[11.5px] text-[#BDB0A4] mt-0.5 leading-snug">
+            You&apos;ve been logged in for <strong className="text-primary font-semibold">5 hours</strong>. For your account&apos;s security,
             please log out and sign back in.
           </p>
         </div>
@@ -87,13 +84,13 @@ function SecurityReminderBanner({ onLogout }: { onLogout: () => void }) {
             localStorage.removeItem(SESSION_START_KEY)
             onLogout()
           }}
-          className="flex-1 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-[0.98] text-white text-[12px] font-semibold transition-all"
+          className="flex-1 py-2 rounded-xl bg-primary hover:bg-primary/90 active:scale-[0.98] text-white text-[12px] font-semibold shadow-sm transition-all"
         >
           Logout Now
         </button>
         <button
           onClick={() => setDismissed(true)}
-          className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-800 text-[12px] font-medium transition-colors"
+          className="px-4 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-[#BDB0A4] text-[12px] font-medium border border-white/[0.08] transition-colors"
         >
           Later
         </button>
@@ -103,10 +100,9 @@ function SecurityReminderBanner({ onLogout }: { onLogout: () => void }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Navigation config
+// Navigation config (Exact routes preserved)
 // ─────────────────────────────────────────────────────────────────────────────
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type NavItem = { name: string; href: string; icon: any; badge?: string | number }
+type NavItem = { name: string; href: string; icon: React.ElementType; badge?: string | number }
 type NavGroup = { label: string; items: NavItem[] }
 
 const navigationGroups: NavGroup[] = [
@@ -164,9 +160,7 @@ const navigationGroups: NavGroup[] = [
 ]
 
 // ─────────────────────────────────────────────────────────────────────────────
-// NavContent — the scrollable nav + pinned footer
-// IMPORTANT: must render a single div (not a Fragment) so flex-1 / shrink-0
-// child layout actually works inside the flex-col parent containers.
+// NavContent — scrollable nav + pinned footer
 // ─────────────────────────────────────────────────────────────────────────────
 function NavContent({
   collapsed,
@@ -182,12 +176,12 @@ function NavContent({
   return (
     <div className="flex flex-col flex-1 min-h-0">
       {/* ── Scrollable nav area ─────────────────────── */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden py-4 custom-scrollbar">
-        <nav className="flex flex-col gap-6 px-3">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden py-3.5 custom-scrollbar">
+        <nav className="flex flex-col gap-5 px-2.5">
           {navigationGroups.map((group) => (
             <div key={group.label} className="flex flex-col gap-0.5">
               {!collapsed && (
-                <span className="px-3 text-[9.5px] font-bold uppercase tracking-[0.22em] text-espresso-light/60 mb-1.5">
+                <span className="px-3 text-[9.5px] font-bold uppercase tracking-[0.24em] text-[#897B70] mb-1">
                   {group.label}
                 </span>
               )}
@@ -195,35 +189,34 @@ function NavContent({
                 const isActive =
                   pathname === item.href ||
                   (pathname.startsWith(`${item.href}/`) && item.href !== "/")
+                const Icon = item.icon
+
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
                     onClick={onNavClick}
                     className={cn(
-                      "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13.5px] font-medium transition-all duration-200 overflow-hidden",
-                      isActive
-                        ? "text-primary nav-active-pill"
-                        : "text-espresso-light hover:text-foreground hover:bg-white/50",
-                      collapsed && "justify-center px-2"
+                      "group relative flex items-center gap-3 transition-all duration-200",
+                      collapsed
+                        ? isActive
+                          ? "h-11 w-11 mx-auto rounded-2xl bg-gradient-to-br from-primary via-[#FF6B00] to-[#D45400] text-white shadow-lg shadow-primary/30 flex items-center justify-center scale-105"
+                          : "h-10 w-10 mx-auto rounded-xl text-[#897B70] hover:text-[#F8F5F1] hover:bg-white/[0.06] flex items-center justify-center"
+                        : isActive
+                          ? "text-[#F8F5F1] bg-gradient-to-r from-primary/20 to-primary/5 border-l-[3px] border-primary font-semibold shadow-[inset_0_1px_0_rgba(255,107,0,0.15)] rounded-xl px-3 py-2 text-[13px]"
+                          : "text-[#BDB0A4] hover:text-[#F8F5F1] hover:bg-white/[0.04] rounded-xl px-3 py-2 text-[13px]"
                     )}
-                    title={collapsed ? item.name : undefined}
                   >
-                    {!isActive && !collapsed && (
-                      <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gradient-to-r from-white/60 to-white/20" />
-                    )}
-
-                    <item.icon
+                    <Icon
                       className={cn(
-                        "h-[16px] w-[16px] shrink-0 relative z-10 transition-colors duration-200",
-                        isActive
-                          ? "text-primary"
-                          : "text-espresso-light/60 group-hover:text-foreground"
+                        "transition-transform duration-200",
+                        collapsed ? (isActive ? "h-5 w-5 text-white" : "h-[18px] w-[18px]") : "h-[16px] w-[16px] shrink-0",
+                        !collapsed && (isActive ? "text-primary" : "text-[#897B70] group-hover:text-[#F8F5F1]")
                       )}
                     />
 
                     {!collapsed && (
-                      <span className="relative z-10 flex-1 tracking-[0.01em]">
+                      <span className="relative z-10 flex-1 tracking-[0.01em] truncate">
                         {item.name}
                       </span>
                     )}
@@ -231,12 +224,19 @@ function NavContent({
                     {!collapsed && item.badge && (
                       <span
                         className={cn(
-                          "relative z-10 px-1.5 py-0.5 text-[10px] font-semibold rounded-full",
+                          "relative z-10 px-1.5 py-0.5 text-[9.5px] font-semibold rounded-full",
                           item.badge === "New" ? "badge-amber" : "badge-neutral"
                         )}
                       >
                         {item.badge}
                       </span>
+                    )}
+
+                    {/* Tooltip on Collapsed Icon-Rail */}
+                    {collapsed && (
+                      <div className="absolute left-full ml-3 px-2.5 py-1.5 rounded-lg bg-[#271A12] border border-white/[0.1] text-xs font-semibold text-[#F8F5F1] whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-150 shadow-xl z-50">
+                        {item.name}
+                      </div>
                     )}
                   </Link>
                 )
@@ -246,35 +246,31 @@ function NavContent({
         </nav>
       </div>
 
-      {/* ── Pinned footer — never scrolls away ─────── */}
-      <div className="shrink-0 border-t border-linen-dark/50 px-3 pt-2.5 pb-3 flex flex-col gap-1.5">
-        {/* Instagram */}
-        <a
-          href="https://www.instagram.com/pathwayeduconsultancy?stkn=YnY3M2R0MzFwNzk="
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(
-            "flex items-center gap-2.5 w-full rounded-xl px-3 py-2",
-            "text-[12.5px] font-medium text-pink-700",
-            "bg-pink-500/10 hover:bg-pink-500/18 border border-pink-500/25",
-            "transition-all duration-200 group",
-            collapsed && "justify-center px-2"
-          )}
-          title="Official Instagram (@pathwayeduconsultancy)"
-        >
-          <InstagramIcon className="h-4 w-4 shrink-0 text-pink-600 group-hover:scale-110 transition-transform" />
-          {!collapsed && (
-            <>
-              <div className="flex flex-col min-w-0 flex-1 leading-tight text-left">
-                <span className="font-semibold text-foreground text-[12px]">Instagram</span>
-                <span className="text-[9.5px] text-pink-600/80">@pathwayeduconsultancy</span>
-              </div>
-              <ExternalLink className="h-3 w-3 text-pink-500/60 shrink-0" />
-            </>
-          )}
-        </a>
+      {/* ── Pinned footer — dark, compact, refined ─────── */}
+      <div className="shrink-0 border-t border-white/[0.07] px-2.5 pt-2.5 pb-3 flex flex-col gap-1.5">
+        {/* Instagram Link — shown when expanded */}
+        {!collapsed && (
+          <a
+            href="https://www.instagram.com/pathwayeduconsultancy?stkn=YnY3M2R0MzFwNzk="
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2.5 w-full rounded-xl px-2.5 py-2 text-[12px] font-medium text-[#BDB0A4] bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-primary/40 transition-all duration-200 group"
+            title="Official Instagram (@pathwayeduconsultancy)"
+          >
+            <InstagramIcon className="h-4 w-4 shrink-0 text-[#BDB0A4] group-hover:text-primary transition-colors" />
+            <div className="flex flex-col min-w-0 flex-1 leading-tight text-left">
+              <span className="font-semibold text-[#F8F5F1] text-[11.5px] group-hover:text-primary transition-colors">
+                Instagram
+              </span>
+              <span className="text-[9.5px] text-[#897B70] truncate">
+                @pathwayeduconsultancy
+              </span>
+            </div>
+            <ExternalLink className="h-3 w-3 text-[#897B70] group-hover:text-primary shrink-0 transition-colors" />
+          </a>
+        )}
 
-        {/* PWA install — desktop only when not collapsed */}
+        {/* PWA install CTA */}
         {!collapsed && <DownloadAppButton variant="sidebar" />}
 
         {/* Logout */}
@@ -282,15 +278,14 @@ function NavContent({
           onClick={onLogout}
           title={collapsed ? "Logout" : undefined}
           className={cn(
-            "w-full flex items-center rounded-xl px-3 py-2.5",
-            "text-[13px] font-medium text-espresso-light/70",
-            "hover:text-red-600 hover:bg-red-50",
-            "transition-colors duration-200",
-            collapsed ? "justify-center px-2" : "justify-start"
+            "w-full flex items-center rounded-xl transition-colors duration-200",
+            collapsed
+              ? "h-10 w-10 mx-auto justify-center text-[#897B70] hover:text-red-400 hover:bg-red-500/10"
+              : "px-2.5 py-2 text-[12.5px] font-medium text-[#BDB0A4] hover:text-red-400 hover:bg-red-500/10 justify-start"
           )}
         >
           <LogOut className="h-4 w-4 shrink-0" />
-          {!collapsed && <span className="ml-3 tracking-wide">Logout</span>}
+          {!collapsed && <span className="ml-2.5 tracking-wide">Logout</span>}
         </button>
       </div>
     </div>
@@ -298,10 +293,10 @@ function NavContent({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Sidebar — desktop + mobile drawer
+// Sidebar — Desktop + Mobile Drawer
 // ─────────────────────────────────────────────────────────────────────────────
 export function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(true)
   const { isOpen, setIsOpen } = useSidebar()
   const router = useRouter()
   const supabase = createClient()
@@ -309,6 +304,7 @@ export function Sidebar() {
   const handleLogout = async () => {
     if (typeof window !== "undefined") {
       localStorage.removeItem(SESSION_START_KEY)
+      document.cookie = "pathway_demo_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;"
     }
     await supabase.auth.signOut()
     router.push("/login")
@@ -322,75 +318,74 @@ export function Sidebar() {
       <SecurityReminderBanner onLogout={handleLogout} />
 
       {/* ── Desktop Sidebar ─────────────────────────── */}
-      <div
+      <aside
         className={cn(
-          "relative hidden md:flex flex-col glass-sidebar transition-all duration-300",
-          collapsed ? "w-[72px]" : "w-[272px]"
+          "relative hidden md:flex flex-col glass-sidebar transition-all duration-300 z-20 shrink-0",
+          collapsed ? "w-[72px]" : "w-[264px]"
         )}
       >
-        {/* Header */}
+        {/* Header Branding */}
         <div
           className={cn(
-            "flex h-[68px] shrink-0 items-center border-b border-linen-dark/40",
-            collapsed ? "justify-center px-4" : "px-5 gap-3"
+            "flex h-[64px] shrink-0 items-center border-b border-white/[0.08]",
+            collapsed ? "justify-center px-3" : "px-4 gap-3"
           )}
         >
           <BrandLogo size="sm" withGlow />
           {!collapsed && (
-            <div className="flex flex-col leading-tight">
-              <span className="text-[15px] font-semibold tracking-[0.08em] text-foreground uppercase">
+            <div className="flex flex-col leading-tight select-none">
+              <span className="text-[14.5px] font-bold tracking-[0.08em] text-[#F8F5F1] uppercase">
                 Pathway
               </span>
-              <span className="text-[9px] font-medium tracking-[0.2em] text-espresso-light/50 uppercase">
+              <span className="text-[9px] font-medium tracking-[0.22em] text-[#897B70] uppercase">
                 Education CRM
               </span>
             </div>
           )}
         </div>
 
-        {/* Collapse toggle */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute -right-3.5 top-[22px] h-7 w-7 rounded-full border border-linen-dark bg-surface/90 backdrop-blur-sm shadow-sm hover:bg-white transition-all duration-200 z-20"
+        {/* Collapse Toggle Button */}
+        <button
+          className="absolute -right-3 top-[20px] h-6 w-6 rounded-full border border-white/[0.12] bg-[#1D1510] hover:bg-[#271A12] text-[#BDB0A4] hover:text-[#F8F5F1] hover:border-primary/50 shadow-md transition-all flex items-center justify-center z-30"
           onClick={() => setCollapsed(!collapsed)}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {collapsed ? (
-            <ChevronRight className="h-3.5 w-3.5 text-espresso-light" />
+            <ChevronRight className="h-3.5 w-3.5" />
           ) : (
-            <ChevronLeft className="h-3.5 w-3.5 text-espresso-light" />
+            <ChevronLeft className="h-3.5 w-3.5" />
           )}
-        </Button>
+        </button>
 
         <NavContent collapsed={collapsed} onLogout={handleLogout} />
-      </div>
+      </aside>
 
       {/* ── Mobile Overlay ──────────────────────────── */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-espresso/20 backdrop-blur-[2px] md:hidden"
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden animate-in fade-in duration-200"
           onClick={() => setIsOpen(false)}
         />
       )}
 
-      {/* ── Mobile Drawer — stops above the bottom nav ── */}
+      {/* ── Mobile Drawer ───────────────────────────── */}
       <div
         className={cn(
-          "fixed top-0 bottom-16 left-0 z-50 w-[288px] flex flex-col glass-sidebar",
-          "transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
-          "md:hidden shadow-glass-lg",
+          "fixed top-0 bottom-16 left-0 z-50 w-[280px] flex flex-col bg-[#120E0B]/98 backdrop-blur-2xl border-r border-white/[0.08]",
+          "transition-transform duration-300 ease-out",
+          "md:hidden shadow-2xl",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Drawer Header */}
-        <div className="flex h-[68px] shrink-0 items-center justify-between px-5 border-b border-linen-dark/40">
+        <div className="flex h-[64px] shrink-0 items-center justify-between px-4 border-b border-white/[0.08]">
           <div className="flex items-center gap-3">
             <BrandLogo size="sm" withGlow />
             <div className="flex flex-col leading-tight">
-              <span className="text-[15px] font-semibold tracking-[0.08em] text-foreground uppercase">
+              <span className="text-[14.5px] font-bold tracking-[0.08em] text-[#F8F5F1] uppercase">
                 Pathway
               </span>
-              <span className="text-[9px] font-medium tracking-[0.2em] text-espresso-light/50 uppercase">
+              <span className="text-[9px] font-medium tracking-[0.22em] text-[#897B70] uppercase">
                 Education CRM
               </span>
             </div>
@@ -398,14 +393,15 @@ export function Sidebar() {
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 rounded-full hover:bg-white/60 transition-colors duration-200"
+            className="h-8 w-8 rounded-full text-[#BDB0A4] hover:text-[#F8F5F1] hover:bg-white/[0.08] transition-colors"
             onClick={() => setIsOpen(false)}
+            aria-label="Close menu"
           >
-            <X className="h-4 w-4 text-espresso-light" />
+            <X className="h-4 w-4" />
           </Button>
         </div>
 
-        {/* Nav + Footer fills remaining height */}
+        {/* Nav + Footer */}
         <NavContent
           collapsed={false}
           onNavClick={handleNavClick}

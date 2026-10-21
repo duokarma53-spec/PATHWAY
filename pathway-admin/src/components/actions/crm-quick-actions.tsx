@@ -53,7 +53,7 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
       <div className="relative inline-block text-left">
         <Button
           onClick={() => setDropdownOpen(!dropdownOpen)}
-          className={`bg-primary text-primary-foreground hover:bg-primary/90 rounded-full font-medium shadow-md shadow-primary/20 flex items-center gap-1.5 transition-all ${className}`}
+          className={`bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium rounded-xl shadow-md shadow-orange-500/20 border border-orange-400/25 flex items-center gap-1.5 transition-all text-xs h-9 px-3.5 active:scale-[0.98] ${className}`}
         >
           <Plus className="h-4 w-4" />
           <span>Quick Create</span>
@@ -62,27 +62,27 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
 
         {dropdownOpen && (
           <div
-            className="origin-top-right absolute right-0 mt-2 w-56 rounded-2xl shadow-2xl bg-card/95 backdrop-blur-2xl border border-border/70 divide-y divide-border/30 z-50 animate-in fade-in-0 zoom-in-95 duration-100"
+            className="origin-top-right absolute right-0 mt-2 w-60 rounded-2xl shadow-2xl bg-[#181310]/95 backdrop-blur-2xl border border-white/10 divide-y divide-white/[0.06] z-50 animate-in fade-in-0 zoom-in-95 duration-150"
             onMouseLeave={() => setDropdownOpen(false)}
           >
             <div className="p-1.5 space-y-0.5">
               <button
                 onClick={() => { setActiveModal("lead"); setDropdownOpen(false); }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-foreground hover:bg-primary/10 hover:text-primary rounded-xl transition-colors text-left"
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-[#E8DED5] hover:bg-orange-500/10 hover:text-orange-400 rounded-xl transition-all text-left"
               >
-                <UserPlus className="h-4 w-4 text-primary" />
+                <UserPlus className="h-4 w-4 text-orange-400" />
                 Add Lead
               </button>
               <button
                 onClick={() => { setActiveModal("student"); setDropdownOpen(false); }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-foreground hover:bg-emerald-500/10 hover:text-emerald-400 rounded-xl transition-colors text-left"
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-[#E8DED5] hover:bg-emerald-500/10 hover:text-emerald-400 rounded-xl transition-all text-left"
               >
                 <GraduationCap className="h-4 w-4 text-emerald-400" />
                 Add Student
               </button>
               <button
                 onClick={() => { setActiveModal("application"); setDropdownOpen(false); }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-foreground hover:bg-blue-500/10 hover:text-blue-400 rounded-xl transition-colors text-left"
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-[#E8DED5] hover:bg-blue-500/10 hover:text-blue-400 rounded-xl transition-all text-left"
               >
                 <FileText className="h-4 w-4 text-blue-400" />
                 Add Application
@@ -91,21 +91,21 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
             <div className="p-1.5 space-y-0.5">
               <button
                 onClick={() => { setActiveModal("task"); setDropdownOpen(false); }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-foreground hover:bg-purple-500/10 hover:text-purple-400 rounded-xl transition-colors text-left"
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-[#E8DED5] hover:bg-purple-500/10 hover:text-purple-400 rounded-xl transition-all text-left"
               >
                 <CheckSquare className="h-4 w-4 text-purple-400" />
                 Add Task / Follow-up
               </button>
               <button
                 onClick={() => { setActiveModal("appointment"); setDropdownOpen(false); }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-foreground hover:bg-amber-500/10 hover:text-amber-400 rounded-xl transition-colors text-left"
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-[#E8DED5] hover:bg-amber-500/10 hover:text-amber-400 rounded-xl transition-all text-left"
               >
                 <Calendar className="h-4 w-4 text-amber-400" />
                 Schedule Appointment
               </button>
               <button
                 onClick={() => { setActiveModal("document"); setDropdownOpen(false); }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-foreground hover:bg-cyan-500/10 hover:text-cyan-400 rounded-xl transition-colors text-left"
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-[#E8DED5] hover:bg-cyan-500/10 hover:text-cyan-400 rounded-xl transition-all text-left"
               >
                 <Upload className="h-4 w-4 text-cyan-400" />
                 Upload Document
@@ -117,45 +117,45 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
 
       {/* Modal Dialogs */}
       <Dialog open={activeModal !== null} onOpenChange={(open) => !open && setActiveModal(null)}>
-        <DialogContent className="max-w-md sm:max-w-lg bg-card/95 backdrop-blur-2xl border-border/70 rounded-2xl shadow-2xl">
+        <DialogContent className="max-w-md sm:max-w-lg liquid-glass-hero border-white/10 rounded-2xl shadow-2xl text-[#F8F5F1] backdrop-blur-2xl">
           {activeModal === "lead" && (
             <form onSubmit={handleSubmit}>
               <DialogHeader>
-                <DialogTitle className="flex items-center gap-2 text-lg text-primary">
+                <DialogTitle className="flex items-center gap-2 text-lg text-orange-400">
                   <UserPlus className="h-5 w-5" /> Add New Prospective Lead
                 </DialogTitle>
-                <DialogDescription>
+                <DialogDescription className="text-xs text-[#897B70]">
                   Record an incoming inquiry manually or from walk-in / phone.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-3.5 py-4">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor="firstName" className="text-xs">First Name *</Label>
+                    <Label htmlFor="firstName" className="text-xs font-medium text-[#BDB0A4]">First Name *</Label>
                     <Input id="firstName" name="firstName" required placeholder="Aarav" onChange={handleInputChange} />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="lastName" className="text-xs">Last Name *</Label>
+                    <Label htmlFor="lastName" className="text-xs font-medium text-[#BDB0A4]">Last Name *</Label>
                     <Input id="lastName" name="lastName" required placeholder="Mehta" onChange={handleInputChange} />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor="email" className="text-xs">Email Address *</Label>
+                    <Label htmlFor="email" className="text-xs font-medium text-[#BDB0A4]">Email Address *</Label>
                     <Input id="email" name="email" type="email" required placeholder="aarav@example.com" onChange={handleInputChange} />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="phone" className="text-xs">Phone / WhatsApp *</Label>
+                    <Label htmlFor="phone" className="text-xs font-medium text-[#BDB0A4]">Phone / WhatsApp *</Label>
                     <Input id="phone" name="phone" required placeholder="+91 98200..." onChange={handleInputChange} />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor="destination" className="text-xs">Target Destination</Label>
+                    <Label htmlFor="destination" className="text-xs font-medium text-[#BDB0A4]">Target Destination</Label>
                     <select
                       id="destination"
                       name="destination"
-                      className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"
+                      className="w-full rounded-xl border border-white/10 bg-[#1B1512] px-3.5 py-2 text-sm text-[#F8F5F1] outline-none transition-all focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
                       onChange={handleInputChange}
                     >
                       <option value="UK">United Kingdom</option>
@@ -166,17 +166,17 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
                     </select>
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="course" className="text-xs">Intended Course / Major</Label>
+                    <Label htmlFor="course" className="text-xs font-medium text-[#BDB0A4]">Intended Course / Major</Label>
                     <Input id="course" name="course" placeholder="MSc Data Science" onChange={handleInputChange} />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor="source" className="text-xs">Lead Source</Label>
+                    <Label htmlFor="source" className="text-xs font-medium text-[#BDB0A4]">Lead Source</Label>
                     <select
                       id="source"
                       name="source"
-                      className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"
+                      className="w-full rounded-xl border border-white/10 bg-[#1B1512] px-3.5 py-2 text-sm text-[#F8F5F1] outline-none transition-all focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
                       onChange={handleInputChange}
                     >
                       <option value="Website">Website Form</option>
@@ -188,11 +188,11 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
                     </select>
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="priority" className="text-xs">Priority</Label>
+                    <Label htmlFor="priority" className="text-xs font-medium text-[#BDB0A4]">Priority</Label>
                     <select
                       id="priority"
                       name="priority"
-                      className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"
+                      className="w-full rounded-xl border border-white/10 bg-[#1B1512] px-3.5 py-2 text-sm text-[#F8F5F1] outline-none transition-all focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
                       onChange={handleInputChange}
                     >
                       <option value="Medium">Medium</option>
@@ -204,8 +204,8 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
                 </div>
               </div>
               <DialogFooter>
-                <Button type="button" variant="ghost" onClick={() => setActiveModal(null)}>Cancel</Button>
-                <Button type="submit" disabled={loading} className="bg-primary text-primary-foreground">
+                <Button type="button" variant="ghost" onClick={() => setActiveModal(null)} className="text-[#897B70] hover:text-[#F8F5F1] hover:bg-white/[0.06] rounded-xl">Cancel</Button>
+                <Button type="submit" disabled={loading} className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl shadow-md shadow-orange-500/20 border border-orange-400/25">
                   {loading ? "Creating..." : "Save Lead"}
                 </Button>
               </DialogFooter>
@@ -218,36 +218,36 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
                 <DialogTitle className="flex items-center gap-2 text-lg text-emerald-400">
                   <GraduationCap className="h-5 w-5" /> Register Student Profile
                 </DialogTitle>
-                <DialogDescription>
+                <DialogDescription className="text-xs text-[#897B70]">
                   Create an official student record for consultation, document tracking and applications.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-3.5 py-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="stuName" className="text-xs">Student Full Name *</Label>
+                  <Label htmlFor="stuName" className="text-xs font-medium text-[#BDB0A4]">Student Full Name *</Label>
                   <Input id="stuName" name="stuName" required placeholder="Full legal name as per passport" onChange={handleInputChange} />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor="stuEmail" className="text-xs">Email Address *</Label>
+                    <Label htmlFor="stuEmail" className="text-xs font-medium text-[#BDB0A4]">Email Address *</Label>
                     <Input id="stuEmail" name="stuEmail" type="email" required placeholder="student@example.com" onChange={handleInputChange} />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="stuPhone" className="text-xs">Phone Number *</Label>
+                    <Label htmlFor="stuPhone" className="text-xs font-medium text-[#BDB0A4]">Phone Number *</Label>
                     <Input id="stuPhone" name="stuPhone" required placeholder="+91 ..." onChange={handleInputChange} />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor="stuPassport" className="text-xs">Passport Number</Label>
+                    <Label htmlFor="stuPassport" className="text-xs font-medium text-[#BDB0A4]">Passport Number</Label>
                     <Input id="stuPassport" name="stuPassport" placeholder="P1234567" onChange={handleInputChange} />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="stuCounsellor" className="text-xs">Assigned Counsellor</Label>
+                    <Label htmlFor="stuCounsellor" className="text-xs font-medium text-[#BDB0A4]">Assigned Counsellor</Label>
                     <select
                       id="stuCounsellor"
                       name="stuCounsellor"
-                      className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"
+                      className="w-full rounded-xl border border-white/10 bg-[#1B1512] px-3.5 py-2 text-sm text-[#F8F5F1] outline-none transition-all focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
                       onChange={handleInputChange}
                     >
                       <option value="Rohan Varma">Rohan Varma (UK Lead)</option>
@@ -258,8 +258,8 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
                 </div>
               </div>
               <DialogFooter>
-                <Button type="button" variant="ghost" onClick={() => setActiveModal(null)}>Cancel</Button>
-                <Button type="submit" disabled={loading} className="bg-emerald-500 hover:bg-emerald-600 text-white">
+                <Button type="button" variant="ghost" onClick={() => setActiveModal(null)} className="text-[#897B70] hover:text-[#F8F5F1] hover:bg-white/[0.06] rounded-xl">Cancel</Button>
+                <Button type="submit" disabled={loading} className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl shadow-md shadow-emerald-500/20 border border-emerald-400/25">
                   {loading ? "Registering..." : "Create Student Profile"}
                 </Button>
               </DialogFooter>
@@ -272,18 +272,18 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
                 <DialogTitle className="flex items-center gap-2 text-lg text-blue-400">
                   <FileText className="h-5 w-5" /> Start University Application
                 </DialogTitle>
-                <DialogDescription>
+                <DialogDescription className="text-xs text-[#897B70]">
                   Link a student to a university and course in the admission pipeline.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-3.5 py-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="appStudent" className="text-xs">Select Student *</Label>
+                  <Label htmlFor="appStudent" className="text-xs font-medium text-[#BDB0A4]">Select Student *</Label>
                   <select
                     id="appStudent"
                     name="appStudent"
                     required
-                    className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"
+                    className="w-full rounded-xl border border-white/10 bg-[#1B1512] px-3.5 py-2 text-sm text-[#F8F5F1] outline-none transition-all focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
                     onChange={handleInputChange}
                   >
                     <option value="Zainab Al-Mansoor">Zainab Al-Mansoor (STU-2041)</option>
@@ -294,15 +294,15 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor="appUni" className="text-xs">University *</Label>
+                    <Label htmlFor="appUni" className="text-xs font-medium text-[#BDB0A4]">University *</Label>
                     <Input id="appUni" name="appUni" required placeholder="University of Manchester" onChange={handleInputChange} />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="appCountry" className="text-xs">Country</Label>
+                    <Label htmlFor="appCountry" className="text-xs font-medium text-[#BDB0A4]">Country</Label>
                     <select
                       id="appCountry"
                       name="appCountry"
-                      className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"
+                      className="w-full rounded-xl border border-white/10 bg-[#1B1512] px-3.5 py-2 text-sm text-[#F8F5F1] outline-none transition-all focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
                       onChange={handleInputChange}
                     >
                       <option value="UK">United Kingdom</option>
@@ -314,18 +314,18 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor="appCourse" className="text-xs">Program / Course *</Label>
+                    <Label htmlFor="appCourse" className="text-xs font-medium text-[#BDB0A4]">Program / Course *</Label>
                     <Input id="appCourse" name="appCourse" required placeholder="MSc Data Science" onChange={handleInputChange} />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="appIntake" className="text-xs">Intake</Label>
+                    <Label htmlFor="appIntake" className="text-xs font-medium text-[#BDB0A4]">Intake</Label>
                     <Input id="appIntake" name="appIntake" placeholder="Sept 2026" onChange={handleInputChange} />
                   </div>
                 </div>
               </div>
               <DialogFooter>
-                <Button type="button" variant="ghost" onClick={() => setActiveModal(null)}>Cancel</Button>
-                <Button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-700 text-white">
+                <Button type="button" variant="ghost" onClick={() => setActiveModal(null)} className="text-[#897B70] hover:text-[#F8F5F1] hover:bg-white/[0.06] rounded-xl">Cancel</Button>
+                <Button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md shadow-blue-600/20 border border-blue-500/25">
                   {loading ? "Adding..." : "Add to Pipeline"}
                 </Button>
               </DialogFooter>
@@ -338,22 +338,22 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
                 <DialogTitle className="flex items-center gap-2 text-lg text-purple-400">
                   <CheckSquare className="h-5 w-5" /> Create CRM Task or Follow-up
                 </DialogTitle>
-                <DialogDescription>
+                <DialogDescription className="text-xs text-[#897B70]">
                   Assign a reminder, call follow-up, or deadline to staff.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-3.5 py-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="taskTitle" className="text-xs">Task Title *</Label>
+                  <Label htmlFor="taskTitle" className="text-xs font-medium text-[#BDB0A4]">Task Title *</Label>
                   <Input id="taskTitle" name="taskTitle" required placeholder="Follow up with student regarding CAS letter" onChange={handleInputChange} />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor="taskCategory" className="text-xs">Task Type</Label>
+                    <Label htmlFor="taskCategory" className="text-xs font-medium text-[#BDB0A4]">Task Type</Label>
                     <select
                       id="taskCategory"
                       name="taskCategory"
-                      className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"
+                      className="w-full rounded-xl border border-white/10 bg-[#1B1512] px-3.5 py-2 text-sm text-[#F8F5F1] outline-none transition-all focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
                       onChange={handleInputChange}
                     >
                       <option value="Call follow-up">Call follow-up</option>
@@ -367,17 +367,17 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
                     </select>
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="taskDue" className="text-xs">Due Date & Time *</Label>
+                    <Label htmlFor="taskDue" className="text-xs font-medium text-[#BDB0A4]">Due Date & Time *</Label>
                     <Input id="taskDue" name="taskDue" type="datetime-local" required onChange={handleInputChange} />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor="taskStaff" className="text-xs">Assigned Staff</Label>
+                    <Label htmlFor="taskStaff" className="text-xs font-medium text-[#BDB0A4]">Assigned Staff</Label>
                     <select
                       id="taskStaff"
                       name="taskStaff"
-                      className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"
+                      className="w-full rounded-xl border border-white/10 bg-[#1B1512] px-3.5 py-2 text-sm text-[#F8F5F1] outline-none transition-all focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
                       onChange={handleInputChange}
                     >
                       <option value="Rohan Varma">Rohan Varma</option>
@@ -386,11 +386,11 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
                     </select>
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="taskPriority" className="text-xs">Priority</Label>
+                    <Label htmlFor="taskPriority" className="text-xs font-medium text-[#BDB0A4]">Priority</Label>
                     <select
                       id="taskPriority"
                       name="taskPriority"
-                      className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"
+                      className="w-full rounded-xl border border-white/10 bg-[#1B1512] px-3.5 py-2 text-sm text-[#F8F5F1] outline-none transition-all focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
                       onChange={handleInputChange}
                     >
                       <option value="Urgent">Urgent</option>
@@ -402,8 +402,8 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
                 </div>
               </div>
               <DialogFooter>
-                <Button type="button" variant="ghost" onClick={() => setActiveModal(null)}>Cancel</Button>
-                <Button type="submit" disabled={loading} className="bg-purple-600 hover:bg-purple-700 text-white">
+                <Button type="button" variant="ghost" onClick={() => setActiveModal(null)} className="text-[#897B70] hover:text-[#F8F5F1] hover:bg-white/[0.06] rounded-xl">Cancel</Button>
+                <Button type="submit" disabled={loading} className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-md shadow-purple-600/20 border border-purple-500/25">
                   {loading ? "Scheduling..." : "Create Task"}
                 </Button>
               </DialogFooter>
@@ -416,32 +416,32 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
                 <DialogTitle className="flex items-center gap-2 text-lg text-amber-400">
                   <Calendar className="h-5 w-5" /> Schedule Counselling Appointment
                 </DialogTitle>
-                <DialogDescription>
+                <DialogDescription className="text-xs text-[#897B70]">
                   Book an in-person, Zoom, or phone counseling session.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-3.5 py-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="aptStudent" className="text-xs">Student / Lead Name *</Label>
+                  <Label htmlFor="aptStudent" className="text-xs font-medium text-[#BDB0A4]">Student / Lead Name *</Label>
                   <Input id="aptStudent" name="aptStudent" required placeholder="Aarav Mehta" onChange={handleInputChange} />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor="aptDate" className="text-xs">Date *</Label>
+                    <Label htmlFor="aptDate" className="text-xs font-medium text-[#BDB0A4]">Date *</Label>
                     <Input id="aptDate" name="aptDate" type="date" required onChange={handleInputChange} />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="aptTime" className="text-xs">Time *</Label>
+                    <Label htmlFor="aptTime" className="text-xs font-medium text-[#BDB0A4]">Time *</Label>
                     <Input id="aptTime" name="aptTime" type="time" required onChange={handleInputChange} />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor="aptType" className="text-xs">Session Type</Label>
+                    <Label htmlFor="aptType" className="text-xs font-medium text-[#BDB0A4]">Session Type</Label>
                     <select
                       id="aptType"
                       name="aptType"
-                      className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"
+                      className="w-full rounded-xl border border-white/10 bg-[#1B1512] px-3.5 py-2 text-sm text-[#F8F5F1] outline-none transition-all focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
                       onChange={handleInputChange}
                     >
                       <option value="Initial counselling">Initial counselling</option>
@@ -453,11 +453,11 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
                     </select>
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="aptMode" className="text-xs">Mode</Label>
+                    <Label htmlFor="aptMode" className="text-xs font-medium text-[#BDB0A4]">Mode</Label>
                     <select
                       id="aptMode"
                       name="aptMode"
-                      className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"
+                      className="w-full rounded-xl border border-white/10 bg-[#1B1512] px-3.5 py-2 text-sm text-[#F8F5F1] outline-none transition-all focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
                       onChange={handleInputChange}
                     >
                       <option value="Office In-Person">Office In-Person</option>
@@ -468,8 +468,8 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
                 </div>
               </div>
               <DialogFooter>
-                <Button type="button" variant="ghost" onClick={() => setActiveModal(null)}>Cancel</Button>
-                <Button type="submit" disabled={loading} className="bg-amber-500 hover:bg-amber-600 text-white">
+                <Button type="button" variant="ghost" onClick={() => setActiveModal(null)} className="text-[#897B70] hover:text-[#F8F5F1] hover:bg-white/[0.06] rounded-xl">Cancel</Button>
+                <Button type="submit" disabled={loading} className="bg-amber-500 hover:bg-amber-600 text-white rounded-xl shadow-md shadow-amber-500/20 border border-amber-400/25">
                   {loading ? "Booking..." : "Schedule Appointment"}
                 </Button>
               </DialogFooter>
@@ -482,18 +482,18 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
                 <DialogTitle className="flex items-center gap-2 text-lg text-cyan-400">
                   <Upload className="h-5 w-5" /> Upload Student Document
                 </DialogTitle>
-                <DialogDescription>
+                <DialogDescription className="text-xs text-[#897B70]">
                   Upload and tag an academic, passport, or visa record.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-3.5 py-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="docStudent" className="text-xs">Student *</Label>
+                  <Label htmlFor="docStudent" className="text-xs font-medium text-[#BDB0A4]">Student *</Label>
                   <select
                     id="docStudent"
                     name="docStudent"
                     required
-                    className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"
+                    className="w-full rounded-xl border border-white/10 bg-[#1B1512] px-3.5 py-2 text-sm text-[#F8F5F1] outline-none transition-all focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
                     onChange={handleInputChange}
                   >
                     <option value="Zainab Al-Mansoor">Zainab Al-Mansoor (STU-2041)</option>
@@ -502,12 +502,12 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
                   </select>
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="docCategory" className="text-xs">Document Category *</Label>
+                  <Label htmlFor="docCategory" className="text-xs font-medium text-[#BDB0A4]">Document Category *</Label>
                   <select
                     id="docCategory"
                     name="docCategory"
                     required
-                    className="w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"
+                    className="w-full rounded-xl border border-white/10 bg-[#1B1512] px-3.5 py-2 text-sm text-[#F8F5F1] outline-none transition-all focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
                     onChange={handleInputChange}
                   >
                     <option value="Passport">Passport</option>
@@ -524,13 +524,13 @@ export function CRMQuickActions({ variant = "default", className }: { variant?: 
                   </select>
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="docFile" className="text-xs">Choose File *</Label>
-                  <Input id="docFile" name="docFile" type="file" required className="cursor-pointer file:text-primary file:font-medium" />
+                  <Label htmlFor="docFile" className="text-xs font-medium text-[#BDB0A4]">Choose File *</Label>
+                  <Input id="docFile" name="docFile" type="file" required className="cursor-pointer file:text-orange-400 file:font-medium" />
                 </div>
               </div>
               <DialogFooter>
-                <Button type="button" variant="ghost" onClick={() => setActiveModal(null)}>Cancel</Button>
-                <Button type="submit" disabled={loading} className="bg-cyan-600 hover:bg-cyan-700 text-white">
+                <Button type="button" variant="ghost" onClick={() => setActiveModal(null)} className="text-[#897B70] hover:text-[#F8F5F1] hover:bg-white/[0.06] rounded-xl">Cancel</Button>
+                <Button type="submit" disabled={loading} className="bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl shadow-md shadow-cyan-600/20 border border-cyan-500/25">
                   {loading ? "Uploading..." : "Upload File"}
                 </Button>
               </DialogFooter>

@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
-// Store subscriptions in-memory (and optionally persist in Supabase)
-export const subscriptionsStore = new Map<string, any>();
+import { subscriptionsStore } from "@/lib/notifications/subscriptions-store";
 
 export async function POST(req: NextRequest) {
   try {

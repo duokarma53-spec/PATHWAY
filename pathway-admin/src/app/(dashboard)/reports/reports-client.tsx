@@ -12,10 +12,11 @@ import {
   Users,
   GraduationCap,
   ShieldCheck,
-  Award
+  Award,
+  Sparkles,
+  ArrowUpRight
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import {
   BarChart,
   Bar,
@@ -24,8 +25,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   CartesianGrid,
-  LineChart,
-  Line
+  Legend
 } from "recharts"
 import { toast } from "sonner"
 import { createClient } from "@/lib/supabase/client"
@@ -130,7 +130,6 @@ export function ReportsClientView() {
 
     const counsellorStats: Record<string, { leads: number; converted: number; revenue: number }> = {}
     leads.forEach(lead => {
-      // Extract from meta notes or default to Admin
       let assigned = "Admin"
       try {
         if (lead.notes && typeof lead.notes === 'string' && lead.notes.startsWith('{')) {
@@ -183,14 +182,14 @@ export function ReportsClientView() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-              Executive Analytics & Performance Reports
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-[#F8F5F1]">
+              Executive Analytics &amp; Reports
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-bold border border-primary/30">
-              Audit Ready
+            <span className="px-2.5 py-0.5 rounded-full bg-orange-500/15 text-[#FF8A35] text-xs font-bold border border-orange-500/30 flex items-center gap-1">
+              <Sparkles className="h-3 w-3" /> Real-time Sync
             </span>
           </div>
-          <p className="text-xs md:text-sm text-muted-foreground mt-1">
+          <p className="text-xs md:text-sm text-[#BDB0A4] mt-1">
             Analyze counselor conversions, admission success rates, monthly consultancy billings, and visa outcomes.
           </p>
         </div>
@@ -200,28 +199,28 @@ export function ReportsClientView() {
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value)}
-            className="h-9 rounded-xl border border-border/60 bg-muted/40 px-3 text-xs text-foreground font-semibold outline-none"
+            className="h-9 rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-semibold outline-none cursor-pointer"
           >
-            <option value="Today">Today</option>
-            <option value="This Week">This Week</option>
-            <option value="This Month">This Month</option>
-            <option value="This Quarter">This Quarter</option>
-            <option value="This Year">This Year</option>
+            <option value="Today" className="bg-[#1D1510]">Today</option>
+            <option value="This Week" className="bg-[#1D1510]">This Week</option>
+            <option value="This Month" className="bg-[#1D1510]">This Month</option>
+            <option value="This Quarter" className="bg-[#1D1510]">This Quarter</option>
+            <option value="This Year" className="bg-[#1D1510]">This Year</option>
           </select>
 
           <Button
             size="sm"
             variant="outline"
             onClick={() => handleExport("csv")}
-            className="text-xs rounded-xl border-border/70"
+            className="text-xs rounded-xl border-white/[0.08] bg-[#15100D] hover:bg-[#1D1510] text-[#F8F5F1] h-9 px-3"
           >
-            <Download className="h-3.5 w-3.5 mr-1" /> CSV
+            <Download className="h-3.5 w-3.5 mr-1 text-orange-400" /> CSV
           </Button>
 
           <Button
             size="sm"
             onClick={() => handleExport("pdf")}
-            className="text-xs rounded-xl bg-primary text-primary-foreground font-semibold"
+            className="text-xs rounded-xl bg-gradient-to-r from-[#FF6B00] to-[#FF8A35] text-white font-semibold shadow-md shadow-orange-950/40 h-9 px-3.5"
           >
             Export PDF
           </Button>
@@ -230,102 +229,115 @@ export function ReportsClientView() {
 
       {/* Top 4 Performance Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
-        <Card className="border-border/60 bg-card/75 p-4">
-          <p className="text-xs text-muted-foreground uppercase font-semibold">Consultancy Conversion Rate</p>
+        <div className="rounded-2xl border border-white/[0.08] bg-[#15100D]/85 p-4 backdrop-blur-md shadow-xl space-y-1">
+          <p className="text-[11px] text-[#897B70] uppercase font-semibold">Consultancy Conversion</p>
           <p className="text-2xl font-bold text-emerald-400 mt-1">{metrics.conversionRate.toFixed(1)}%</p>
-          <p className="text-[11px] text-muted-foreground mt-1">Based on all captured leads</p>
-        </Card>
-        <Card className="border-border/60 bg-card/75 p-4">
-          <p className="text-xs text-muted-foreground uppercase font-semibold">University Offer Ratio</p>
-          <p className="text-2xl font-bold text-primary mt-1">{metrics.offerRatio.toFixed(1)}%</p>
-          <p className="text-[11px] text-muted-foreground mt-1">From total submissions</p>
-        </Card>
-        <Card className="border-border/60 bg-card/75 p-4">
-          <p className="text-xs text-muted-foreground uppercase font-semibold">Visa Success Rate</p>
-          <p className="text-2xl font-bold text-violet-400 mt-1">{metrics.visaSuccessRate.toFixed(1)}%</p>
-          <p className="text-[11px] text-muted-foreground mt-1">From completed visa processing</p>
-        </Card>
-        <Card className="border-border/60 bg-card/75 p-4">
-          <p className="text-xs text-muted-foreground uppercase font-semibold">Total Net Billed</p>
-          <p className="text-2xl font-bold text-foreground mt-1">${metrics.totalRevenue.toLocaleString()}</p>
-          <p className="text-[11px] text-emerald-400 mt-1">Real-time synced</p>
-        </Card>
+          <p className="text-[11px] text-[#897B70]">Based on all captured leads</p>
+        </div>
+
+        <div className="rounded-2xl border border-orange-500/25 bg-orange-500/[0.07] p-4 backdrop-blur-md shadow-xl space-y-1">
+          <p className="text-[11px] text-[#FF8A35] uppercase font-semibold">University Offer Ratio</p>
+          <p className="text-2xl font-bold text-[#FF8A35] mt-1">{metrics.offerRatio.toFixed(1)}%</p>
+          <p className="text-[11px] text-orange-400/80">From total submissions</p>
+        </div>
+
+        <div className="rounded-2xl border border-white/[0.08] bg-[#15100D]/85 p-4 backdrop-blur-md shadow-xl space-y-1">
+          <p className="text-[11px] text-[#897B70] uppercase font-semibold">Visa Success Rate</p>
+          <p className="text-2xl font-bold text-sky-400 mt-1">{metrics.visaSuccessRate.toFixed(1)}%</p>
+          <p className="text-[11px] text-[#897B70]">From completed visa filing</p>
+        </div>
+
+        <div className="rounded-2xl border border-white/[0.08] bg-[#15100D]/85 p-4 backdrop-blur-md shadow-xl space-y-1">
+          <p className="text-[11px] text-[#897B70] uppercase font-semibold">Total Net Billed</p>
+          <p className="text-2xl font-bold text-[#F8F5F1] mt-1">${metrics.totalRevenue.toLocaleString()}</p>
+          <p className="text-[11px] text-emerald-400">Real-time synced</p>
+        </div>
       </div>
 
       {/* Revenue Trajectory Chart */}
-      <Card className="border-border/60 bg-card/75 backdrop-blur-xl shadow-md">
-        <CardHeader className="pb-2 flex flex-row items-center justify-between">
+      <div className="rounded-2xl border border-white/[0.08] bg-[#15100D]/85 p-5 backdrop-blur-md shadow-xl space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <CardTitle className="text-base font-bold text-foreground">Consultancy Revenue vs Target ($)</CardTitle>
-            <CardDescription className="text-xs">Cumulative advisory retainers, application fees, and service charges.</CardDescription>
+            <h3 className="text-base font-bold text-[#F8F5F1]">Consultancy Revenue vs Target ($)</h3>
+            <p className="text-xs text-[#897B70]">Cumulative advisory retainers, application fees, and service charges.</p>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[250px] w-full">
-            {mounted ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={metrics.monthlyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.06)" />
-                  <XAxis dataKey="month" stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#131B2E",
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      borderRadius: "8px",
-                      color: "#F8FAFC",
-                      fontSize: "12px"
-                    }}
-                  />
-                  <Bar dataKey="revenue" name="Achieved Revenue" fill="#10B981" radius={[4, 4, 0, 0]} barSize={26} />
-                  <Bar dataKey="target" name="Monthly Target" fill="#E5C05D" radius={[4, 4, 0, 0]} barSize={26} />
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="h-full w-full rounded-xl bg-linen/20 animate-pulse" />
-            )}
+          <div className="flex items-center gap-4 text-xs font-medium">
+            <span className="flex items-center gap-1.5 text-[#F8F5F1]">
+              <span className="h-3 w-3 rounded-sm bg-[#FF6B00]" /> Achieved Revenue
+            </span>
+            <span className="flex items-center gap-1.5 text-[#897B70]">
+              <span className="h-3 w-3 rounded-sm bg-[#BDB0A4]/30" /> Monthly Target
+            </span>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        <div className="h-[260px] w-full pt-2">
+          {mounted ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={metrics.monthlyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.06)" />
+                <XAxis dataKey="month" stroke="#897B70" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="#897B70" fontSize={11} tickLine={false} axisLine={false} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#15100D",
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    borderRadius: "12px",
+                    color: "#F8F5F1",
+                    fontSize: "12px",
+                    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.5)"
+                  }}
+                />
+                <Bar dataKey="revenue" name="Achieved Revenue" fill="#FF6B00" radius={[4, 4, 0, 0]} barSize={26} />
+                <Bar dataKey="target" name="Monthly Target" fill="rgba(189, 176, 164, 0.25)" radius={[4, 4, 0, 0]} barSize={26} />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-full w-full rounded-xl bg-white/[0.02] animate-pulse" />
+          )}
+        </div>
+      </div>
 
       {/* Counsellor Workload & Performance Table */}
-      <Card className="border-border/60 bg-card/80 backdrop-blur-xl shadow-lg overflow-hidden">
-        <CardHeader className="pb-3 border-b border-border/40">
-          <CardTitle className="text-base font-bold text-foreground flex items-center gap-2">
-            <Award className="h-4 w-4 text-primary" /> Counsellor Scorecard & Attribution
-          </CardTitle>
-          <CardDescription className="text-xs">
-            Individual conversion productivity, student allocations, and generated revenue.
-          </CardDescription>
-        </CardHeader>
+      <div className="rounded-2xl border border-white/[0.08] bg-[#15100D]/85 backdrop-blur-md shadow-xl overflow-hidden">
+        <div className="p-5 border-b border-white/[0.08] flex items-center justify-between">
+          <div>
+            <h3 className="text-base font-bold text-[#F8F5F1] flex items-center gap-2">
+              <Award className="h-4 w-4 text-[#FF6B00]" /> Counsellor Scorecard &amp; Attribution
+            </h3>
+            <p className="text-xs text-[#897B70] mt-0.5">
+              Individual conversion productivity, student allocations, and generated revenue.
+            </p>
+          </div>
+        </div>
 
         <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full text-left border-collapse text-xs md:text-sm">
             <thead>
-              <tr className="border-b border-border/50 bg-muted/30 text-muted-foreground uppercase text-[11px] tracking-wider font-semibold">
-                <th className="py-3 px-4">Counsellor Name</th>
-                <th className="py-3 px-3">Assigned Leads</th>
-                <th className="py-3 px-3">Converted Students</th>
-                <th className="py-3 px-3">Conversion Rate</th>
-                <th className="py-3 px-4 text-right">Attributed Revenue</th>
+              <tr className="border-b border-white/[0.08] bg-[#18120D] text-[#897B70] uppercase text-[11px] tracking-wider font-semibold">
+                <th className="py-3.5 px-4">Counsellor Name</th>
+                <th className="py-3.5 px-3">Assigned Leads</th>
+                <th className="py-3.5 px-3">Converted Students</th>
+                <th className="py-3.5 px-3">Conversion Rate</th>
+                <th className="py-3.5 px-4 text-right">Attributed Revenue</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border/40">
+            <tbody className="divide-y divide-white/[0.06]">
               {metrics.counsellorPerf.map((c) => (
-                <tr key={c.name} className="hover:bg-muted/30 transition-colors">
-                  <td className="py-3.5 px-4 font-semibold text-foreground">
+                <tr key={c.name} className="hover:bg-white/[0.02] transition-colors">
+                  <td className="py-3.5 px-4 font-bold text-[#F8F5F1]">
                     {c.name}
                   </td>
-                  <td className="py-3.5 px-3 text-muted-foreground">
+                  <td className="py-3.5 px-3 text-[#BDB0A4]">
                     {c.leads} inquiries
                   </td>
                   <td className="py-3.5 px-3 font-semibold text-emerald-400">
                     {c.converted} enrolled
                   </td>
-                  <td className="py-3.5 px-3 font-bold text-foreground">
+                  <td className="py-3.5 px-3 font-bold text-[#F8F5F1]">
                     {c.conversionRate}
                   </td>
-                  <td className="py-3.5 px-4 text-right font-bold text-primary">
+                  <td className="py-3.5 px-4 text-right font-bold text-orange-400 font-mono">
                     {c.revenue}
                   </td>
                 </tr>
@@ -333,7 +345,7 @@ export function ReportsClientView() {
             </tbody>
           </table>
         </div>
-      </Card>
+      </div>
     </div>
   )
 }

@@ -25,15 +25,18 @@ export function BrandLogo({ size = "sm", className, withGlow = true }: BrandLogo
   return (
     <div
       className={cn(
-        "relative rounded-full flex items-center justify-center shrink-0 select-none bg-white p-0.5 border border-[#E0D8CE] overflow-hidden transition-all duration-300",
+        "relative rounded-full flex items-center justify-center shrink-0 select-none bg-white p-0.5 border border-white/20 overflow-hidden transition-all duration-300",
         sizeMap[size],
-        withGlow && "shadow-[0_2px_12px_rgba(80,60,40,0.10)]",
+        withGlow && "shadow-[0_0_12px_rgba(255,107,0,0.25)] border-primary/40",
         className
       )}
     >
       <img
         src="/images/logo.png"
         alt="Pathway Education Consultancy"
+        width={40}
+        height={40}
+        style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", display: "block" }}
         className="w-full h-full object-contain rounded-full"
       />
     </div>

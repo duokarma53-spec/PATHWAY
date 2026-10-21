@@ -62,12 +62,28 @@ export async function login(formData: FormData) {
 
     // Success - reset failed counter
     cookieStore.delete('sec_login_tracker')
+    if (isDemoUser) {
+      cookieStore.set('pathway_demo_auth', 'true', {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 86400 * 7,
+        sameSite: 'lax',
+        path: '/'
+      });
+    }
   } catch (err) {
     if (!isDemoUser) {
       return redirect('/login?message=Unable%20to%20connect%20to%20auth%20service')
     }
-    // If demo user succeeded despite error, clear tracker
+    // If demo user succeeded despite error, clear tracker and set demo cookie
     cookieStore.delete('sec_login_tracker')
+    cookieStore.set('pathway_demo_auth', 'true', {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 86400 * 7,
+      sameSite: 'lax',
+      path: '/'
+    });
   }
 
   revalidatePath('/', 'layout')

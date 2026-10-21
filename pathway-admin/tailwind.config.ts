@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  // No dark mode toggle — light-only theme
+  // Dark mode class configuration
   darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -11,9 +11,9 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans:    ["Inter", "var(--font-geist-sans)", "sans-serif"],
-        mono:    ["var(--font-geist-mono)", "monospace"],
-        display: ["'Playfair Display'", "Georgia", "serif"],
+        sans:    ["Inter", "var(--font-geist-sans)", "system-ui", "-apple-system", "sans-serif"],
+        mono:    ["var(--font-geist-mono)", "ui-monospace", "monospace"],
+        display: ["Inter", "var(--font-geist-sans)", "system-ui", "sans-serif"],
       },
       colors: {
         background: "hsl(var(--background))",
@@ -60,11 +60,48 @@ const config: Config = {
           "5": "hsl(var(--chart-5))",
         },
 
-        /* Semantic palette aliases */
-        amber:    { DEFAULT: "hsl(27 55% 52%)", light: "hsl(27 55% 52% / 0.12)", dark: "hsl(27 55% 38%)" },
-        sage:     { DEFAULT: "hsl(74 22% 52%)",  light: "hsl(74 22% 52% / 0.12)",  dark: "hsl(74 28% 32%)" },
-        linen:    { DEFAULT: "hsl(36 28% 93%)",  dark:  "hsl(36 20% 85%)" },
-        espresso: { DEFAULT: "hsl(24 18% 18%)",  light: "hsl(24 10% 48%)" },
+        /* Client Brand Tokens — Obsidian, Charcoal & Electric Orange */
+        brand: {
+          black:      "#0D0A08",
+          dark:       "#15100D",
+          card:       "#1D1510",
+          elevated:   "#271A12",
+          orange: {
+            DEFAULT:  "#FF6B00",
+            secondary:"#FF8A35",
+            hover:    "#E05E00",
+            glow:     "rgba(255, 107, 0, 0.25)",
+          },
+          text: {
+            primary:  "#F8F5F1",
+            secondary:"#BDB0A4",
+            muted:    "#897B70",
+          },
+          border: {
+            subtle:   "rgba(255, 255, 255, 0.08)",
+            orange:   "rgba(255, 107, 0, 0.25)",
+          },
+        },
+
+        /* Semantic palette aliases mapped to dark theme for backward compatibility */
+        amber: {
+          DEFAULT: "#FF6B00",
+          light:   "rgba(255, 107, 0, 0.14)",
+          dark:    "#E05E00",
+        },
+        sage: {
+          DEFAULT: "#1DB874",
+          light:   "rgba(29, 184, 116, 0.14)",
+          dark:    "#158755",
+        },
+        linen: {
+          DEFAULT: "#1D1510",
+          dark:    "#15100D",
+        },
+        espresso: {
+          DEFAULT: "#0D0A08",
+          light:   "#BDB0A4",
+        },
       },
       borderRadius: {
         lg:  "var(--radius)",
@@ -74,16 +111,22 @@ const config: Config = {
         "2xl": "calc(var(--radius) + 8px)",
       },
       boxShadow: {
-        glass:      "var(--glass-shadow)",
-        "glass-lg": "0 16px 48px rgba(80, 60, 40, 0.10), inset 0 1px 0 rgba(255,255,255,0.85)",
-        warm:       "0 4px 20px rgba(192, 120, 56, 0.18)",
-        "warm-lg":  "0 8px 32px rgba(192, 120, 56, 0.28)",
+        glass:         "0 8px 32px -4px rgba(0, 0, 0, 0.65)",
+        "glass-lg":    "0 16px 48px -6px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.08)",
+        "orange-glow": "0 0 24px -2px rgba(255, 107, 0, 0.35)",
+        "orange-sm":   "0 0 12px -2px rgba(255, 107, 0, 0.22)",
+        warm:          "0 4px 20px rgba(0, 0, 0, 0.5)",
+        "warm-lg":     "0 8px 32px rgba(0, 0, 0, 0.7)",
       },
       backgroundImage: {
-        "grain":         "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E\")",
-        "liquid-amber":  "linear-gradient(135deg, hsl(27 55% 52%), hsl(27 55% 44%))",
-        "liquid-sage":   "linear-gradient(135deg, hsl(74 22% 52%), hsl(74 22% 42%))",
-        "warm-fade":     "linear-gradient(to bottom, hsl(38 30% 96%), hsl(36 28% 93%))",
+        "grain":                 "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E\")",
+        "liquid-amber":          "linear-gradient(135deg, #FF6B00 0%, #E05E00 100%)",
+        "liquid-sage":           "linear-gradient(135deg, #1DB874 0%, #158755 100%)",
+        "orange-gradient":       "linear-gradient(135deg, #FF6B00 0%, #FF8A35 100%)",
+        "orange-gradient-hover": "linear-gradient(135deg, #FF7A1A 0%, #FF994A 100%)",
+        "dark-card":             "linear-gradient(145deg, #1D1510 0%, #15100D 100%)",
+        "dark-elevated":         "linear-gradient(145deg, #271A12 0%, #1D1510 100%)",
+        "warm-fade":             "linear-gradient(to bottom, #15100D, #0D0A08)",
       },
       animation: {
         "liquid-float": "liquidFloat 20s ease-in-out infinite alternate",

@@ -1,14 +1,24 @@
 "use client";
 
+// Declaration merging for standard W3C Web Notification specification properties
+// supported by modern Service Workers but omitted in standard lib.dom.d.ts
+declare global {
+  interface NotificationOptions {
+    renotify?: boolean;
+    vibrate?: number | number[];
+  }
+}
+
 export const VAPID_PUBLIC_KEY =
   process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ||
   "BHB9KrgJlCV5QwlIK6ZSEu3FEaF3XiPXBr1vCYIJbrL37HheTWPLIxSBFZGJB-IR7RKEtUAp_qVNpefmdN0k9M0";
 
-function urlBase64ToUint8Array(base64String: string): Uint8Array {
+function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
   const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
+  const buffer = new ArrayBuffer(rawData.length);
+  const outputArray = new Uint8Array(buffer);
   for (let i = 0; i < rawData.length; ++i) {
     outputArray[i] = rawData.charCodeAt(i);
   }
@@ -133,16 +143,37 @@ export async function showLocalNativeNotification({
  * Trigger a simulated sample inquiry notification for testing on mobile
  */
 export async function sendTestPhoneNotification(): Promise<void> {
-  const perm = getPushPermissionState();
-  if (perm !== "granted") {
-    const granted = await requestPushPermission();
-    if (!granted) return;
-  }
-
   await showLocalNativeNotification({
-    title: "🔔 New Inquiry: Hatim Suttar",
-    body: "Interested in United Kingdom (MSc Data Science). Tap to view inquiry details.",
-    tag: `test-inquiry-${Date.now()}`,
+    title: "⚡ New Website Inquiry Received!",
+    body: "Harpreet Kaur (+91 98140...) inquired about UK Master's in Artificial Intelligence.",
     url: "/inquiries",
+    tag: `test-inquiry-${Date.now()}`,
   });
+}
+
+/**
+ * Play subtle audio chime for incoming leads
+ */
+export function playNotificationSound(): void {
+  if (typeof window === "undefined") return;
+  try {
+    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15); // A5
+
+    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.35);
+  } catch (e) {
+    // AudioContext might be blocked by autoplay policies until user interacts
+  }
 }

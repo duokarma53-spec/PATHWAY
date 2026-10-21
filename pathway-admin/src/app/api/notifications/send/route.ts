@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import webPush from "web-push";
-import { subscriptionsStore } from "../subscribe/route";
+import { subscriptionsStore } from "@/lib/notifications/subscriptions-store";
 
 const VAPID_PUBLIC_KEY =
   process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ||

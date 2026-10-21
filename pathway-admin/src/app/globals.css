@@ -1,82 +1,84 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ─────────────────────────────────────────────────────────────
-   PATHWAY ADMIN — LIQUID GLASS LIGHT THEME
-   Palette: Alabaster Cream / Warm Beige / Warm Espresso
+   PATHWAY ADMIN — PREMIUM DARK OBSIDIAN & ORANGE THEME
+   Visual Language: Warm Black-Brown Surfaces / Electric Orange / Crisp White
+   Reference: Sophisticated Dark Financial & Educational CRM
 ───────────────────────────────────────────────────────────── */
 
 @layer base {
-  :root {
-    /* ── Backgrounds ─────────────────────── */
-    --background:      38 30% 96%;   /* #F7F3EE  Alabaster Cream        */
-    --surface:         36 28% 93%;   /* #F0EAE0  Warm Linen             */
-    --surface-raised:  35 25% 98%;   /* #FDFAF6  Near-White Card        */
+  :root,
+  .dark {
+    /* ── Backgrounds ────────────────────────────────────────── */
+    --background:          24 24% 4.1%;   /* #0D0A08  Main Canvas Background     */
+    --surface:             23 24% 6.7%;   /* #15100D  Secondary / Panels         */
+    --surface-raised:      23 29% 8.8%;   /* #1D1510  Card Surfaces              */
+    --surface-elevated:    23 37% 11.2%;  /* #271A12  Elevated / Popovers        */
 
-    /* ── Text ────────────────────────────── */
-    --foreground:      24 18% 18%;   /* #332B22  Warm Espresso          */
-    --foreground-muted:24 10% 48%;   /* #7D7168  Muted Taupe            */
-    --foreground-faint:24  8% 72%;   /* #B8B0A8  Very faint             */
+    /* ── Typography & Text ──────────────────────────────────── */
+    --foreground:          34 33% 96%;    /* #F8F5F1  Primary Crisp White        */
+    --foreground-muted:    29 16% 69%;    /* #BDB0A4  Secondary Warm Gray        */
+    --foreground-faint:    26 10% 49%;    /* #897B70  Muted / Placeholder Text   */
 
-    /* ── Cards / Popovers ────────────────── */
-    --card:            35 25% 98%;   /* same as surface-raised          */
-    --card-foreground: 24 18% 18%;
+    /* ── Cards & Popovers ───────────────────────────────────── */
+    --card:                23 29% 8.8%;   /* #1D1510                             */
+    --card-foreground:     34 33% 96%;    /* #F8F5F1                             */
 
-    --popover:         35 25% 98%;
-    --popover-foreground: 24 18% 18%;
+    --popover:             23 37% 11.2%;  /* #271A12                             */
+    --popover-foreground:  34 33% 96%;    /* #F8F5F1                             */
 
-    /* ── Primary: Terracotta Amber ───────── */
-    --primary:         27 55% 52%;   /* #C07838  Warm Amber             */
-    --primary-foreground: 35 25% 98%;
+    /* ── Primary: Electric Brand Orange ─────────────────────── */
+    --primary:             25 100% 50%;   /* #FF6B00  Primary Brand Accent       */
+    --primary-foreground:  0 0% 100%;     /* #FFFFFF                             */
 
-    /* ── Secondary ───────────────────────── */
-    --secondary:       36 22% 90%;   /* #E5DCCF  Warm Stone             */
-    --secondary-foreground: 24 18% 18%;
+    /* ── Secondary: Dark Obsidian Button / Surface ──────────── */
+    --secondary:           23 29% 12%;    /* #231913                             */
+    --secondary-foreground:34 33% 96%;    /* #F8F5F1                             */
 
-    /* ── Muted ───────────────────────────── */
-    --muted:           36 20% 91%;   /* #E8E2D9  Slightly darker linen  */
-    --muted-foreground:24 10% 48%;
+    /* ── Muted Surfaces ─────────────────────────────────────── */
+    --muted:               23 24% 10%;    /* #1B1410                             */
+    --muted-foreground:    26 10% 49%;    /* #897B70                             */
 
-    /* ── Accent: Sage Olive ──────────────── */
-    --accent:          74 22% 62%;   /* #97A87A  Sage                   */
-    --accent-foreground: 24 18% 18%;
+    /* ── Accent: Warm Secondary Orange ──────────────────────── */
+    --accent:              25 100% 60%;   /* #FF8A35  Secondary Orange           */
+    --accent-foreground:   0 0% 100%;
 
-    /* ── Destructive ─────────────────────── */
-    --destructive:     0 62% 52%;    /* Soft Crimson                    */
-    --destructive-foreground: 35 25% 98%;
+    /* ── Destructive: Crisp Alert Red ───────────────────────── */
+    --destructive:         0 72% 51%;     /* #E53935                             */
+    --destructive-foreground: 0 0% 100%;
 
-    /* ── Borders / Inputs ────────────────── */
-    --border:          35 20% 85%;   /* #D9D1C6  Warm Light Border      */
-    --input:           35 20% 88%;
-    --ring:            27 55% 52%;   /* Matches primary                 */
+    /* ── Borders, Inputs & Focus Rings ──────────────────────── */
+    --border:              24 16% 16%;    /* #28201A  Subtle Warm Hairline       */
+    --input:               23 25% 14%;    /* #241B15  Dark Input Surface         */
+    --ring:                25 100% 50%;   /* #FF6B00  Electric Orange Ring       */
 
-    /* ── Radius ──────────────────────────── */
-    --radius:          1rem;
+    /* ── Radius ─────────────────────────────────────────────── */
+    --radius:              1rem;
 
-    /* ── Charts ──────────────────────────── */
-    --chart-1: 27 55% 52%;   /* amber       */
-    --chart-2: 74 22% 52%;   /* sage        */
-    --chart-3: 200 45% 55%;  /* dusty blue  */
-    --chart-4: 280 30% 58%;  /* mauve       */
-    --chart-5: 340 40% 58%;  /* dusty rose  */
+    /* ── Data Visualization / Charts ────────────────────────── */
+    --chart-1:             25 100% 50%;   /* #FF6B00  Area Primary Curve         */
+    --chart-2:             156 72% 42%;   /* #1DB874  Growth / Converted Green   */
+    --chart-3:             25 100% 65%;   /* #FFA366  Light Amber Orange         */
+    --chart-4:             210 90% 62%;   /* #47A3F3  Subtle Blue / Applications */
+    --chart-5:             280 65% 62%;   /* #B258F5  Subtle Violet / Visa       */
 
-    /* ── Glass Layer Tokens ──────────────── */
-    --glass-bg:        rgba(253, 250, 246, 0.72);
-    --glass-border:    rgba(208, 196, 180, 0.55);
-    --glass-shadow:    0 8px 32px rgba(80, 60, 40, 0.08);
-    --glass-blur:      18px;
+    /* ── Glass Layer Tokens ─────────────────────────────────── */
+    --glass-bg:            rgba(29, 21, 16, 0.78);
+    --glass-border:        rgba(255, 255, 255, 0.08);
+    --glass-border-orange: rgba(255, 107, 0, 0.25);
+    --glass-shadow:        0 8px 32px -4px rgba(0, 0, 0, 0.65);
+    --glass-blur:          16px;
 
-    /* ── Ambient Orb Colors ──────────────── */
-    --orb-1:  rgba(192, 120, 56, 0.12);   /* amber */
-    --orb-2:  rgba(151, 168, 122, 0.10);  /* sage  */
-    --orb-3:  rgba(220, 200, 170, 0.15);  /* linen */
+    /* ── Ambient Glows (Subtle, Restrained Depth) ───────────── */
+    --orb-1:               rgba(255, 107, 0, 0.05);  /* soft amber-orange       */
+    --orb-2:               rgba(195, 75, 15, 0.03);  /* warm terracotta         */
+    --orb-3:               rgba(39, 26, 18, 0.30);   /* deep espresso depth     */
   }
 }
-
-/* ─── No dark mode — single light theme ─── */
 
 @layer base {
   * {
@@ -84,19 +86,19 @@
   }
 
   html {
-    color-scheme: light;
+    color-scheme: dark;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', sans-serif;
-    selection-color: hsl(var(--primary));
-    -webkit-selection-background: hsl(var(--primary) / 0.15);
+    font-family: 'Inter', var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+    selection-color: hsl(var(--primary-foreground));
+    -webkit-selection-background: hsl(var(--primary) / 0.35);
   }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   LIQUID MESH BACKGROUND — ambient animated orbs
+   AMBIENT BACKGROUND — subtle warm glow, no harsh neon
 ───────────────────────────────────────────────────────────── */
 .liquid-mesh-bg {
   position: fixed;
@@ -104,6 +106,7 @@
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
+  background-color: #0D0A08;
 }
 
 .liquid-mesh-bg::before,
@@ -111,107 +114,168 @@
   content: '';
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
-  animation: liquidFloat 18s ease-in-out infinite alternate;
+  filter: blur(100px);
+  animation: liquidFloat 24s ease-in-out infinite alternate;
 }
 
 .liquid-mesh-bg::before {
-  width: 55vw;
-  height: 55vw;
+  width: 50vw;
+  height: 50vw;
   top: -15%;
-  right: -10%;
+  right: -5%;
   background: var(--orb-1);
-  animation-duration: 20s;
+  animation-duration: 22s;
 }
 
 .liquid-mesh-bg::after {
-  width: 40vw;
-  height: 40vw;
+  width: 45vw;
+  height: 45vw;
   bottom: -10%;
   left: -8%;
   background: var(--orb-2);
-  animation-duration: 26s;
+  animation-duration: 28s;
   animation-direction: alternate-reverse;
 }
 
 .liquid-orb-3 {
   position: absolute;
-  width: 30vw;
-  height: 30vw;
-  top: 40%;
-  left: 30%;
+  width: 35vw;
+  height: 35vw;
+  top: 35%;
+  left: 25%;
   border-radius: 50%;
   background: var(--orb-3);
-  filter: blur(60px);
-  animation: liquidFloat 22s ease-in-out infinite alternate;
+  filter: blur(80px);
+  animation: liquidFloat 26s ease-in-out infinite alternate;
   pointer-events: none;
 }
 
 @keyframes liquidFloat {
-  0%   { transform: translate(0,    0)    scale(1);    }
-  33%  { transform: translate(4%,  -6%)   scale(1.06); }
-  66%  { transform: translate(-3%,  4%)   scale(0.96); }
-  100% { transform: translate(5%,   3%)   scale(1.04); }
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(3%, -4%) scale(1.04); }
+  66%  { transform: translate(-2%, 3%) scale(0.97); }
+  100% { transform: translate(4%, 2%) scale(1.03); }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   GLASSMORPHISM PANELS
+   LIQUID GLASS SYSTEM — MULTI-TIERED OBSIDIAN & BURNT ORANGE
+   Visual Language: Deep obsidian, subtle black-to-burnt-orange
+   gradient fades, fine low-contrast borders & inner highlights
 ───────────────────────────────────────────────────────────── */
-.glass-panel {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
-}
-
+.liquid-glass-card,
+.dark-glass-card,
 .glass-card {
-  background: rgba(253, 250, 246, 0.80);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(208, 196, 180, 0.50);
+  background: linear-gradient(
+    145deg,
+    rgba(22, 15, 11, 0.92) 0%,
+    rgba(15, 10, 7, 0.96) 60%,
+    rgba(10, 7, 5, 0.98) 100%
+  );
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
-    0 2px 12px rgba(80, 60, 40, 0.06),
-    0 1px 3px rgba(80, 60, 40, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.80);
-  transition: box-shadow 0.25s ease, transform 0.2s ease;
+    0 16px 36px -8px rgba(0, 0, 0, 0.75),
+    0 4px 12px -2px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 16px rgba(255, 107, 0, 0.02);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
 }
 
+.liquid-glass-card:hover,
+.dark-glass-card:hover,
 .glass-card:hover {
+  border-color: rgba(255, 107, 0, 0.25);
   box-shadow:
-    0 8px 28px rgba(80, 60, 40, 0.10),
-    0 2px 6px rgba(80, 60, 40, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.90);
+    0 20px 42px -8px rgba(0, 0, 0, 0.82),
+    0 0 20px -4px rgba(255, 107, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
   transform: translateY(-1px);
 }
 
-.glass-sidebar {
-  background: rgba(247, 243, 238, 0.82);
+/* Primary Hero Card with soft top-right burnt orange atmospheric fade */
+.liquid-glass-hero {
+  background: 
+    radial-gradient(circle at 85% 15%, rgba(255, 107, 0, 0.10) 0%, transparent 55%),
+    linear-gradient(150deg, rgba(22, 15, 11, 0.95) 0%, rgba(14, 9, 7, 0.98) 50%, rgba(9, 6, 4, 0.99) 100%);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border-right: 1px solid rgba(208, 196, 180, 0.50);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 24px 48px -12px rgba(0, 0, 0, 0.85),
+    0 4px 16px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 0 24px rgba(255, 107, 0, 0.03);
+}
+
+/* Radiant Burnt-Orange Feature Banner */
+.liquid-glass-orange {
+  background: 
+    radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.18) 0%, transparent 40%),
+    linear-gradient(135deg, #FF6B00 0%, #D84E00 40%, #7A2400 85%, #350F00 100%);
+  border: 1px solid rgba(255, 140, 50, 0.35);
+  box-shadow:
+    0 20px 40px -10px rgba(255, 107, 0, 0.32),
+    0 6px 16px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* High-Density Item Pill / Capsule */
+.liquid-glass-pill {
+  background: rgba(18, 12, 9, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+}
+
+.liquid-glass-pill:hover {
+  background: rgba(28, 18, 13, 0.85);
+  border-color: rgba(255, 107, 0, 0.25);
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.dark-glass-panel,
+.glass-panel {
+  background: rgba(18, 12, 9, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 16px 40px -6px rgba(0, 0, 0, 0.7);
+}
+
+.glass-sidebar {
+  background: rgba(14, 10, 7, 0.94);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .glass-topbar {
-  background: rgba(253, 250, 246, 0.85);
+  background: rgba(16, 11, 8, 0.90);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(208, 196, 180, 0.45);
-  box-shadow: 0 2px 16px rgba(80, 60, 40, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.55);
 }
 
 /* ─────────────────────────────────────────────────────────────
-   LIQUID BUTTON — primary CTA
+   PRIMARY ORANGE CTA BUTTON
 ───────────────────────────────────────────────────────────── */
 .btn-liquid {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, hsl(27 55% 52%), hsl(27 55% 44%));
-  color: #fdfaf6;
+  background: linear-gradient(135deg, #FF6B00 0%, #E05E00 100%);
+  color: #FFFFFF;
   border: none;
   border-radius: var(--radius);
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.015em;
+  box-shadow: 0 4px 16px -2px rgba(255, 107, 0, 0.35);
   transition: transform 0.2s ease, box-shadow 0.25s ease;
 }
 
@@ -219,14 +283,14 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.20) 0%, transparent 60%);
   opacity: 0;
   transition: opacity 0.25s ease;
 }
 
 .btn-liquid:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(192, 120, 56, 0.35);
+  box-shadow: 0 6px 24px -2px rgba(255, 107, 0, 0.5);
 }
 
 .btn-liquid:hover::before {
@@ -235,48 +299,60 @@
 
 .btn-liquid:active {
   transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(192, 120, 56, 0.25);
+  box-shadow: 0 2px 10px rgba(255, 107, 0, 0.3);
 }
 
 /* ─────────────────────────────────────────────────────────────
-   WARM GLOW EFFECT (replaces gold-glow)
+   ORANGE GLOW & HIGHLIGHT UTILITIES
 ───────────────────────────────────────────────────────────── */
+.orange-glow {
+  box-shadow: 0 0 24px -2px rgba(255, 107, 0, 0.35);
+}
+
+.orange-glow-sm {
+  box-shadow: 0 0 12px -2px rgba(255, 107, 0, 0.22);
+}
+
 .warm-glow {
-  box-shadow: 0 0 30px -5px rgba(192, 120, 56, 0.20);
+  box-shadow: 0 0 30px -5px rgba(255, 107, 0, 0.22);
 }
 
 /* ─────────────────────────────────────────────────────────────
-   SCROLLBAR — warm minimal
+   MINIMAL DARK SCROLLBAR
 ───────────────────────────────────────────────────────────── */
 .custom-scrollbar::-webkit-scrollbar {
   width: 5px;
   height: 5px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: hsl(var(--border));
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 9999px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--foreground-muted) / 0.4);
+  background: rgba(255, 107, 0, 0.45);
 }
 
 /* ─────────────────────────────────────────────────────────────
-   ACTIVE NAV INDICATOR
+   ACTIVE NAV PILL INDICATOR
 ───────────────────────────────────────────────────────────── */
 .nav-active-pill {
   background: linear-gradient(
     90deg,
-    hsl(27 55% 52% / 0.14),
-    hsl(27 55% 52% / 0.04)
+    rgba(255, 107, 0, 0.18) 0%,
+    rgba(255, 107, 0, 0.04) 100%
   );
-  border-left: 2.5px solid hsl(27 55% 52%);
+  border-left: 2.5px solid #FF6B00;
+  color: #F8F5F1;
 }
 
 /* ─────────────────────────────────────────────────────────────
-   SHIMMER SKELETON
+   SHIMMER SKELETON (DARK)
 ───────────────────────────────────────────────────────────── */
 @keyframes shimmer {
   0%   { background-position: -400px 0; }
@@ -287,7 +363,7 @@
   background: linear-gradient(
     90deg,
     hsl(var(--muted)) 25%,
-    hsl(var(--surface)) 50%,
+    hsl(var(--surface-elevated)) 50%,
     hsl(var(--muted)) 75%
   );
   background-size: 800px 100%;
@@ -295,78 +371,84 @@
 }
 
 /* ─────────────────────────────────────────────────────────────
-   STAT CARD ACCENT STRIPE
+   STAT CARD ACCENT STRIPES
 ───────────────────────────────────────────────────────────── */
-.stat-accent-amber  { border-top: 3px solid hsl(27 55% 52%); }
-.stat-accent-sage   { border-top: 3px solid hsl(74 22% 52%); }
-.stat-accent-blue   { border-top: 3px solid hsl(200 45% 55%); }
-.stat-accent-rose   { border-top: 3px solid hsl(340 40% 58%); }
+.stat-accent-amber { border-top: 3px solid #FF6B00; }
+.stat-accent-sage  { border-top: 3px solid #1DB874; }
+.stat-accent-blue  { border-top: 3px solid #47A3F3; }
+.stat-accent-rose  { border-top: 3px solid #E53935; }
 
 /* ─────────────────────────────────────────────────────────────
-   LIQUID RIPPLE — on interactive tiles
-───────────────────────────────────────────────────────────── */
-@keyframes ripple {
-  0%   { transform: scale(0); opacity: 0.4; }
-  100% { transform: scale(4); opacity: 0; }
-}
-
-.ripple-container {
-  position: relative;
-  overflow: hidden;
-}
-
-.ripple-container .ripple {
-  position: absolute;
-  border-radius: 50%;
-  background: hsl(var(--primary) / 0.18);
-  width: 40px;
-  height: 40px;
-  margin-top: -20px;
-  margin-left: -20px;
-  animation: ripple 0.6s linear;
-  pointer-events: none;
-}
-
-/* ─────────────────────────────────────────────────────────────
-   TYPOGRAPHY HELPERS
+   TYPOGRAPHY & UTILITY HELPERS
 ───────────────────────────────────────────────────────────── */
 .font-display {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', var(--font-geist-sans), system-ui, sans-serif;
 }
 
 .text-muted-warm {
   color: hsl(var(--foreground-muted));
 }
 
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
 /* ─────────────────────────────────────────────────────────────
-   BADGE / CHIP UTILS
+   BADGE & CHIP UTILITIES (HIGH-CONTRAST DARK SURFACES)
 ───────────────────────────────────────────────────────────── */
 .badge-amber {
-  background: hsl(27 55% 52% / 0.12);
-  color: hsl(27 55% 40%);
-  border: 1px solid hsl(27 55% 52% / 0.28);
+  background: rgba(255, 107, 0, 0.14);
+  color: #FF8A35;
+  border: 1px solid rgba(255, 107, 0, 0.32);
 }
 
 .badge-sage {
-  background: hsl(74 22% 52% / 0.12);
-  color: hsl(74 28% 32%);
-  border: 1px solid hsl(74 22% 52% / 0.28);
+  background: rgba(29, 184, 116, 0.14);
+  color: #34D399;
+  border: 1px solid rgba(29, 184, 116, 0.32);
 }
 
 .badge-blue {
-  background: hsl(200 45% 55% / 0.12);
-  color: hsl(200 45% 35%);
-  border: 1px solid hsl(200 45% 55% / 0.28);
+  background: rgba(71, 163, 243, 0.14);
+  color: #60A5FA;
+  border: 1px solid rgba(71, 163, 243, 0.32);
 }
 
 .badge-rose {
-  background: hsl(340 40% 58% / 0.12);
-  color: hsl(340 40% 38%);
-  border: 1px solid hsl(340 40% 58% / 0.28);
+  background: rgba(229, 57, 53, 0.14);
+  color: #F87171;
+  border: 1px solid rgba(229, 57, 53, 0.32);
 }
 
 .badge-neutral {
-  background: hsl(var(--muted));
-  color: hsl(var(--foreground-muted));
-  border: 1px solid hsl(var(--border));
+  background: rgba(255, 255, 255, 0.06);
+  color: #BDB0A4;
+  border: 1px solid rgba(255, 255, 255, 0.10);
 }
+
+/* ─────────────────────────────────────────────────────────────
+   ACCESSIBILITY: RESPECT REDUCED MOTION PREFERENCES
+───────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .liquid-mesh-bg::before,
+  .liquid-mesh-bg::after,
+  .liquid-orb-3 {
+    animation: none !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MOBILE SAFE AREA INSETS (iOS & ANDROID GESTURE BARS)
+───────────────────────────────────────────────────────────── */
+.safe-bottom {
+  padding-bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem));
+}
+

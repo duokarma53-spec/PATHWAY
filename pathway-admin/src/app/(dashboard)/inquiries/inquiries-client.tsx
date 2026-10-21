@@ -12,12 +12,19 @@ import {
   AlertTriangle,
   Clock,
   ArrowRight,
-  Trash2
+  Trash2,
+  Search,
+  Filter,
+  Globe,
+  GraduationCap,
+  Calendar,
+  ExternalLink,
+  RefreshCw
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { StatusBadge, PriorityBadge } from "@/components/ui/status-badge"
-import { INITIAL_LEADS, Lead } from "@/lib/mock-data"
+import { Lead } from "@/lib/mock-data"
 import Link from "next/link"
 import { toast } from "sonner"
 import { createClient } from "@/lib/supabase/client"
@@ -111,40 +118,42 @@ export function InquiriesClientView() {
   const [inquiries, setInquiries] = React.useState<Lead[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [isClearing, setIsClearing] = React.useState(false)
+  const [searchQuery, setSearchQuery] = React.useState("")
+  const [statusFilter, setStatusFilter] = React.useState("ALL")
+  const [destFilter, setDestFilter] = React.useState("ALL")
 
   // Fetch live leads from Supabase and listen for real-time events
-  React.useEffect(() => {
+  const loadLiveInquiries = React.useCallback(async () => {
     const supabase = createClient();
+    try {
+      const { data, error } = await supabase
+        .from("leads")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-    async function loadLiveInquiries() {
-      try {
-        const { data, error } = await supabase
-          .from("leads")
-          .select("*")
-          .order("created_at", { ascending: false });
+      if (!error && data !== null) {
+        const liveLeads = data.map(mapDbLeadToLead);
+        // Check local storage submissions too
+        let localMapped: Lead[] = [];
+        try {
+          const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
+          if (local.length > 0) {
+            localMapped = local.map(mapDbLeadToLead);
+          }
+        } catch (e) {}
 
-        if (!error && data !== null) {
-          const liveLeads = data.map(mapDbLeadToLead);
-          // Check local storage submissions too
-          let localMapped: Lead[] = [];
-          try {
-            const local = JSON.parse(localStorage.getItem("pathway_local_leads") || "[]");
-            if (local.length > 0) {
-              localMapped = local.map(mapDbLeadToLead);
-            }
-          } catch (e) {}
-
-          const liveIds = new Set(liveLeads.map((l) => l.id));
-          const uniqueLocal = localMapped.filter((l) => !liveIds.has(l.id));
-          setInquiries([...liveLeads, ...uniqueLocal]);
-        }
-      } catch (err) {
-        console.debug("Live inquiry fetch error:", err);
-      } finally {
-        setIsLoading(false);
+        const liveIds = new Set(liveLeads.map((l) => l.id));
+        const uniqueLocal = localMapped.filter((l) => !liveIds.has(l.id));
+        setInquiries([...liveLeads, ...uniqueLocal]);
       }
+    } catch (err) {
+      console.debug("Live inquiry fetch error:", err);
+    } finally {
+      setIsLoading(false);
     }
+  }, []);
 
+  React.useEffect(() => {
     loadLiveInquiries();
 
     // Listen to real-time custom event dispatched by LeadNotificationListener
@@ -160,7 +169,7 @@ export function InquiriesClientView() {
     return () => {
       window.removeEventListener("pathway_new_lead", handleNewLeadEvent);
     };
-  }, []);
+  }, [loadLiveInquiries]);
 
   const handleClearAllInquiries = async () => {
     if (!window.confirm("Are you sure you want to clear all inquiries? This will permanently remove all website inquiries.")) {
@@ -222,14 +231,36 @@ export function InquiriesClientView() {
     }
   };
 
-  const handleAssignCounsellor = (id: string, counsellor: string) => {
-    setInquiries(prev => prev.map(l => l.id === id ? { ...l, assignedCounsellor: counsellor, status: "Contacted" } : l))
-    toast.success(`Assigned to ${counsellor} and scheduled follow-up`)
-  }
-
   const handleCreateTask = (lead: Lead) => {
     toast.success(`First follow-up call task created for ${lead.name}`)
   }
+
+  // Filtered inquiries
+  const filteredInquiries = inquiries.filter((inq) => {
+    const query = searchQuery.toLowerCase().trim();
+    const matchSearch =
+      !query ||
+      inq.name.toLowerCase().includes(query) ||
+      inq.email.toLowerCase().includes(query) ||
+      inq.phone.includes(query) ||
+      inq.course.toLowerCase().includes(query) ||
+      inq.preferredDestination.toLowerCase().includes(query);
+
+    const matchStatus =
+      statusFilter === "ALL" ||
+      (statusFilter === "NEW" && inq.status === "New") ||
+      (statusFilter === "CONTACTED" && inq.status === "Contacted") ||
+      (statusFilter === "CONVERTED" && inq.status === "Converted to Student");
+
+    const matchDest =
+      destFilter === "ALL" ||
+      inq.preferredDestination.toLowerCase().includes(destFilter.toLowerCase());
+
+    return matchSearch && matchStatus && matchDest;
+  });
+
+  const newCount = inquiries.filter((i) => i.status === "New").length;
+  const contactedCount = inquiries.filter((i) => i.status === "Contacted").length;
 
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto pb-16 min-w-0">
@@ -237,89 +268,195 @@ export function InquiriesClientView() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-              Website Inquiry Intake & Triage
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-[#F8F5F1]">
+              Website Inquiries
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-xs font-bold border border-amber-500/30 flex items-center gap-1">
-              <Sparkles className="h-3 w-3" /> Live Feed
+            <span className="px-2.5 py-0.5 rounded-full bg-orange-500/15 text-[#FF8A35] text-xs font-bold border border-orange-500/30 flex items-center gap-1 shadow-sm shadow-orange-950/20">
+              <Sparkles className="h-3 w-3" /> Real-time Feed
             </span>
           </div>
-          <p className="text-xs md:text-sm text-muted-foreground mt-1">
-            Real-time inquiries automatically captured from the public Pathway website contact & course forms.
+          <p className="text-xs md:text-sm text-[#BDB0A4] mt-1">
+            Incoming prospective student consultations captured from the public Pathway website.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2.5 shrink-0">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={loadLiveInquiries}
+            className="h-9 px-3.5 text-xs bg-[#15100D] text-[#F8F5F1] hover:bg-[#1D1510] border-white/[0.08] rounded-xl font-medium transition-colors"
+          >
+            <RefreshCw className="h-3.5 w-3.5 mr-1.5 text-orange-400" />
+            Refresh
+          </Button>
+
           <Button
             variant="outline"
             size="sm"
             onClick={handleClearAllInquiries}
             disabled={isClearing || inquiries.length === 0}
-            className="h-9 px-3.5 text-xs text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 border-rose-500/30 rounded-xl font-medium transition-colors"
+            className="h-9 px-3.5 text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 border-rose-500/25 bg-rose-500/5 rounded-xl font-medium transition-colors disabled:opacity-50"
           >
             <Trash2 className="h-3.5 w-3.5 mr-1.5" />
-            {isClearing ? "Clearing..." : "Clear All Inquiries"}
+            {isClearing ? "Clearing..." : "Clear Inquiries"}
           </Button>
         </div>
       </div>
 
-      {/* Duplicate detection badge explanation */}
-      <div className="p-4 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-between gap-4 text-xs">
+      {/* Metric Summary Ribbon */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="p-4 rounded-2xl bg-[#15100D]/80 border border-white/[0.08] backdrop-blur-md">
+          <p className="text-[11px] uppercase tracking-wider text-[#897B70] font-semibold">Total Inbound</p>
+          <div className="flex items-baseline justify-between mt-1">
+            <span className="text-2xl font-bold text-[#F8F5F1]">{inquiries.length}</span>
+            <span className="text-[11px] text-[#BDB0A4]">All-time</span>
+          </div>
+        </div>
+
+        <div className="p-4 rounded-2xl bg-orange-500/[0.07] border border-orange-500/25 backdrop-blur-md">
+          <p className="text-[11px] uppercase tracking-wider text-[#FF8A35] font-semibold">New / Uncontacted</p>
+          <div className="flex items-baseline justify-between mt-1">
+            <span className="text-2xl font-bold text-[#FF8A35]">{newCount}</span>
+            <span className="text-[11px] font-semibold text-orange-400/80">Action required</span>
+          </div>
+        </div>
+
+        <div className="p-4 rounded-2xl bg-[#15100D]/80 border border-white/[0.08] backdrop-blur-md">
+          <p className="text-[11px] uppercase tracking-wider text-[#897B70] font-semibold">In Progress</p>
+          <div className="flex items-baseline justify-between mt-1">
+            <span className="text-2xl font-bold text-sky-400">{contactedCount}</span>
+            <span className="text-[11px] text-[#BDB0A4]">Outreach made</span>
+          </div>
+        </div>
+
+        <div className="p-4 rounded-2xl bg-[#15100D]/80 border border-white/[0.08] backdrop-blur-md">
+          <p className="text-[11px] uppercase tracking-wider text-[#897B70] font-semibold">Response SLA</p>
+          <div className="flex items-baseline justify-between mt-1">
+            <span className="text-2xl font-bold text-emerald-400">&lt; 2 hrs</span>
+            <span className="text-[11px] text-[#BDB0A4]">Triage target</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Notification Banner */}
+      <div className="p-3.5 rounded-2xl bg-[#181310] border border-white/[0.08] flex items-center justify-between gap-4 text-xs">
         <div className="flex items-center gap-2.5">
-          <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-          <p className="text-foreground">
-            <strong>Automatic Lead Routing Active:</strong> Every submission generates a unique <code>LD-XXXX</code> reference, runs phone/email duplicate detection, and notifies counselors.
+          <div className="p-1 rounded-md bg-emerald-500/10 text-emerald-400">
+            <CheckCircle2 className="h-4 w-4 shrink-0" />
+          </div>
+          <p className="text-[#BDB0A4]">
+            <strong className="text-[#F8F5F1]">Live Routing & Deduplication:</strong> Inbound leads are cross-checked for existing phone/email records before generating CRM assignment tasks.
           </p>
         </div>
       </div>
 
+      {/* Filter and Search Toolbar */}
+      <div className="rounded-2xl bg-[#15100D]/80 border border-white/[0.08] p-3 backdrop-blur-md flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        {/* Search Input */}
+        <div className="relative flex-1 min-w-[240px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#897B70]" />
+          <input
+            type="text"
+            placeholder="Search inquiries by student name, phone, course, or target country..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full h-9 pl-9 pr-3 rounded-xl bg-[#1D1510] border border-white/[0.08] text-xs text-[#F8F5F1] placeholder:text-[#897B70] outline-none focus:border-orange-500/50"
+          />
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-wrap items-center gap-2">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="h-9 px-3 rounded-xl bg-[#1D1510] border border-white/[0.08] text-xs text-[#F8F5F1] outline-none font-medium cursor-pointer"
+          >
+            <option value="ALL" className="bg-[#1D1510] text-[#F8F5F1]">All Statuses</option>
+            <option value="NEW" className="bg-[#1D1510] text-[#F8F5F1]">New Only</option>
+            <option value="CONTACTED" className="bg-[#1D1510] text-[#F8F5F1]">Contacted</option>
+            <option value="CONVERTED" className="bg-[#1D1510] text-[#F8F5F1]">Converted</option>
+          </select>
+
+          <select
+            value={destFilter}
+            onChange={(e) => setDestFilter(e.target.value)}
+            className="h-9 px-3 rounded-xl bg-[#1D1510] border border-white/[0.08] text-xs text-[#F8F5F1] outline-none font-medium cursor-pointer"
+          >
+            <option value="ALL" className="bg-[#1D1510] text-[#F8F5F1]">All Destinations</option>
+            <option value="United Kingdom" className="bg-[#1D1510] text-[#F8F5F1]">United Kingdom</option>
+            <option value="United States" className="bg-[#1D1510] text-[#F8F5F1]">United States</option>
+            <option value="Canada" className="bg-[#1D1510] text-[#F8F5F1]">Canada</option>
+            <option value="Australia" className="bg-[#1D1510] text-[#F8F5F1]">Australia</option>
+            <option value="Germany" className="bg-[#1D1510] text-[#F8F5F1]">Germany</option>
+            <option value="Ireland" className="bg-[#1D1510] text-[#F8F5F1]">Ireland</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Loading Skeleton */}
+      {isLoading && (
+        <div className="space-y-4">
+          {[1, 2, 3].map((n) => (
+            <div key={n} className="h-36 rounded-2xl bg-[#15100D]/50 border border-white/[0.06] animate-pulse" />
+          ))}
+        </div>
+      )}
+
       {/* Inquiries Feed Cards */}
-      {inquiries.length === 0 && !isLoading ? (
-        <Card className="border border-dashed border-border/60 bg-card/40 p-12 text-center rounded-2xl">
+      {!isLoading && filteredInquiries.length === 0 ? (
+        <div className="border border-dashed border-white/[0.1] bg-[#15100D]/50 p-12 text-center rounded-2xl">
           <div className="flex flex-col items-center justify-center gap-3">
-            <div className="h-12 w-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+            <div className="h-12 w-12 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400">
               <Inbox className="h-6 w-6" />
             </div>
-            <h3 className="text-base font-semibold text-foreground">No inquiries found</h3>
-            <p className="text-xs text-muted-foreground max-w-sm">
-              All inquiries have been cleared. New submissions from website contact and inquiry forms will automatically arrive here in real-time.
+            <h3 className="text-base font-bold text-[#F8F5F1]">No inquiries matching filter</h3>
+            <p className="text-xs text-[#897B70] max-w-sm">
+              {searchQuery || statusFilter !== "ALL" || destFilter !== "ALL"
+                ? "Try clearing filters or search terms to inspect more inbound inquiries."
+                : "All inquiries have been processed or cleared. New web form submissions will appear here in real-time."}
             </p>
           </div>
-        </Card>
+        </div>
       ) : (
-      <div className="space-y-4">
-        {inquiries.map((inq) => {
-          const isNew = inq.status === "New"
+        <div className="space-y-4">
+          {filteredInquiries.map((inq) => {
+            const isNew = inq.status === "New"
 
-          return (
-            <Card
-              key={inq.id}
-              className={`border transition-all duration-200 ${
-                isNew
-                  ? "border-amber-500/40 bg-amber-500/5 shadow-md shadow-amber-500/5"
-                  : "border-border/60 bg-card/75"
-              }`}
-            >
-              <CardContent className="p-5 space-y-4">
+            return (
+              <div
+                key={inq.id}
+                className={`rounded-2xl border transition-all duration-200 p-5 space-y-4 relative overflow-hidden backdrop-blur-md ${
+                  isNew
+                    ? "border-orange-500/35 bg-[#18120D] shadow-lg shadow-orange-950/20"
+                    : "border-white/[0.08] bg-[#15100D]/85 hover:border-white/[0.14]"
+                }`}
+              >
+                {/* Header row: Avatar, Name, Reference, Badges */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 flex items-center justify-center font-bold text-xs text-primary shrink-0">
+                  <div className="flex items-center gap-3.5">
+                    <div className="h-11 w-11 rounded-xl bg-[#271A12] border border-orange-500/30 flex items-center justify-center font-extrabold text-xs text-[#FF8A35] shrink-0">
                       {inq.avatar || inq.name.slice(0, 2).toUpperCase()}
                     </div>
                     <div>
-                      <div className="flex items-center gap-2">
-                        <Link href={`/leads/${inq.id}`} className="text-base font-bold text-foreground hover:text-primary transition-colors">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Link
+                          href={`/leads/${inq.id}`}
+                          className="text-base font-bold text-[#F8F5F1] hover:text-[#FF6B00] transition-colors"
+                        >
                           {inq.name}
                         </Link>
                         {isNew && (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40 uppercase">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-500/20 text-[#FF8A35] border border-orange-500/40 uppercase tracking-wide">
                             NEW INQUIRY
                           </span>
                         )}
-                        <span className="text-xs font-mono text-muted-foreground">{inq.leadCode}</span>
+                        <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded-md bg-[#271A12] text-[#FF8A35] border border-orange-500/20">
+                          {inq.leadCode}
+                        </span>
                       </div>
-                      <p className="text-xs text-muted-foreground" suppressHydrationWarning>
-                        Submitted on {inq.createdDate} via Pathway Website Contact Form
+                      <p className="text-xs text-[#897B70] mt-0.5" suppressHydrationWarning>
+                        Received on {inq.createdDate} via Pathway Website Form
                       </p>
                     </div>
                   </div>
@@ -330,38 +467,65 @@ export function InquiriesClientView() {
                   </div>
                 </div>
 
-                {/* Submitted Message */}
-                <div className="p-3.5 rounded-xl bg-muted/40 border border-border/40 text-xs space-y-1">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Student Message:</span>
-                  <p className="text-foreground/90 italic font-sans leading-relaxed">
+                {/* Submitted Message Box */}
+                <div className="p-3.5 rounded-xl bg-[#1D1510] border border-white/[0.06] text-xs space-y-1">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#897B70]">Student Message & Goals:</span>
+                  <p className="text-[#BDB0A4] italic font-sans leading-relaxed">
                     &ldquo;{inq.message || `Interested in enrolling for ${inq.course} in ${inq.preferredDestination} for ${inq.intake} intake.`}&rdquo;
                   </p>
                 </div>
 
-                {/* Bottom Bar: Action buttons & counsellor assignment */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-border/30 text-xs">
-                  <div className="flex items-center gap-4 text-muted-foreground">
-                    <span>Target: <strong className="text-foreground">{inq.course}</strong></span>
+                {/* Bottom Bar: Quick metadata & action buttons */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-white/[0.06] text-xs">
+                  <div className="flex flex-wrap items-center gap-3 text-[#897B70]">
+                    <span>Target: <strong className="text-[#F8F5F1]">{inq.course}</strong></span>
                     <span>•</span>
-                    <span>Destination: <strong className="text-foreground">{inq.preferredDestination}</strong></span>
+                    <span className="inline-flex items-center gap-1">
+                      <Globe className="h-3.5 w-3.5 text-orange-400" />
+                      <strong className="text-[#F8F5F1]">{inq.preferredDestination}</strong>
+                    </span>
                     <span>•</span>
-                    <span>Phone: <strong className="text-foreground">{inq.phone}</strong></span>
+                    <span>Phone: <strong className="text-[#F8F5F1] font-mono">{inq.phone}</strong></span>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {inq.phone && (
+                      <>
+                        <a
+                          href={`https://wa.me/${inq.phone.replace(/[^0-9]/g, "")}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="h-8 px-2.5 rounded-xl text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 transition-colors"
+                          title="Message on WhatsApp"
+                        >
+                          <MessageCircle className="h-3.5 w-3.5" />
+                          <span className="hidden sm:inline">WhatsApp</span>
+                        </a>
+
+                        <a
+                          href={`tel:${inq.phone}`}
+                          className="h-8 px-2.5 rounded-xl text-xs font-semibold bg-[#1D1510] hover:bg-[#271A12] text-[#F8F5F1] border border-white/[0.08] flex items-center gap-1.5 transition-colors"
+                          title="Call student"
+                        >
+                          <Phone className="h-3.5 w-3.5 text-sky-400" />
+                          <span className="hidden sm:inline">Call</span>
+                        </a>
+                      </>
+                    )}
+
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => handleCreateTask(inq)}
-                      className="h-8 text-xs rounded-xl border-border/60"
+                      className="h-8 text-xs rounded-xl bg-[#1D1510] hover:bg-[#271A12] border-white/[0.08] text-[#F8F5F1]"
                     >
-                      <Clock className="h-3.5 w-3.5 mr-1 text-primary" /> + Follow-up Task
+                      <Clock className="h-3.5 w-3.5 mr-1 text-[#FF6B00]" /> + Task
                     </Button>
 
                     <Button
                       size="sm"
                       asChild
-                      className="h-8 text-xs rounded-xl bg-primary text-primary-foreground font-semibold"
+                      className="h-8 text-xs rounded-xl bg-gradient-to-r from-[#FF6B00] to-[#FF8A35] hover:opacity-90 text-white font-semibold shadow-md shadow-orange-950/30"
                     >
                       <Link href={`/leads/${inq.id}`}>
                         Open Profile &rarr;
@@ -372,18 +536,17 @@ export function InquiriesClientView() {
                       size="sm"
                       variant="ghost"
                       onClick={() => handleDeleteInquiry(inq.id, inq.name)}
-                      className="h-8 w-8 p-0 text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 rounded-xl transition-colors"
+                      className="h-8 w-8 p-0 text-[#897B70] hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors"
                       title="Delete inquiry"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
+              </div>
+            )
+          })}
+        </div>
       )}
     </div>
   )

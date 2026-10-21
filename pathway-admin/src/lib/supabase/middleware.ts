@@ -48,15 +48,19 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse
   }
 
+  // Check both Supabase Auth session and pre-configured demo auth cookie
+  const isDemoAuthenticated = request.cookies.get('pathway_demo_auth')?.value === 'true'
+  const isAuthenticated = !!user || isDemoAuthenticated
+
   // Unauthenticated → always redirect to /login
-  if (!user && !isLoginPage) {
+  if (!isAuthenticated && !isLoginPage) {
     const loginUrl = request.nextUrl.clone()
     loginUrl.pathname = '/login'
     return NextResponse.redirect(loginUrl)
   }
 
   // Already authenticated → skip login page, go to dashboard
-  if (user && isLoginPage) {
+  if (isAuthenticated && isLoginPage) {
     const dashboardUrl = request.nextUrl.clone()
     dashboardUrl.pathname = '/'
     return NextResponse.redirect(dashboardUrl)

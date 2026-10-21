@@ -109,18 +109,22 @@ export function LeadNotificationListener() {
     // This ensures NO notifications pop up for past historical leads
     if (!isInitialized.current) {
       isInitialized.current = true;
-      supabase
-        .from("leads")
-        .select("id, full_name, phone")
-        .then(({ data }) => {
+      const initExisting = async () => {
+        try {
+          const { data } = await supabase
+            .from("leads")
+            .select("id, full_name, phone");
           if (data) {
             data.forEach((l) => {
               const id = l.id ? String(l.id) : `${l.full_name}-${l.phone}`;
               globalNotifiedSet.add(id);
             });
           }
-        })
-        .catch(() => {});
+        } catch {
+          // Gracefully handle any initial network glitches
+        }
+      };
+      void initExisting();
     }
 
     // 1. Real-time Supabase postgres INSERT channel

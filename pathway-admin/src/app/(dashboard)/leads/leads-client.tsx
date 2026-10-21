@@ -16,7 +16,10 @@ import {
   Plus,
   RefreshCw,
   ExternalLink,
-  Trash2
+  Trash2,
+  Users,
+  GraduationCap,
+  FileText
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -147,7 +150,6 @@ export function LeadsClientView() {
       }
     }
 
-    // Initial fetch
     fetchLiveLeads();
 
     // Subscribe to ALL changes on the leads table (INSERT, UPDATE, DELETE)
@@ -175,7 +177,6 @@ export function LeadsClientView() {
         "postgres_changes",
         { event: "DELETE", schema: "public", table: "leads" },
         (payload) => {
-          // payload.old contains the deleted row's data (at minimum the id)
           const deletedId = payload.old?.id;
           if (deletedId) {
             setLeads((prev) => prev.filter((l) => l.id !== deletedId));
@@ -258,10 +259,7 @@ export function LeadsClientView() {
       return;
     }
 
-    // Snapshot the lead before removing (needed to restore on failure)
     const snapshot = leads.find((l) => l.id === id);
-
-    // Optimistically remove from UI immediately
     setLeads((prev) => prev.filter((l) => l.id !== id));
     setSelectedLeads((prev) => prev.filter((selId) => selId !== id));
 
@@ -270,14 +268,12 @@ export function LeadsClientView() {
       const { error } = await supabase.from("leads").delete().eq("id", id);
       if (error) {
         console.error("Supabase delete error:", error);
-        // Restore lead in UI — DB delete failed
         if (snapshot) {
           setLeads((prev) => [snapshot, ...prev.filter((l) => l.id !== id)]);
         }
         toast.error(`Failed to delete lead "${name}": ${error.message}`);
         return;
       }
-      // Realtime DELETE event will also fire and keep other tabs in sync
       toast.success(`Lead "${name}" deleted`);
     } catch (err) {
       console.error(err);
@@ -294,11 +290,8 @@ export function LeadsClientView() {
       return;
     }
     const toDelete = [...selectedLeads];
-
-    // Snapshot leads to delete (needed to restore on failure)
     const snapshots = leads.filter((l) => toDelete.includes(l.id));
 
-    // Optimistically remove from UI
     setLeads((prev) => prev.filter((l) => !toDelete.includes(l.id)));
     setSelectedLeads([]);
 
@@ -307,13 +300,11 @@ export function LeadsClientView() {
       const { error } = await supabase.from("leads").delete().in("id", toDelete);
       if (error) {
         console.error("Supabase bulk delete error:", error);
-        // Restore all leads that failed to delete
         setLeads((prev) => [...snapshots, ...prev]);
         setSelectedLeads(toDelete);
         toast.error(`Failed to delete leads: ${error.message}`);
         return;
       }
-      // Realtime DELETE events will keep other tabs in sync
       toast.success(`Deleted ${toDelete.length} leads`);
     } catch (err) {
       console.error(err);
@@ -358,19 +349,19 @@ export function LeadsClientView() {
   const convertedCount = leads.filter(l => l.status === "Converted to Student").length
 
   return (
-    <div className="flex flex-col gap-6 max-w-7xl mx-auto pb-12 min-w-0">
-      {/* Top Header */}
+    <div className="flex flex-col gap-6 max-w-7xl mx-auto pb-16 min-w-0">
+      {/* ── Top Header ────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-              Lead & Inquiry Management
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-[#F8F5F1]">
+              Leads Directory
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-bold border border-primary/30">
+            <span className="px-2.5 py-0.5 rounded-full bg-orange-500/15 text-orange-400 text-xs font-bold border border-orange-500/30">
               {leads.length} Active Leads
             </span>
           </div>
-          <p className="text-xs md:text-sm text-muted-foreground mt-1">
+          <p className="text-xs md:text-sm text-[#897B70] mt-1">
             Real-time pipeline of student inquiries from website, WhatsApp, phone, and walk-ins.
           </p>
         </div>
@@ -380,87 +371,91 @@ export function LeadsClientView() {
             variant="outline"
             size="sm"
             onClick={handleExportCSV}
-            className="rounded-xl border-border/70 hover:bg-muted/50 text-xs flex items-center gap-1.5"
+            className="rounded-xl border-white/10 bg-[#16120F]/70 text-xs text-[#F8F5F1] hover:bg-white/[0.06] hover:border-white/20 h-9 flex items-center gap-1.5"
           >
-            <Download className="h-3.5 w-3.5" /> Export CSV
+            <Download className="h-3.5 w-3.5 text-orange-400" /> Export CSV
           </Button>
           <CRMQuickActions />
         </div>
       </div>
 
-      {/* Quick Metrics Bar */}
+      {/* ── Quick Metrics Filter Bar ──────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         <div
           onClick={() => setStatusFilter("ALL")}
           className={`cursor-pointer p-3.5 rounded-2xl border transition-all ${
             statusFilter === "ALL"
-              ? "bg-primary/10 border-primary/40 shadow-sm"
-              : "bg-card/60 border-border/40 hover:border-border"
+              ? "bg-orange-500/10 border-orange-500/40 shadow-sm shadow-orange-500/10"
+              : "bg-[#181310]/85 border-white/[0.08] hover:border-white/15"
           }`}
         >
-          <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Total Leads</p>
-          <p className="text-xl md:text-2xl font-bold text-foreground mt-0.5">{totalCount}</p>
+          <p className="text-[11px] font-medium text-[#897B70] uppercase tracking-wider">Total Leads</p>
+          <p className="text-xl md:text-2xl font-bold text-[#F8F5F1] mt-0.5 font-mono-numbers">{totalCount}</p>
         </div>
+
         <div
           onClick={() => setStatusFilter("New")}
           className={`cursor-pointer p-3.5 rounded-2xl border transition-all ${
             statusFilter === "New"
-              ? "bg-amber-500/15 border-amber-500/40 shadow-sm"
-              : "bg-card/60 border-border/40 hover:border-border"
+              ? "bg-amber-500/15 border-amber-500/40 shadow-sm shadow-amber-500/10"
+              : "bg-[#181310]/85 border-white/[0.08] hover:border-white/15"
           }`}
         >
           <p className="text-[11px] font-medium text-amber-400 uppercase tracking-wider flex items-center gap-1">
             <Sparkles className="h-3 w-3" /> New Inquiries
           </p>
-          <p className="text-xl md:text-2xl font-bold text-amber-400 mt-0.5">{newCount}</p>
+          <p className="text-xl md:text-2xl font-bold text-amber-300 mt-0.5 font-mono-numbers">{newCount}</p>
         </div>
+
         <div
           onClick={() => setStatusFilter("Counselling Scheduled")}
           className={`cursor-pointer p-3.5 rounded-2xl border transition-all ${
             statusFilter === "Counselling Scheduled"
-              ? "bg-purple-500/15 border-purple-500/40 shadow-sm"
-              : "bg-card/60 border-border/40 hover:border-border"
+              ? "bg-violet-500/15 border-violet-500/40 shadow-sm shadow-violet-500/10"
+              : "bg-[#181310]/85 border-white/[0.08] hover:border-white/15"
           }`}
         >
-          <p className="text-[11px] font-medium text-purple-400 uppercase tracking-wider">Counselling</p>
-          <p className="text-xl md:text-2xl font-bold text-purple-400 mt-0.5">{scheduledCount}</p>
+          <p className="text-[11px] font-medium text-violet-400 uppercase tracking-wider">Counselling</p>
+          <p className="text-xl md:text-2xl font-bold text-violet-300 mt-0.5 font-mono-numbers">{scheduledCount}</p>
         </div>
+
         <div
           onClick={() => setStatusFilter("Application Started")}
           className={`cursor-pointer p-3.5 rounded-2xl border transition-all ${
             statusFilter === "Application Started"
-              ? "bg-blue-500/15 border-blue-500/40 shadow-sm"
-              : "bg-card/60 border-border/40 hover:border-border"
+              ? "bg-blue-500/15 border-blue-500/40 shadow-sm shadow-blue-500/10"
+              : "bg-[#181310]/85 border-white/[0.08] hover:border-white/15"
           }`}
         >
           <p className="text-[11px] font-medium text-blue-400 uppercase tracking-wider">App In Progress</p>
-          <p className="text-xl md:text-2xl font-bold text-blue-400 mt-0.5">{appStartedCount}</p>
+          <p className="text-xl md:text-2xl font-bold text-blue-300 mt-0.5 font-mono-numbers">{appStartedCount}</p>
         </div>
+
         <div
           onClick={() => setStatusFilter("Converted to Student")}
           className={`cursor-pointer p-3.5 rounded-2xl border transition-all ${
             statusFilter === "Converted to Student"
-              ? "bg-emerald-500/15 border-emerald-500/40 shadow-sm"
-              : "bg-card/60 border-border/40 hover:border-border"
+              ? "bg-emerald-500/15 border-emerald-500/40 shadow-sm shadow-emerald-500/10"
+              : "bg-[#181310]/85 border-white/[0.08] hover:border-white/15"
           }`}
         >
           <p className="text-[11px] font-medium text-emerald-400 uppercase tracking-wider">Converted</p>
-          <p className="text-xl md:text-2xl font-bold text-emerald-400 mt-0.5">{convertedCount}</p>
+          <p className="text-xl md:text-2xl font-bold text-emerald-300 mt-0.5 font-mono-numbers">{convertedCount}</p>
         </div>
       </div>
 
-      {/* Filter and Search Bar */}
-      <Card className="border-border/60 bg-card/75 backdrop-blur-xl shadow-sm">
+      {/* ── Filter and Search Bar ─────────────────────────── */}
+      <Card className="border border-white/[0.08] bg-[#181310]/85 backdrop-blur-md shadow-sm rounded-2xl">
         <CardContent className="p-4 space-y-3">
           <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between">
             {/* Search Input */}
             <div className="relative flex-1 min-w-[260px]">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#897B70]" />
               <Input
                 placeholder="Search by name, email, phone, course, or ID (e.g. 'LD-1048')..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 h-10 rounded-xl bg-muted/30 border-border/50 focus:bg-background text-sm"
+                className="pl-10 h-10 rounded-xl bg-[#16110E]/90 border border-white/10 text-sm text-[#F8F5F1] placeholder:text-[#897B70]"
               />
             </div>
 
@@ -470,7 +465,7 @@ export function LeadsClientView() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="h-9 rounded-xl border border-border/60 bg-muted/40 px-3 text-xs text-foreground outline-none font-medium focus:ring-1 focus:ring-primary"
+                className="h-9.5 rounded-xl border border-white/10 bg-[#1B1512] px-3 text-xs text-[#F8F5F1] outline-none font-medium focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
               >
                 <option value="ALL">All Statuses</option>
                 <option value="New">New</option>
@@ -488,7 +483,7 @@ export function LeadsClientView() {
               <select
                 value={priorityFilter}
                 onChange={(e) => setPriorityFilter(e.target.value)}
-                className="h-9 rounded-xl border border-border/60 bg-muted/40 px-3 text-xs text-foreground outline-none font-medium focus:ring-1 focus:ring-primary"
+                className="h-9.5 rounded-xl border border-white/10 bg-[#1B1512] px-3 text-xs text-[#F8F5F1] outline-none font-medium focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
               >
                 <option value="ALL">All Priorities</option>
                 <option value="Urgent">Urgent</option>
@@ -501,7 +496,7 @@ export function LeadsClientView() {
               <select
                 value={destFilter}
                 onChange={(e) => setDestFilter(e.target.value)}
-                className="h-9 rounded-xl border border-border/60 bg-muted/40 px-3 text-xs text-foreground outline-none font-medium focus:ring-1 focus:ring-primary"
+                className="h-9.5 rounded-xl border border-white/10 bg-[#1B1512] px-3 text-xs text-[#F8F5F1] outline-none font-medium focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
               >
                 <option value="ALL">All Countries</option>
                 <option value="United Kingdom">United Kingdom</option>
@@ -514,7 +509,7 @@ export function LeadsClientView() {
               <select
                 value={sourceFilter}
                 onChange={(e) => setSourceFilter(e.target.value)}
-                className="h-9 rounded-xl border border-border/60 bg-muted/40 px-3 text-xs text-foreground outline-none font-medium focus:ring-1 focus:ring-primary"
+                className="h-9.5 rounded-xl border border-white/10 bg-[#1B1512] px-3 text-xs text-[#F8F5F1] outline-none font-medium focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
               >
                 <option value="ALL">All Sources</option>
                 <option value="Website">Website</option>
@@ -536,7 +531,7 @@ export function LeadsClientView() {
                     setDestFilter("ALL")
                     setSourceFilter("ALL")
                   }}
-                  className="h-9 text-xs text-muted-foreground hover:text-foreground"
+                  className="h-9.5 text-xs text-[#897B70] hover:text-[#F8F5F1] rounded-xl hover:bg-white/[0.06]"
                 >
                   Reset
                 </Button>
@@ -544,10 +539,10 @@ export function LeadsClientView() {
             </div>
           </div>
 
-          {/* Bulk Actions Bar (if any selected) */}
+          {/* Floating/Docked Bulk Actions Bar */}
           {selectedLeads.length > 0 && (
-            <div className="flex items-center justify-between p-2.5 px-4 rounded-xl bg-primary/10 border border-primary/30 animate-in fade-in-50">
-              <span className="text-xs font-semibold text-primary">
+            <div className="flex items-center justify-between p-2.5 px-4 rounded-xl bg-[#1F1712] border border-orange-500/30 shadow-lg shadow-black/60 animate-in fade-in-50 duration-150">
+              <span className="text-xs font-semibold text-orange-400">
                 {selectedLeads.length} lead{selectedLeads.length > 1 ? "s" : ""} selected
               </span>
               <div className="flex items-center gap-2">
@@ -555,7 +550,7 @@ export function LeadsClientView() {
                   size="sm"
                   variant="outline"
                   onClick={() => handleBulkStatus("Contacted")}
-                  className="h-7 text-xs rounded-lg border-border"
+                  className="h-7.5 text-xs rounded-lg border-white/10 bg-[#16120F] text-[#F8F5F1] hover:bg-white/[0.08]"
                 >
                   Mark Contacted
                 </Button>
@@ -563,14 +558,14 @@ export function LeadsClientView() {
                   size="sm"
                   variant="outline"
                   onClick={() => handleBulkStatus("Counselling Scheduled")}
-                  className="h-7 text-xs rounded-lg border-border"
+                  className="h-7.5 text-xs rounded-lg border-white/10 bg-[#16120F] text-[#F8F5F1] hover:bg-white/[0.08]"
                 >
                   Schedule Counselling
                 </Button>
                 <Button
                   size="sm"
                   onClick={() => handleBulkStatus("Converted to Student")}
-                  className="h-7 text-xs rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white"
+                  className="h-7.5 text-xs rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm"
                 >
                   Convert to Student
                 </Button>
@@ -578,7 +573,7 @@ export function LeadsClientView() {
                   size="sm"
                   variant="outline"
                   onClick={handleBulkDelete}
-                  className="h-7 text-xs rounded-lg text-rose-500 border-rose-500/30 hover:bg-rose-500/10 hover:text-rose-600"
+                  className="h-7.5 text-xs rounded-lg text-rose-400 border-rose-500/30 hover:bg-rose-500/10 hover:text-rose-300"
                 >
                   <Trash2 className="h-3 w-3 mr-1" />
                   Delete Selected
@@ -589,18 +584,18 @@ export function LeadsClientView() {
         </CardContent>
       </Card>
 
-      {/* Main Leads Table */}
-      <Card className="border-border/60 bg-card/80 backdrop-blur-xl shadow-lg overflow-hidden">
+      {/* ── Main Leads Table ──────────────────────────────── */}
+      <Card className="border border-white/[0.08] bg-[#181310]/85 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden">
         <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full text-left border-collapse text-xs md:text-sm">
             <thead>
-              <tr className="border-b border-border/50 bg-muted/30 text-muted-foreground uppercase text-[11px] tracking-wider font-semibold">
+              <tr className="border-b border-white/[0.08] bg-[#1C1613]/90 text-[#897B70] uppercase text-[11px] tracking-wider font-semibold">
                 <th className="py-3 px-4 w-10">
                   <input
                     type="checkbox"
                     checked={selectedLeads.length === filteredLeads.length && filteredLeads.length > 0}
                     onChange={handleSelectAll}
-                    className="rounded border-border bg-card cursor-pointer"
+                    className="rounded border-white/20 bg-[#16110E] accent-orange-500 cursor-pointer"
                   />
                 </th>
                 <th className="py-3 px-3">Lead / Student</th>
@@ -613,12 +608,17 @@ export function LeadsClientView() {
                 <th className="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border/40">
+            <tbody className="divide-y divide-white/[0.04]">
               {filteredLeads.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="py-12 text-center text-muted-foreground">
-                    <p className="text-sm font-medium">No leads match your active filters.</p>
-                    <p className="text-xs text-muted-foreground/70 mt-1">Try resetting the filter criteria or searching a different term.</p>
+                  <td colSpan={9} className="py-16 text-center text-[#897B70]">
+                    <div className="flex flex-col items-center justify-center space-y-2">
+                      <div className="h-10 w-10 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-[#897B70]">
+                        <Search className="h-5 w-5" />
+                      </div>
+                      <p className="text-sm font-semibold text-[#F8F5F1]">No leads match your active filters</p>
+                      <p className="text-xs text-[#897B70]">Try resetting your filter criteria or searching a different term.</p>
+                    </div>
                   </td>
                 </tr>
               ) : (
@@ -629,8 +629,8 @@ export function LeadsClientView() {
                   return (
                     <tr
                       key={lead.id}
-                      className={`hover:bg-muted/30 transition-colors group ${
-                        isSelected ? "bg-primary/5" : ""
+                      className={`hover:bg-white/[0.03] transition-colors group ${
+                        isSelected ? "bg-orange-500/[0.06]" : ""
                       }`}
                     >
                       {/* Checkbox */}
@@ -639,32 +639,32 @@ export function LeadsClientView() {
                           type="checkbox"
                           checked={isSelected}
                           onChange={() => handleSelectLead(lead.id)}
-                          className="rounded border-border bg-card cursor-pointer"
+                          className="rounded border-white/20 bg-[#16110E] accent-orange-500 cursor-pointer"
                         />
                       </td>
 
                       {/* Lead / Student Details */}
                       <td className="py-3.5 px-3 min-w-[200px]">
                         <div className="flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 flex items-center justify-center font-bold text-xs text-primary shrink-0">
+                          <div className="h-9 w-9 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center font-bold text-xs text-orange-400 shrink-0">
                             {lead.avatar || lead.name.slice(0, 2).toUpperCase()}
                           </div>
                           <div>
                             <div className="flex items-center gap-1.5">
                               <Link
                                 href={`/leads/${lead.id}`}
-                                className="font-semibold text-foreground hover:text-primary transition-colors flex items-center gap-1"
+                                className="font-semibold text-[#F8F5F1] hover:text-orange-400 transition-colors flex items-center gap-1"
                               >
                                 {lead.name}
                               </Link>
                               {isNew && (
-                                <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40 uppercase">
+                                <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase">
                                   NEW
                                 </span>
                               )}
                             </div>
-                            <div className="text-[11px] text-muted-foreground flex items-center gap-2 mt-0.5">
-                              <span className="font-mono text-muted-foreground/80">{lead.leadCode}</span>
+                            <div className="text-[11px] text-[#897B70] flex items-center gap-2 mt-0.5">
+                              <span className="font-mono text-[#897B70]/90">{lead.leadCode}</span>
                               <span>•</span>
                               <span>{lead.phone}</span>
                             </div>
@@ -674,15 +674,15 @@ export function LeadsClientView() {
 
                       {/* Destination & Course */}
                       <td className="py-3.5 px-3 min-w-[200px]">
-                        <p className="font-medium text-foreground">{lead.course}</p>
-                        <p className="text-[11px] text-muted-foreground mt-0.5">
-                          {lead.preferredDestination} • <span className="text-primary/90 font-medium">{lead.intake}</span>
+                        <p className="font-medium text-[#E8DED5] text-xs md:text-sm">{lead.course}</p>
+                        <p className="text-[11px] text-[#897B70] mt-0.5">
+                          {lead.preferredDestination} • <span className="text-orange-400 font-medium">{lead.intake}</span>
                         </p>
                       </td>
 
                       {/* Source */}
                       <td className="py-3.5 px-3 whitespace-nowrap">
-                        <span className="text-xs px-2 py-0.5 rounded-md bg-muted/60 text-muted-foreground border border-border/40 font-medium">
+                        <span className="text-xs px-2 py-0.5 rounded-md bg-white/[0.04] text-[#BDB0A4] border border-white/[0.08] font-medium">
                           {lead.leadSource}
                         </span>
                       </td>
@@ -690,10 +690,10 @@ export function LeadsClientView() {
                       {/* Assigned Counsellor */}
                       <td className="py-3.5 px-3 whitespace-nowrap">
                         <div className="flex items-center gap-2">
-                          <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-[10px] font-semibold text-foreground border border-border/50">
+                          <div className="h-6 w-6 rounded-full bg-white/[0.05] border border-white/10 flex items-center justify-center text-[10px] font-semibold text-[#E8DED5]">
                             {lead.counsellorAvatar || lead.assignedCounsellor.slice(0, 2).toUpperCase()}
                           </div>
-                          <span className="text-xs font-medium text-foreground">{lead.assignedCounsellor}</span>
+                          <span className="text-xs font-medium text-[#E8DED5]">{lead.assignedCounsellor}</span>
                         </div>
                       </td>
 
@@ -710,8 +710,8 @@ export function LeadsClientView() {
                       {/* Next Follow-up */}
                       <td className="py-3.5 px-3 whitespace-nowrap">
                         <div className="flex items-center gap-1.5 text-xs">
-                          <Calendar className="h-3.5 w-3.5 text-muted-foreground/70" />
-                          <span className={lead.priority === "Urgent" ? "text-amber-400 font-medium" : "text-muted-foreground"}>
+                          <Calendar className="h-3.5 w-3.5 text-[#897B70]" />
+                          <span className={lead.priority === "Urgent" ? "text-rose-400 font-semibold" : "text-[#897B70]"}>
                             {lead.nextFollowUp}
                           </span>
                         </div>
@@ -738,7 +738,12 @@ export function LeadsClientView() {
                             <Phone className="h-4 w-4" />
                           </a>
 
-                          <Button variant="ghost" size="sm" asChild className="h-8 px-2.5 text-xs rounded-lg hover:text-primary">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            asChild
+                            className="h-8 px-2.5 text-xs rounded-xl text-[#F8F5F1] hover:text-orange-400 hover:bg-white/[0.06]"
+                          >
                             <Link href={`/leads/${lead.id}`}>
                               View Profile
                             </Link>
@@ -748,7 +753,7 @@ export function LeadsClientView() {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteLead(lead.id, lead.name)}
-                            className="h-8 w-8 p-0 text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
+                            className="h-8 w-8 p-0 text-[#897B70] hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors"
                             title="Delete Lead"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
