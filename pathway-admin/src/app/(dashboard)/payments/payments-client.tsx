@@ -126,7 +126,7 @@ export function PaymentsClientView() {
               Payment &amp; Finance Management
             </h1>
             <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-bold border border-emerald-500/30">
-              ${totalPaid.toLocaleString()} Collected
+              ₹{totalPaid.toLocaleString("en-IN")} Collected
             </span>
           </div>
           <p className="text-xs md:text-sm text-[#BDB0A4] mt-1">
@@ -157,19 +157,19 @@ export function PaymentsClientView() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
         <div className="rounded-2xl border border-white/[0.08] bg-[#15100D]/85 p-4 backdrop-blur-md shadow-xl space-y-1">
           <p className="text-[11px] text-[#897B70] uppercase font-semibold">Total Invoiced</p>
-          <p className="text-2xl font-bold text-[#F8F5F1] mt-1">${totalBilled.toLocaleString()}</p>
+          <p className="text-xl sm:text-2xl font-bold text-[#F8F5F1] mt-1 font-mono">₹{totalBilled.toLocaleString("en-IN")}</p>
           <p className="text-[11px] text-[#897B70]">All contracts</p>
         </div>
 
         <div className="rounded-2xl border border-white/[0.08] bg-[#15100D]/85 p-4 backdrop-blur-md shadow-xl space-y-1">
           <p className="text-[11px] text-[#897B70] uppercase font-semibold">Total Collected</p>
-          <p className="text-2xl font-bold text-emerald-400 mt-1">${totalPaid.toLocaleString()}</p>
+          <p className="text-xl sm:text-2xl font-bold text-emerald-400 mt-1 font-mono">₹{totalPaid.toLocaleString("en-IN")}</p>
           <p className="text-[11px] text-emerald-400 font-semibold">{((totalPaid / (totalBilled || 1)) * 100).toFixed(0)}% recovery rate</p>
         </div>
 
         <div className="rounded-2xl border border-white/[0.08] bg-[#15100D]/85 p-4 backdrop-blur-md shadow-xl space-y-1">
           <p className="text-[11px] text-[#897B70] uppercase font-semibold">Outstanding Due</p>
-          <p className="text-2xl font-bold text-amber-400 mt-1">${totalPending.toLocaleString()}</p>
+          <p className="text-xl sm:text-2xl font-bold text-amber-400 mt-1 font-mono">₹{totalPending.toLocaleString("en-IN")}</p>
           <p className="text-[11px] text-[#897B70]">Pending receipts</p>
         </div>
 
@@ -177,15 +177,15 @@ export function PaymentsClientView() {
           overdueCount > 0 ? "border-rose-500/30 bg-rose-500/[0.08]" : "border-white/[0.08] bg-[#15100D]/85"
         }`}>
           <p className="text-[11px] text-rose-400 uppercase font-semibold">Overdue Invoices</p>
-          <p className="text-2xl font-bold text-rose-400 mt-1">{overdueCount}</p>
+          <p className="text-xl sm:text-2xl font-bold text-rose-400 mt-1 font-mono">{overdueCount}</p>
           <p className="text-[11px] text-rose-400/80">Requires collection follow-up</p>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="rounded-2xl border border-white/[0.08] bg-[#15100D]/85 p-4 backdrop-blur-md shadow-xl">
-        <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-          <div className="relative flex-1 min-w-[240px]">
+      <div className="rounded-2xl border border-white/[0.08] bg-[#15100D]/85 p-3.5 sm:p-4 backdrop-blur-md shadow-xl">
+        <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 items-stretch sm:items-center justify-between">
+          <div className="relative flex-1 min-w-0">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#897B70]" />
             <input
               placeholder="Search invoices by student name, reference or service..."
@@ -195,11 +195,11 @@ export function PaymentsClientView() {
             />
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="h-9 rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
+              className="w-full sm:w-auto h-9 rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
             >
               <option value="ALL" className="bg-[#1D1510]">All Statuses</option>
               <option value="Paid" className="bg-[#1D1510]">Paid</option>
@@ -214,15 +214,15 @@ export function PaymentsClientView() {
       {/* Payments High-Density Data Table */}
       <div className="rounded-2xl border border-white/[0.08] bg-[#15100D]/85 backdrop-blur-md shadow-xl overflow-hidden">
         <div className="overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left border-collapse text-xs md:text-sm">
+          <table className="w-full text-left border-collapse text-xs md:text-sm min-w-[750px]">
             <thead>
               <tr className="border-b border-white/[0.08] bg-[#18120D] text-[#897B70] uppercase text-[11px] tracking-wider font-semibold">
                 <th className="py-3.5 px-4">Invoice Reference</th>
                 <th className="py-3.5 px-3">Student Name</th>
                 <th className="py-3.5 px-3">Service Package</th>
-                <th className="py-3.5 px-3">Total Billed</th>
-                <th className="py-3.5 px-3">Amount Paid</th>
-                <th className="py-3.5 px-3">Balance Due</th>
+                <th className="py-3.5 px-3">Total (₹)</th>
+                <th className="py-3.5 px-3">Paid (₹)</th>
+                <th className="py-3.5 px-3">Balance Due (₹)</th>
                 <th className="py-3.5 px-3">Date</th>
                 <th className="py-3.5 px-3">Method</th>
                 <th className="py-3.5 px-3">Status</th>
@@ -252,16 +252,16 @@ export function PaymentsClientView() {
                     </td>
 
                     <td className="py-3.5 px-3 font-semibold text-[#F8F5F1] font-mono">
-                      ${p.amount}
+                      ₹{p.amount.toLocaleString("en-IN")}
                     </td>
 
                     <td className="py-3.5 px-3 font-bold text-emerald-400 font-mono">
-                      ${p.amountPaid}
+                      ₹{p.amountPaid.toLocaleString("en-IN")}
                     </td>
 
                     <td className="py-3.5 px-3 font-bold font-mono">
                       <span className={p.remaining > 0 ? "text-amber-400" : "text-[#897B70]"}>
-                        ${p.remaining}
+                        ₹{p.remaining.toLocaleString("en-IN")}
                       </span>
                     </td>
 
@@ -335,23 +335,23 @@ export function PaymentsClientView() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label htmlFor="pAmount" className="text-xs font-semibold text-[#BDB0A4]">Total Amount ($) *</Label>
+                  <Label htmlFor="pAmount" className="text-xs font-semibold text-[#BDB0A4]">Total Amount (₹) *</Label>
                   <Input
                     id="pAmount"
                     type="number"
                     required
-                    placeholder="2500"
+                    placeholder="50000"
                     value={newPay.amount || ""}
                     onChange={(e) => setNewPay({ ...newPay, amount: Number(e.target.value) })}
                     className="font-mono bg-[#1D1510] border-white/[0.1] text-xs text-[#F8F5F1] rounded-xl h-9"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="pPaid" className="text-xs font-semibold text-[#BDB0A4]">Initial Payment ($)</Label>
+                  <Label htmlFor="pPaid" className="text-xs font-semibold text-[#BDB0A4]">Initial Payment (₹)</Label>
                   <Input
                     id="pPaid"
                     type="number"
-                    placeholder="1000"
+                    placeholder="25000"
                     value={newPay.amountPaid || ""}
                     onChange={(e) => setNewPay({ ...newPay, amountPaid: Number(e.target.value) })}
                     className="font-mono bg-[#1D1510] border-white/[0.1] text-xs text-[#F8F5F1] rounded-xl h-9"
@@ -367,9 +367,9 @@ export function PaymentsClientView() {
                   value={newPay.method || "Bank Transfer"}
                   onChange={(e) => setNewPay({ ...newPay, method: e.target.value as any })}
                 >
-                  <option value="Bank Transfer" className="bg-[#1D1510]">Bank Transfer</option>
-                  <option value="Credit Card" className="bg-[#1D1510]">Credit Card</option>
-                  <option value="UPI / QR Code" className="bg-[#1D1510]">UPI / QR Code</option>
+                  <option value="UPI / QR Code" className="bg-[#1D1510]">UPI / QR Code (GPay/PhonePe)</option>
+                  <option value="Bank Transfer" className="bg-[#1D1510]">Bank Transfer (NEFT/RTGS/IMPS)</option>
+                  <option value="Credit Card" className="bg-[#1D1510]">Credit / Debit Card</option>
                   <option value="Cheque / Cash" className="bg-[#1D1510]">Cheque / Cash</option>
                 </select>
               </div>

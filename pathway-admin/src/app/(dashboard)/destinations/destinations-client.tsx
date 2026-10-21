@@ -7,7 +7,7 @@ import {
   Landmark,
   ShieldCheck,
   Calendar,
-  DollarSign,
+  IndianRupee,
   GraduationCap,
   Sparkles,
   BookOpen,
@@ -49,8 +49,8 @@ export function DestinationsClientView() {
       visaInfo: newDest.visaInfo || "Standard Student Visa",
       intakeDates: "September / February",
       requirements: "60%+ in Bachelor's",
-      estimatedTuition: "$18,000 - $30,000 / year",
-      livingCosts: "$12,000 / year",
+      estimatedTuition: "₹18 Lakh - ₹30 Lakh / year",
+      livingCosts: "₹10 Lakh / year",
       scholarships: "Government & University merit scholarships",
       importantDeadlines: "Rolling"
     }
@@ -151,7 +151,7 @@ export function DestinationsClientView() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-4 rounded-2xl bg-muted/30 border border-border/40">
               <span className="text-xs font-semibold text-muted-foreground uppercase flex items-center gap-1.5">
-                <DollarSign className="h-4 w-4 text-primary" /> Estimated Tuition
+                <IndianRupee className="h-4 w-4 text-primary" /> Estimated Tuition
               </span>
               <p className="text-base font-bold text-foreground mt-1">{selectedDest.estimatedTuition}</p>
             </div>

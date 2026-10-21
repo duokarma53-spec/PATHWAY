@@ -188,7 +188,7 @@ export function TasksClientView({ defaultCategory }: { defaultCategory?: string 
       {/* Filter and Search Bar */}
       <div className="rounded-2xl border border-white/[0.08] bg-[#15100D]/85 p-4 backdrop-blur-md shadow-xl">
         <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-          <div className="relative flex-1 min-w-[240px]">
+          <div className="relative flex-1 w-full sm:min-w-[240px]">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#897B70]" />
             <input
               placeholder="Search tasks by title, lead name or student..."
@@ -198,11 +198,11 @@ export function TasksClientView({ defaultCategory }: { defaultCategory?: string 
             />
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="h-9 rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
+              className="h-9 w-full sm:w-auto truncate rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
             >
               <option value="ALL" className="bg-[#1D1510]">All Statuses</option>
               <option value="Pending" className="bg-[#1D1510]">Pending</option>
@@ -214,7 +214,7 @@ export function TasksClientView({ defaultCategory }: { defaultCategory?: string 
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
-              className="h-9 rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
+              className="h-9 w-full sm:w-auto truncate rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
             >
               <option value="ALL" className="bg-[#1D1510]">All Priorities</option>
               <option value="Urgent" className="bg-[#1D1510]">Urgent</option>
@@ -226,7 +226,7 @@ export function TasksClientView({ defaultCategory }: { defaultCategory?: string 
             <select
               value={staffFilter}
               onChange={(e) => setStaffFilter(e.target.value)}
-              className="h-9 rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
+              className="h-9 w-full sm:w-auto truncate rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
             >
               <option value="ALL" className="bg-[#1D1510]">All Staff</option>
               <option value="Rohan Varma" className="bg-[#1D1510]">Rohan Varma</option>
@@ -244,7 +244,7 @@ export function TasksClientView({ defaultCategory }: { defaultCategory?: string 
                   setPriorityFilter("ALL")
                   setStaffFilter("ALL")
                 }}
-                className="h-9 text-xs text-[#897B70] hover:text-[#F8F5F1]"
+                className="col-span-2 sm:col-span-1 h-9 text-xs text-[#897B70] hover:text-[#F8F5F1] rounded-xl hover:bg-white/[0.06]"
               >
                 Reset
               </Button>

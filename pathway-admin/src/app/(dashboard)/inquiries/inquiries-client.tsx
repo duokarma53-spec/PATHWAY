@@ -354,7 +354,7 @@ export function InquiriesClientView() {
       {/* Filter and Search Toolbar */}
       <div className="rounded-2xl bg-[#15100D]/80 border border-white/[0.08] p-3 backdrop-blur-md flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
         {/* Search Input */}
-        <div className="relative flex-1 min-w-[240px]">
+        <div className="relative flex-1 w-full sm:min-w-[240px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#897B70]" />
           <input
             type="text"
@@ -366,11 +366,11 @@ export function InquiriesClientView() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full md:w-auto">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-9 px-3 rounded-xl bg-[#1D1510] border border-white/[0.08] text-xs text-[#F8F5F1] outline-none font-medium cursor-pointer"
+            className="h-9 w-full sm:w-auto truncate px-3 rounded-xl bg-[#1D1510] border border-white/[0.08] text-xs text-[#F8F5F1] outline-none font-medium cursor-pointer"
           >
             <option value="ALL" className="bg-[#1D1510] text-[#F8F5F1]">All Statuses</option>
             <option value="NEW" className="bg-[#1D1510] text-[#F8F5F1]">New Only</option>
@@ -381,7 +381,7 @@ export function InquiriesClientView() {
           <select
             value={destFilter}
             onChange={(e) => setDestFilter(e.target.value)}
-            className="h-9 px-3 rounded-xl bg-[#1D1510] border border-white/[0.08] text-xs text-[#F8F5F1] outline-none font-medium cursor-pointer"
+            className="h-9 w-full sm:w-auto truncate px-3 rounded-xl bg-[#1D1510] border border-white/[0.08] text-xs text-[#F8F5F1] outline-none font-medium cursor-pointer"
           >
             <option value="ALL" className="bg-[#1D1510] text-[#F8F5F1]">All Destinations</option>
             <option value="United Kingdom" className="bg-[#1D1510] text-[#F8F5F1]">United Kingdom</option>

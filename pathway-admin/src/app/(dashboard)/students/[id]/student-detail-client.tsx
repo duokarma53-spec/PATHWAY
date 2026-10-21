@@ -268,12 +268,12 @@ export function StudentDetailClient({ studentId }: { studentId: string }) {
           <div className="flex items-center gap-5 text-xs">
             <div>
               <span className="text-[#897B70]">Total Paid: </span>
-              <strong className="text-[#F8F5F1]">${student.totalPaid}</strong>
+              <strong className="text-[#F8F5F1]">₹{(student.totalPaid || 0).toLocaleString('en-IN')}</strong>
             </div>
             <div>
               <span className="text-[#897B70]">Balance Due: </span>
               <strong className={student.balanceDue > 0 ? "text-amber-400 font-bold" : "text-emerald-400"}>
-                ${student.balanceDue}
+                ₹{(student.balanceDue || 0).toLocaleString('en-IN')}
               </strong>
             </div>
           </div>
@@ -556,8 +556,8 @@ export function StudentDetailClient({ studentId }: { studentId: string }) {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-base font-bold text-[#F8F5F1]">${p.amountPaid} / ${p.amount}</p>
-                  {p.remaining > 0 && <p className="text-xs text-amber-400 font-semibold">${p.remaining} remaining</p>}
+                  <p className="text-base font-bold text-[#F8F5F1]">₹{p.amountPaid.toLocaleString('en-IN')} / ₹{p.amount.toLocaleString('en-IN')}</p>
+                  {p.remaining > 0 && <p className="text-xs text-amber-400 font-semibold">₹{p.remaining.toLocaleString('en-IN')} remaining</p>}
                 </div>
               </div>
             ))}

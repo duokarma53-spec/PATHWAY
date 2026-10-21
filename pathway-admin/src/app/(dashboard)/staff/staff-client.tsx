@@ -177,21 +177,21 @@ export function StaffClientView() {
 
       {/* Filter and Search Bar */}
       <div className="p-4 rounded-2xl bg-[#14100D]/75 border border-white/[0.08] backdrop-blur-xl flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between shadow-sm">
-        <div className="relative flex-1 min-w-[240px]">
+        <div className="relative flex-1 w-full sm:min-w-[240px]">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search team member by name, corporate email, or department..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 h-10 rounded-xl bg-black/40 border-white/[0.08] text-xs text-foreground placeholder:text-muted-foreground focus:border-primary/50"
+            className="pl-10 h-10 rounded-xl bg-black/40 border-white/[0.08] text-xs text-foreground placeholder:text-muted-foreground focus:border-primary/50 w-full"
           />
         </div>
 
-        <div className="flex items-center gap-2.5 flex-wrap">
+        <div className="grid grid-cols-2 sm:flex items-center gap-2.5 w-full md:w-auto">
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="h-10 rounded-xl border border-white/[0.08] bg-black/40 px-3 text-xs text-foreground font-medium outline-none hover:border-white/20 transition-colors"
+            className="h-10 w-full sm:w-auto truncate rounded-xl border border-white/[0.08] bg-black/40 px-3 text-xs text-foreground font-medium outline-none hover:border-white/20 transition-colors"
           >
             <option value="ALL">All Roles</option>
             <option value="Super Admin">Super Admin</option>
@@ -203,7 +203,7 @@ export function StaffClientView() {
           <select
             value={deptFilter}
             onChange={(e) => setDeptFilter(e.target.value)}
-            className="h-10 rounded-xl border border-white/[0.08] bg-black/40 px-3 text-xs text-foreground font-medium outline-none hover:border-white/20 transition-colors"
+            className="h-10 w-full sm:w-auto truncate rounded-xl border border-white/[0.08] bg-black/40 px-3 text-xs text-foreground font-medium outline-none hover:border-white/20 transition-colors"
           >
             <option value="ALL">All Departments</option>
             <option value="Admissions">Admissions</option>

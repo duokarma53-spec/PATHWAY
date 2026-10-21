@@ -173,9 +173,9 @@ export function DocumentsClientView() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="rounded-2xl border border-white/[0.08] bg-[#15100D]/85 p-4 backdrop-blur-md shadow-xl">
-        <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-          <div className="relative flex-1 min-w-[240px]">
+      <div className="rounded-2xl border border-white/[0.08] bg-[#15100D]/85 p-3.5 sm:p-4 backdrop-blur-md shadow-xl">
+        <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 items-stretch sm:items-center justify-between">
+          <div className="relative flex-1 min-w-0">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#897B70]" />
             <input
               placeholder="Search by student name or document file name..."
@@ -185,29 +185,29 @@ export function DocumentsClientView() {
             />
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="h-9 rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
+              className="w-full sm:w-auto h-9 rounded-xl border border-white/[0.08] bg-[#1D1510] px-2.5 sm:px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer truncate"
             >
               <option value="ALL" className="bg-[#1D1510]">All Categories</option>
               <option value="Passport" className="bg-[#1D1510]">Passport</option>
-              <option value="Academic transcripts" className="bg-[#1D1510]">Academic transcripts</option>
+              <option value="Academic transcripts" className="bg-[#1D1510]">Transcripts</option>
               <option value="English test" className="bg-[#1D1510]">English test</option>
-              <option value="Financial documents" className="bg-[#1D1510]">Financial documents</option>
+              <option value="Financial documents" className="bg-[#1D1510]">Financials</option>
               <option value="SOP" className="bg-[#1D1510]">SOP</option>
-              <option value="Visa documents" className="bg-[#1D1510]">Visa documents</option>
+              <option value="Visa documents" className="bg-[#1D1510]">Visa docs</option>
             </select>
 
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="h-9 rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
+              className="w-full sm:w-auto h-9 rounded-xl border border-white/[0.08] bg-[#1D1510] px-2.5 sm:px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer truncate"
             >
               <option value="ALL" className="bg-[#1D1510]">All Statuses</option>
               <option value="Approved" className="bg-[#1D1510]">Approved ({approvedCount})</option>
-              <option value="Under Review" className="bg-[#1D1510]">Under Review ({pendingCount})</option>
+              <option value="Under Review" className="bg-[#1D1510]">Review ({pendingCount})</option>
               <option value="Requested" className="bg-[#1D1510]">Requested</option>
               <option value="Rejected" className="bg-[#1D1510]">Rejected ({rejectedCount})</option>
             </select>
@@ -218,7 +218,7 @@ export function DocumentsClientView() {
       {/* Documents High-Density Data Table */}
       <div className="rounded-2xl border border-white/[0.08] bg-[#15100D]/85 backdrop-blur-md shadow-xl overflow-hidden">
         <div className="overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left border-collapse text-xs md:text-sm">
+          <table className="w-full text-left border-collapse text-xs md:text-sm min-w-[700px]">
             <thead>
               <tr className="border-b border-white/[0.08] bg-[#18120D] text-[#897B70] uppercase text-[11px] tracking-wider font-semibold">
                 <th className="py-3.5 px-4">Document File</th>

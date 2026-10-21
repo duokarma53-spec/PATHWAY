@@ -449,23 +449,23 @@ export function LeadsClientView() {
         <CardContent className="p-4 space-y-3">
           <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between">
             {/* Search Input */}
-            <div className="relative flex-1 min-w-[260px]">
+            <div className="relative flex-1 w-full sm:min-w-[260px]">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#897B70]" />
               <Input
                 placeholder="Search by name, email, phone, course, or ID (e.g. 'LD-1048')..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 h-10 rounded-xl bg-[#16110E]/90 border border-white/10 text-sm text-[#F8F5F1] placeholder:text-[#897B70]"
+                className="pl-10 h-10 rounded-xl bg-[#16110E]/90 border border-white/10 text-sm text-[#F8F5F1] placeholder:text-[#897B70] w-full"
               />
             </div>
 
             {/* Filter Dropdowns */}
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full lg:w-auto">
               {/* Status Filter */}
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="h-9.5 rounded-xl border border-white/10 bg-[#1B1512] px-3 text-xs text-[#F8F5F1] outline-none font-medium focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
+                className="h-9.5 w-full sm:w-auto truncate rounded-xl border border-white/10 bg-[#1B1512] px-3 text-xs text-[#F8F5F1] outline-none font-medium focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
               >
                 <option value="ALL">All Statuses</option>
                 <option value="New">New</option>
@@ -483,7 +483,7 @@ export function LeadsClientView() {
               <select
                 value={priorityFilter}
                 onChange={(e) => setPriorityFilter(e.target.value)}
-                className="h-9.5 rounded-xl border border-white/10 bg-[#1B1512] px-3 text-xs text-[#F8F5F1] outline-none font-medium focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
+                className="h-9.5 w-full sm:w-auto truncate rounded-xl border border-white/10 bg-[#1B1512] px-3 text-xs text-[#F8F5F1] outline-none font-medium focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
               >
                 <option value="ALL">All Priorities</option>
                 <option value="Urgent">Urgent</option>
@@ -496,7 +496,7 @@ export function LeadsClientView() {
               <select
                 value={destFilter}
                 onChange={(e) => setDestFilter(e.target.value)}
-                className="h-9.5 rounded-xl border border-white/10 bg-[#1B1512] px-3 text-xs text-[#F8F5F1] outline-none font-medium focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
+                className="h-9.5 w-full sm:w-auto truncate rounded-xl border border-white/10 bg-[#1B1512] px-3 text-xs text-[#F8F5F1] outline-none font-medium focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
               >
                 <option value="ALL">All Countries</option>
                 <option value="United Kingdom">United Kingdom</option>
@@ -509,7 +509,7 @@ export function LeadsClientView() {
               <select
                 value={sourceFilter}
                 onChange={(e) => setSourceFilter(e.target.value)}
-                className="h-9.5 rounded-xl border border-white/10 bg-[#1B1512] px-3 text-xs text-[#F8F5F1] outline-none font-medium focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
+                className="h-9.5 w-full sm:w-auto truncate rounded-xl border border-white/10 bg-[#1B1512] px-3 text-xs text-[#F8F5F1] outline-none font-medium focus:border-orange-500/60 focus:ring-1 focus:ring-orange-500/30"
               >
                 <option value="ALL">All Sources</option>
                 <option value="Website">Website</option>
@@ -531,7 +531,7 @@ export function LeadsClientView() {
                     setDestFilter("ALL")
                     setSourceFilter("ALL")
                   }}
-                  className="h-9.5 text-xs text-[#897B70] hover:text-[#F8F5F1] rounded-xl hover:bg-white/[0.06]"
+                  className="col-span-2 sm:col-span-1 h-9.5 text-xs text-[#897B70] hover:text-[#F8F5F1] rounded-xl hover:bg-white/[0.06]"
                 >
                   Reset
                 </Button>

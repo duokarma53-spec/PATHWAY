@@ -218,7 +218,7 @@ export function ApplicationsClientView() {
       {/* Filter and Phase Navigation Toolbar */}
       <div className="rounded-2xl bg-[#15100D]/85 border border-white/[0.08] p-4 backdrop-blur-md shadow-xl space-y-3">
         <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-          <div className="relative flex-1 min-w-[240px]">
+          <div className="relative flex-1 w-full sm:min-w-[240px]">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#897B70]" />
             <input
               placeholder="Search by university, student name, course or code (e.g. APP-401)..."
@@ -228,11 +228,11 @@ export function ApplicationsClientView() {
             />
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
             <select
               value={countryFilter}
               onChange={(e) => setCountryFilter(e.target.value)}
-              className="h-9 rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
+              className="h-9 w-full sm:w-auto truncate rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
             >
               <option value="ALL" className="bg-[#1D1510]">All Countries</option>
               <option value="United Kingdom" className="bg-[#1D1510]">United Kingdom</option>
@@ -244,7 +244,7 @@ export function ApplicationsClientView() {
             <select
               value={counsellorFilter}
               onChange={(e) => setCounsellorFilter(e.target.value)}
-              className="h-9 rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
+              className="h-9 w-full sm:w-auto truncate rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
             >
               <option value="ALL" className="bg-[#1D1510]">All Counsellors</option>
               <option value="Rohan Varma" className="bg-[#1D1510]">Rohan Varma</option>

@@ -132,20 +132,20 @@ function PinGate({ onUnlock }: { onUnlock: () => void }) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[65vh] px-4">
-      <div className="w-full max-w-md p-8 rounded-3xl bg-[#14100D]/90 border border-white/[0.08] backdrop-blur-2xl shadow-2xl flex flex-col items-center gap-6 relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center min-h-[65vh] px-3 sm:px-4 w-full">
+      <div className="w-full max-w-sm sm:max-w-md p-5 sm:p-8 rounded-3xl bg-[#14100D]/95 border border-white/[0.08] backdrop-blur-2xl shadow-2xl flex flex-col items-center gap-5 sm:gap-6 relative overflow-hidden box-border">
         {/* Subtle orange accent glow at top */}
         <div className="absolute top-0 left-1/4 right-1/4 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent" />
 
-        <div className="flex flex-col items-center gap-3 text-center">
-          <div className="h-16 w-16 rounded-2xl bg-[#271A12] border border-primary/30 flex items-center justify-center shadow-lg shadow-primary/10">
-            <Lock className="h-8 w-8 text-primary" />
+        <div className="flex flex-col items-center gap-3 text-center w-full">
+          <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-2xl bg-[#271A12] border border-primary/30 flex items-center justify-center shadow-lg shadow-primary/10">
+            <Lock className="h-7 w-7 sm:h-8 sm:w-8 text-primary" />
           </div>
-          <div>
-            <h2 className="text-xl font-bold text-foreground tracking-tight">
+          <div className="px-1">
+            <h2 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">
               Administrative Clearance
             </h2>
-            <p className="text-xs text-muted-foreground mt-1 max-w-xs leading-relaxed">
+            <p className="text-xs text-muted-foreground mt-1 max-w-xs leading-relaxed mx-auto">
               Enter the 4-digit system access PIN to unlock sensitive account credentials and administrative controls.
             </p>
           </div>
@@ -153,7 +153,7 @@ function PinGate({ onUnlock }: { onUnlock: () => void }) {
 
         <form onSubmit={handleSubmit} className="flex flex-col items-center gap-4 w-full">
           <div
-            className={`flex gap-3.5 transition-transform ${shaking ? "animate-[shake_0.5s_ease-in-out]" : ""}`}
+            className={`flex gap-2 sm:gap-3.5 justify-center items-center max-w-full transition-transform ${shaking ? "animate-[shake_0.5s_ease-in-out]" : ""}`}
             style={shaking ? { animation: "shake 0.5s ease-in-out" } : {}}
           >
             {pin.map((digit, i) => (
@@ -167,7 +167,7 @@ function PinGate({ onUnlock }: { onUnlock: () => void }) {
                 autoFocus={i === 0}
                 onChange={(e) => handleChange(i, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(i, e)}
-                className={`w-13 h-14 text-center text-2xl font-bold rounded-2xl border-2 bg-black/60 outline-none transition-all font-mono
+                className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 text-center text-xl sm:text-2xl font-bold rounded-xl sm:rounded-2xl border-2 bg-black/60 outline-none transition-all font-mono
                   ${
                     error
                       ? "border-destructive text-destructive bg-destructive/10"

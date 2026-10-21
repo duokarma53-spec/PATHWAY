@@ -178,7 +178,7 @@ export function StudentsClientView() {
       {/* Filter and Search Bar */}
       <div className="rounded-2xl border border-white/[0.08] bg-[#15100D]/85 p-4 backdrop-blur-md shadow-xl">
         <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between">
-          <div className="relative flex-1 min-w-[260px]">
+          <div className="relative flex-1 w-full sm:min-w-[260px]">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#897B70]" />
             <input
               placeholder="Search students by name, email, student code (e.g. STU-2041)..."
@@ -188,11 +188,11 @@ export function StudentsClientView() {
             />
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full lg:w-auto">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="h-9 rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
+              className="h-9 w-full sm:w-auto truncate rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
             >
               <option value="ALL" className="bg-[#1D1510]">All Statuses</option>
               <option value="Prospect" className="bg-[#1D1510]">Prospect</option>
@@ -208,7 +208,7 @@ export function StudentsClientView() {
             <select
               value={destFilter}
               onChange={(e) => setDestFilter(e.target.value)}
-              className="h-9 rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
+              className="h-9 w-full sm:w-auto truncate rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
             >
               <option value="ALL" className="bg-[#1D1510]">All Destinations</option>
               <option value="United Kingdom" className="bg-[#1D1510]">United Kingdom</option>
@@ -220,7 +220,7 @@ export function StudentsClientView() {
             <select
               value={counsellorFilter}
               onChange={(e) => setCounsellorFilter(e.target.value)}
-              className="h-9 rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
+              className="h-9 w-full sm:w-auto truncate rounded-xl border border-white/[0.08] bg-[#1D1510] px-3 text-xs text-[#F8F5F1] font-medium outline-none cursor-pointer"
             >
               <option value="ALL" className="bg-[#1D1510]">All Counsellors</option>
               <option value="Rohan Varma" className="bg-[#1D1510]">Rohan Varma</option>
@@ -238,7 +238,7 @@ export function StudentsClientView() {
                   setDestFilter("ALL")
                   setCounsellorFilter("ALL")
                 }}
-                className="h-9 text-xs text-[#897B70] hover:text-[#F8F5F1]"
+                className="col-span-2 sm:col-span-1 h-9 text-xs text-[#897B70] hover:text-[#F8F5F1] rounded-xl hover:bg-white/[0.06]"
               >
                 Reset
               </Button>

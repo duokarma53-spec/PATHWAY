@@ -64,7 +64,7 @@ export function UniversitiesClientView() {
       logo: (newUni.name || "").slice(0, 3).toUpperCase(),
       ranking: Number(newUni.ranking) || 50,
       popularCourses: newUni.popularCourses || ["Business", "Computer Science"],
-      tuitionRange: newUni.tuitionRange || "£20,000 - £30,000",
+      tuitionRange: newUni.tuitionRange || "₹20 Lakh - ₹30 Lakh / year",
       intakes: ["September", "January"],
       deadline: newUni.deadline || "Rolling",
       entryRequirements: newUni.entryRequirements || "60%+ in Bachelor's",
@@ -117,21 +117,21 @@ export function UniversitiesClientView() {
       <Card className="border-border/60 bg-card/75 backdrop-blur-xl shadow-sm">
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-            <div className="relative flex-1 min-w-[240px]">
+            <div className="relative flex-1 w-full sm:min-w-[240px]">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search universities by name, course, or city..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 h-10 rounded-xl bg-muted/30 border-border/50 text-sm"
+                className="pl-10 h-10 rounded-xl bg-muted/30 border-border/50 text-sm w-full"
               />
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
               <select
                 value={countryFilter}
                 onChange={(e) => setCountryFilter(e.target.value)}
-                className="h-9 rounded-xl border border-border/60 bg-muted/40 px-3 text-xs text-foreground font-medium outline-none"
+                className="h-9 w-full sm:w-auto truncate rounded-xl border border-border/60 bg-muted/40 px-3 text-xs text-foreground font-medium outline-none"
               >
                 <option value="ALL">All Countries</option>
                 <option value="United Kingdom">United Kingdom</option>
@@ -143,7 +143,7 @@ export function UniversitiesClientView() {
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
-                className="h-9 rounded-xl border border-border/60 bg-muted/40 px-3 text-xs text-foreground font-medium outline-none"
+                className="h-9 w-full sm:w-auto truncate rounded-xl border border-border/60 bg-muted/40 px-3 text-xs text-foreground font-medium outline-none"
               >
                 <option value="ALL">All Types</option>
                 <option value="Russell Group">Russell Group</option>
@@ -321,7 +321,7 @@ export function UniversitiesClientView() {
                   <Label htmlFor="uniFees" className="text-xs">Tuition Range</Label>
                   <Input
                     id="uniFees"
-                    placeholder="£24,000 - £32,000"
+                    placeholder="₹24 Lakh - ₹32 Lakh / year"
                     onChange={(e) => setNewUni({ ...newUni, tuitionRange: e.target.value })}
                   />
                 </div>
