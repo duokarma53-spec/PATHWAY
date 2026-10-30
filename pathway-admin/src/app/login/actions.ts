@@ -34,7 +34,9 @@ export async function login(formData: FormData) {
     (email === 'owner@pathway.com' && (password === 'pathway2026' || password === 'admin123')) ||
     (email === 'admin@pathway.com' && (password === 'pathway2026' || password === 'admin123')) ||
     (email === 'counsellor@pathway.com' && password === 'pathway2026') ||
-    (email === 'frontdesk@pathway.com' && password === 'pathway2026');
+    (email === 'frontdesk@pathway.com' && password === 'pathway2026') ||
+    // ── DuoKarma Owner Access ──
+    (email === 'duokarma@54.com' && (password === 'Hatim' || password === 'Moiz'));
 
   try {
     const supabase = await createClient()
